@@ -13,6 +13,8 @@ echo "My IP:" $MYIP
 
 # free some ports from firewalld just in case
 firewall-cmd --permanent --add-port=8001/tcp
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
 firewall-cmd --permanent --add-port=8443/tcp
 firewall-cmd --permanent --add-port=6443/tcp
 firewall-cmd --permanent --add-port=10250/tcp
