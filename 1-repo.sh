@@ -1,5 +1,7 @@
 #! /bin/sh
 
+yum install -y git epel yum-utils
+
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
@@ -11,5 +13,8 @@ gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cl
 exclude=kube*
 EOF
 
-yum install -y git
+yum-config-manager --add-repo=https://cbs.centos.org/repos/paas7-crio-311-candidate/x86_64/os/
+
+# yum install -y cri-o --nogpgcheck
+yum install -y docker
 yum install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
