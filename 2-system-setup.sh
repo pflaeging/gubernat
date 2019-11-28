@@ -1,5 +1,9 @@
 #! /bin/sh
 
+# install network time
+yum install ntp ntpdate
+systemctl enable ntpd --now
+
 # turnoff swap
 swapoff -a
 sed -i 's$/dev/mapper/cl-swap$# /dev/mapper/cl-swap$g' /etc/fstab

@@ -18,6 +18,9 @@ $KUBECTL patch deployment nginx-ingress-controller -n ingress-nginx --type='json
 # install dashboard
 $KUBECTL apply -f admin-user.yaml
 $KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta4/aio/deploy/recommended.yaml
-$KUBECTL patch service kubernetes-dashboard --type='json' -p='[{"op":"replace","path":"/spec/type","value":"NodePort"}]' -n kubernetes-dashboard
+# setting dashboard to https://myhostname:32443/
+$KUBECTL apply -f service-kubernetes-dashboard.yaml -n kubernetes-dashboard
 
-#
+# install local-storage class provider
+$KUBECTL apply -f storageclass-local-storage.yaml
+
