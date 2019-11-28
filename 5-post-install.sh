@@ -2,6 +2,8 @@
 
 # Base command
 KUBECTL="kubectl --kubeconfig=/etc/kubernetes/admin.conf"
+# My hostname
+HOSTNAME=`hostname`
 
 # make master schedulable
 $KUBECTL patch nodes $(hostname) -p '{"spec":{"taints":[]}}'
@@ -23,4 +25,8 @@ $KUBECTL apply -f service-kubernetes-dashboard.yaml -n kubernetes-dashboard
 
 # install local-storage class provider
 $KUBECTL apply -f storageclass-local-storage.yaml
+
+# Give our master node a label for node affinity and local storage
+# the best idea is: give every data store a uniq name!
+$KUBECTL label node $HOSTNAME pflaeging.net/datastore=data
 

@@ -1,0 +1,30 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: banana-app
+  labels:
+    app: banana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: banana
+  template:
+    metadata:
+      labels:
+        app: banana
+    spec:
+      containers:
+      - name: banana-app
+        image: docker.io/hashicorp/http-echo
+        args: ["-text=banana"]
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: banana-service
+spec:
+  selector:
+    app: banana
+  ports:
+    - port: 5678 # Default port for image

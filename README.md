@@ -28,5 +28,23 @@ The dashboard is always listening on port 32443 with SSL and a private certifica
 
 <https://myfamous-minicluster-hostname.cloud:32443>
 
+## Getting login info for your cluster
+
+You can copy the admin.conf in your local kube environment. As normal user:
+
+```shell
+mkdir -p ~/.kube
+sudo cp /etc/kubernetes/admin.conf ~/.kube/
+sudo chown $USER ~/.kube/admin.conf
+```
+
+Now you should put something like `export KUBECONFIG=~/.kube/admin.config` in your shell startup.
+
+You can now validate your login with `kubectl config get-contexts`
+
+## Tests
+
+There is a small test deployment in the [tests](tests/) folder.
+
 ---
 (c) peter pfläging <peter@pflaeging.net>

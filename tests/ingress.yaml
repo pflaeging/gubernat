@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: example-ingress
+  name: test-multi-ingress
   annotations:
     ingress.kubernetes.io/rewrite-target: /
 spec:
@@ -16,3 +16,7 @@ spec:
           backend:
             serviceName: banana-service
             servicePort: 5678
+        - path: /files
+          backend:
+            serviceName: files-service
+            servicePort: 80

@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: files-app
+  labels:
+    app: files
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: files
+  template:
+    metadata:
+      labels:
+        app: files
+    spec:
+      containers:
+      - name: files-app
+        image: docker.io/nginx:alpine
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: local-files
+      volumes:
+      - name: local-files
+        persistentVolumeClaim:
+          claimName: local-files
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: files-service
+spec:
+  selector:
+    app: files
+  ports:
+    - port: 80
