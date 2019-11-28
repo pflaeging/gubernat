@@ -6,7 +6,25 @@ Gubernat means steer (latin).
 
 Gubernat is an approach to establish a production ready small kubernetes cluster.
 
-We will use gubernat as a replacement for standard docker-compose installations. 
+The main goal in creating gubernat was: replace docker-compose in a portable open and
+upgradable way that is compatible with standard kubernetes configs and maintains a small footprint.
+
+It will typically run on a single server. But it's good practice to have the opportunity to scale it up 
+to a redundant configuration without too much effort.
+
+So we created a simple installation procedure for kubernetes 1.16+, flannel as networking layer, the kubernetes-dashboard, helm and the standard nginx ingress configuration.
+
+For persistent storage we are using local storage with explicit persitent volume allocation.
+
+## Components
+
+- Base OS: centos 7
+- kubernetes 1.16.2
+- standard k8s nginx ingress
+- helm 2
+- local storage provisioning
+- flannel network layer
+- kubernetes dashboard on port 32433
 
 ## Installation
 
