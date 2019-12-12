@@ -1,5 +1,14 @@
 # Test Apps for ingress!
 
+## NEWS
+
+Our first attempt on Raspbian (Raspberry PI 4)!
+
+After this you have a running kubernetes cluster on a Raspbi!
+
+
+## install
+
 At first be sure that you are logged in in your cluster:
 ```shell
 [peter@gubernat]~% kubectl config get-contexts
