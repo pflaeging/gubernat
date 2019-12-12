@@ -16,6 +16,14 @@ So we created a simple installation procedure for kubernetes 1.16+, flannel as n
 
 For persistent storage we are using local storage with explicit persitent volume allocation.
 
+## NEWS
+
+Our first attempt on Raspbian (Raspberry PI 4)!
+
+After this you have a running kubernetes cluster on a Raspbi!
+
+Follow the work in directory [raspbian](raspbian/)
+
 ## Components
 
 - Base OS: centos 7
