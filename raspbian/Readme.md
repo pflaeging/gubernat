@@ -17,12 +17,11 @@ I've got my inspiration from this youtube video: <https://www.youtube.com/watch?
 
 ## Installation
 
-1. At first make a normal raspbian setup: <https://www.raspberrypi.org/documentation/installation/installing-images/README.md>
-1. Then follow this advice to make it working with an iPad: <https://www.hardill.me.uk/wordpress/2019/11/02/pi4-usb-c-gadget/>
+1. Follow the setup procedure from [Setup-pi4.md](Setup-pi4.md)
 1. Be sure everything is working. 
     - I'm using this 2 applications for my connections:
       - ssh with [Blink Shell](https://www.blink.sh)
-      - Graphical X11 G_UI with [VNC Viewer](https://www.realvnc.com/en/connect/download/viewer/)
+      - [Microsoft Remote Desktop App](https://apps.apple.com/at/app/microsoft-remotedesktop/id714464092)
 1. After this you can install the complete system like mentioned in the top directory here, but please use the scripts for the first steps mentioned in this directory.
 1. [1-repo.sh](1-repo.sh) -> add kubernetes repo and install packages
 1. [2-system-setup.sh](2-system-setup.sh) -> disable swap, disable selinux

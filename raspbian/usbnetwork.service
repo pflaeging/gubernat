@@ -1,0 +1,9 @@
+[Unit]
+Description=Enable USB network interface
+
+[Service]
+Type=oneshot
+ExecStart=/opt/sbin/usbnetworkstart.sh
+
+[Install]
+WantedBy=multi-user.target
