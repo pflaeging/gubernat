@@ -5,6 +5,7 @@
 1. At first make a normal raspbian setup: <https://www.raspberrypi.org/documentation/installation/installing-images/README.md>
 1. Add `dtoverlay=dwc2` to the `/boot/config.txt`
 1. Add `modules-load=dwc2` to the end of `/boot/cmdline.txt`
+1. Create an empty ssh file in `/boot`: `touch /boot/ssh`
 
 ## enable WIFI on boot
 
@@ -28,7 +29,7 @@ network={
 1. Boot the Pi with this card
 2. login with `ssh pi@raspberrypi.local` (Password is: `raspberry`)
 
-- Add `libcomposite` to `/etc/modules`: `echo libcomposite >> /etc/modules``
+- Add `libcomposite` to `/etc/modules`: `echo libcomposite >> /etc/modules`
 - `echo denyinterfaces usb0 >> /etc/dhcpcd.conf`
 - `apt-get install -y dnsmasq`
 
@@ -67,19 +68,27 @@ cp usbnetwork.service /etc/systemd/system
 systemctl enable usbnetwork.service
 ```
 
+- Make Bonjour Services
+
+```shell
+cp /usr/share/doc/avahi-daemon/examples/ssh.service /etc/avahi/services/
+cp /usr/share/doc/avahi-daemon/examples/sftp-ssh.service /etc/avahi/services/
+```
+
 - Reboot your PI
 
 ## FINISH
 
 You can now login to your Pi from the device which it is connect via USB:
 
-```
+```shell
 ssh pi@10.64.0.1
 ```
 
 ## Optional
 
 Install RDP
-```
+
+```shell
 apt-get install -y xrdp
 ```

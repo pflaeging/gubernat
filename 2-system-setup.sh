@@ -1,7 +1,7 @@
 #! /bin/sh
 
 # install network time
-yum install ntp ntpdate
+yum install -y ntp ntpdate
 systemctl enable ntpd --now
 
 # turnoff swap

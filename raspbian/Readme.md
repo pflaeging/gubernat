@@ -10,7 +10,7 @@ Here's the hardware I'm using:
 - the original Apple USB-C to USB Adapter
 - a short USB-C to USB cable from Hama
 
-Idea is the following: 
+Idea is the following:
 
 I want to have a small running Linux machine and ideally a working k8s cluster without carrying a notebook with me.
 I've got my inspiration from this youtube video: <https://www.youtube.com/watch?v=IR6sDcKo3V8>
@@ -18,7 +18,7 @@ I've got my inspiration from this youtube video: <https://www.youtube.com/watch?
 ## Installation
 
 1. Follow the setup procedure from [Setup-pi4.md](Setup-pi4.md)
-1. Be sure everything is working. 
+1. Be sure everything is working.
     - I'm using this 2 applications for my connections:
       - ssh with [Blink Shell](https://www.blink.sh)
       - [Microsoft Remote Desktop App](https://apps.apple.com/at/app/microsoft-remotedesktop/id714464092)
