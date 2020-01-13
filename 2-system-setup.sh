@@ -6,7 +6,7 @@ systemctl enable ntpd --now
 
 # turnoff swap
 swapoff -a
-sed -i 's$/dev/mapper/cl-swap$# /dev/mapper/cl-swap$g' /etc/fstab
+sed -i 's_^\(/dev/mapper/.*swap\)_# \1_g' /etc/fstab
 
 # Set SELinux in permissive mode (effectively disabling it)
 setenforce 0
