@@ -6,7 +6,7 @@
 # enp0s3 as NAT interface (only reachable from extern)
 # we need the internal interface ;-)
 MYIP=`ip route | grep kernel | grep enp0s8 | cut -d " " -f 9`
-MYNAME=gubernat.pflaeging.net
+MYNAME=`hostname`
 
 echo "My Name:" $MYNAME
 echo "My IP:" $MYIP 

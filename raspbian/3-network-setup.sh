@@ -4,7 +4,7 @@
 # here we have a raspi 4 with networking on lan, wlan and usb
 # my usb port is on the iPad. Though I'm using it!
 MYIP=`ip route | grep kernel | grep usb0 | cut -d " " -f 9`
-MYNAME=p4raspiredwhite.pflaeging.net
+MYNAME=`hostname`
 
 
 echo "My Name:" $MYNAME
