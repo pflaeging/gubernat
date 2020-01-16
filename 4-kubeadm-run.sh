@@ -6,8 +6,7 @@ POD_NETWORK_CIDR=10.42.0.0/16
 # Networks for service definitions
 SERVICE_CIDR=10.96.0.0/12
 
-HOSTNAME=`hostname`
-MYIP=`grep $HOSTNAME /etc/hosts | cut -d " " -f 1`
+source ./CONFIG
 
 # enable crio
 # systemctl enable --now crio

@@ -1,9 +1,9 @@
 #! /bin/sh
 
+source ./CONFIG
+
 # Base command
 KUBECTL="kubectl --kubeconfig=/etc/kubernetes/admin.conf"
-# My hostname
-HOSTNAME=`hostname`
 
 # make master schedulable
 $KUBECTL patch nodes $(hostname) -p '{"spec":{"taints":[]}}'
