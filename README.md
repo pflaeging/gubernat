@@ -65,7 +65,7 @@ sudo cp /etc/kubernetes/admin.conf ~/.kube/
 sudo chown $USER ~/.kube/admin.conf
 ```
 
-Now you should put something like `export KUBECONFIG=~/.kube/admin.config` in your shell startup.
+Now you should put something like `export KUBECONFIG=~/.kube/admin.conf` in your shell startup.
 
 You can now validate your login with `kubectl config get-contexts`
 
