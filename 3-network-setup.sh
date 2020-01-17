@@ -1,12 +1,6 @@
 #! /bin/sh
 
-# get my IP address
-# if I'm using virtual box, my machines have two interfaces:
-# enp0s8 as host only network (only reaching from host)
-# enp0s3 as NAT interface (only reachable from extern)
-# we need the internal interface ;-)
-MYIP=`ip route | grep kernel | grep enp0s8 | cut -d " " -f 9`
-MYNAME=`hostname`
+source ./CONFIG
 
 echo "My Name:" $MYNAME
 echo "My IP:" $MYIP 

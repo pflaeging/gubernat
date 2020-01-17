@@ -39,6 +39,7 @@ Follow the work in directory [raspbian](raspbian/)
 - Base installation of CentOS 7 minimal
 - After the base installation I made a pair of very small shell scripts to aid the install:
 
+1. [CONFIG] -> open it to configure your interface/IP address and hostname
 1. [1-repo.sh](1-repo.sh) -> add kubernetes repo and install packages
 1. [2-system-setup.sh](2-system-setup.sh) -> disable swap, disable selinux
 1. [3-network-setup.sh](3-network-setup.sh) -> customize firewalld, setting hostname
@@ -64,7 +65,7 @@ sudo cp /etc/kubernetes/admin.conf ~/.kube/
 sudo chown $USER ~/.kube/admin.conf
 ```
 
-Now you should put something like `export KUBECONFIG=~/.kube/admin.config` in your shell startup.
+Now you should put something like `export KUBECONFIG=~/.kube/admin.conf` in your shell startup.
 
 You can now validate your login with `kubectl config get-contexts`
 
