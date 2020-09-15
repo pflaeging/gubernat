@@ -46,7 +46,7 @@ Follow the work in directory [raspbian](raspbian/)
 1. [5-post-install.sh](5-post-install.sh) -> install network plugin, ingress and dashboard
 1. [6-install-helm.sh](6-install-helm.sh) -> install helm for deployment of packaged apps
 
- ## Accessing the Dashboard
+## Accessing the Dashboard
 
 Execute the script [dashboard-login-infos.sh](dashboard-login-infos.sh) and get the parameter for dashboard login.
 

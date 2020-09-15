@@ -32,3 +32,32 @@ I've got my inspiration from this youtube video: <https://www.youtube.com/watch?
 Attention: helm is not working or tested for now.
 
 Generally we've got one problem: the raspi has an arm processor, but most of the images are amd64 or intel images. Though be aware that your images are available in the correct architecture!
+
+## Accessing the Dashboard
+
+Execute the script [dashboard-login-infos.sh](dashboard-login-infos.sh) and get the parameter for dashboard login.
+
+The dashboard is always listening on port 32443 with SSL and a private certificate. That means:
+
+<https://myfamous-minicluster-hostname.cloud:32443>
+
+## Getting login info for your cluster
+
+You can copy the admin.conf in your local kube environment. As normal user:
+
+```shell
+mkdir -p ~/.kube
+sudo cp /etc/kubernetes/admin.conf ~/.kube/
+sudo chown $USER ~/.kube/admin.conf
+```
+
+Now you should put something like `export KUBECONFIG=~/.kube/admin.config` in your shell startup.
+
+You can now validate your login with `kubectl config get-contexts`
+
+## Tests
+
+There is a small test deployment in the [tests](tests/) folder.
+
+---
+(c) peter pfläging <peter@pflaeging.net>
