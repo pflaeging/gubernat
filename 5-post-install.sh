@@ -1,6 +1,6 @@
 #! /bin/sh
 
-source ./CONFIG
+source ./config.sh
 
 # Base command
 KUBECTL="kubectl --kubeconfig=/etc/kubernetes/admin.conf"

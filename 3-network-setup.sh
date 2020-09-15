@@ -1,6 +1,6 @@
 #! /bin/sh
 
-source ./CONFIG
+source ./config.sh
 
 echo "My Name:" $MYNAME
 echo "My IP:" $MYIP 

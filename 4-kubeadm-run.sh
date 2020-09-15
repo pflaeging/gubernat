@@ -6,7 +6,7 @@ POD_NETWORK_CIDR=10.42.0.0/16
 # Networks for service definitions
 SERVICE_CIDR=10.96.0.0/12
 
-source ./CONFIG
+source ./config.sh
 
 # enable crio
 # systemctl enable --now crio
