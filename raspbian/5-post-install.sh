@@ -13,12 +13,12 @@ $KUBECTL apply -f https://raw.githubusercontent.com/coreos/flannel/master/Docume
 
 # install ingress
 $KUBECTL apply -f ingress-mandatory-arm.yaml
-$KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/service-nodeport.yaml
+$KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/static/provider/baremetal/deploy.yaml
 # patch ingress for availability
 $KUBECTL patch deployment nginx-ingress-controller -n ingress-nginx --type='json' -p='[{"op":"add","path":"/spec/template/spec/hostNetwork","value":true}]'
 
 # install dashboard
-$KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta4/aio/deploy/recommended.yaml
+$KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
 $KUBECTL apply -f ../admin-user.yaml
 # setting dashboard to https://myhostname:32443/
 $KUBECTL apply -f ../service-kubernetes-dashboard.yaml -n kubernetes-dashboard
