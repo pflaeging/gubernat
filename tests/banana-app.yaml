@@ -16,8 +16,10 @@ spec:
     spec:
       containers:
       - name: banana-app
-        image: docker.io/hashicorp/http-echo
-        args: ["-text=banana"]
+        image: docker.io/pflaeging/http-echo-env:latest
+        env:
+	- name: TEXT
+	  value: "banana"
 ---
 kind: Service
 apiVersion: v1
@@ -27,4 +29,4 @@ spec:
   selector:
     app: banana
   ports:
-    - port: 5678 # Default port for image
+    - port: 5000 # Default port for image

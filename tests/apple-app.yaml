@@ -16,8 +16,10 @@ spec:
     spec:
       containers:
       - name: apple-app
-        image: docker.io/hashicorp/http-echo
-        args: ["-text=apple"]
+        image: docker.io/pflaeging/http-echo-env:latest
+        env:
+	- name: TEXT
+	  value: apple
 ---
 kind: Service
 apiVersion: v1
@@ -27,4 +29,4 @@ spec:
   selector:
     app: apple
   ports:
-    - port: 5678 # Default port for image
+    - port: 5000 # Default port for image

@@ -11,11 +11,11 @@ spec:
         - path: /apple
           backend:
             serviceName: apple-service
-            servicePort: 5678
+            servicePort: 5000
         - path: /banana
           backend:
             serviceName: banana-service
-            servicePort: 5678
+            servicePort: 5000
         - path: /files
           backend:
             serviceName: files-service
