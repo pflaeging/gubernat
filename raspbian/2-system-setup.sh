@@ -8,3 +8,4 @@ systemctl enable chrony --now
 dphys-swapfile swapoff
 dphys-swapfile uninstall
 update-rc.d dphys-swapfile remove
+echo "CONF_SWAPSIZE=0" > /etc/dphys-swapfile

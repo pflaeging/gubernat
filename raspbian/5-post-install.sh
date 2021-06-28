@@ -18,7 +18,7 @@ $KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/mas
 $KUBECTL patch deployment nginx-ingress-controller -n ingress-nginx --type='json' -p='[{"op":"add","path":"/spec/template/spec/hostNetwork","value":true}]'
 
 # install dashboard
-$KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+$KUBECTL apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.3.1/aio/deploy/recommended.yaml
 $KUBECTL apply -f ../admin-user.yaml
 # setting dashboard to https://myhostname:32443/
 $KUBECTL apply -f ../service-kubernetes-dashboard.yaml -n kubernetes-dashboard

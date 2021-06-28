@@ -23,6 +23,9 @@ echo "My IP:" $MYIP
 # firewall-cmd --reload
 # modprobe br_netfilter
 
+# use iptables legacy (described here: https://stackoverflow.com/questions/61011414/unable-to-access-nginx-nodeport-service-in-k8-cluster-running-on-rpi)
+update-alternatives --set iptables /usr/sbin/iptables-legacy
+
 # just in case
 cat <<EOF >  /etc/sysctl.d/k8s.conf
 net.ipv4.ip_forward=1

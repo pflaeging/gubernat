@@ -4,7 +4,7 @@
 
 1. At first make a normal raspbian setup: <https://www.raspberrypi.org/documentation/installation/installing-images/README.md>
 1. Add `dtoverlay=dwc2` to the `/boot/config.txt`
-1. Add `modules-load=dwc2` to the end of `/boot/cmdline.txt`
+1. Add `modules-load=dwc2,g_ether cgroup_enable=cpuset cgroup_enable=memory cgroup_memory=1` after `rootwait` in  `/boot/cmdline.txt`
 1. Create an empty ssh file in `/boot`: `touch /boot/ssh`
 
 ## enable WIFI on boot
