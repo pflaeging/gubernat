@@ -35,7 +35,7 @@ Generally we've got one problem: the raspi has an arm processor, but most of the
 
 ## Accessing the Dashboard
 
-Execute the script [dashboard-login-infos.sh](dashboard-login-infos.sh) and get the parameter for dashboard login.
+Execute the script [../dashboard-login-infos.sh](../dashboard-login-infos.sh) and get the parameter for dashboard login.
 
 The dashboard is always listening on port 32443 with SSL and a private certificate. That means:
 
