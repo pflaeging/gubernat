@@ -1,8 +1,8 @@
 #! /bin/sh
 
-cp install/yum-repos.d--kubernetes.repo /etc/yum-repos.d/
-cp install/modules-load.d--k8s.conf /etc/modules-load.d/
-cp install/sysctl.d--90-k8s.conf /etc/sysctl.d/
+cp install/yum.repos.d--kubernetes.repo /etc/yum.repos.d/kubernetes.repo
+cp install/modules-load.d--k8s.conf /etc/modules-load.d/k8s.conf
+cp install/sysctl.d--90-k8s.conf /etc/sysctl.d/90-k8s.conf
 
 dnf update -y 
 sysctl --system
