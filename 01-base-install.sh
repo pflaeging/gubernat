@@ -1,5 +1,7 @@
 #! /bin/sh
 
+. ./env.sh
+
 # install utilities
 dnf install -y yum-utils nfs-utils bash-completion git
 # configure firewall

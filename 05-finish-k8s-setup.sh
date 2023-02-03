@@ -1,5 +1,7 @@
 #! /bin/sh
 
+. ./env.sh
+
 KUBECONFIG=/etc/kubernetes/admin.conf
 
 
