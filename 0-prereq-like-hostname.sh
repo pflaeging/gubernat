@@ -10,4 +10,4 @@ then
 fi
 
 echo "My name: " $MYNAME "IP: " $MYIP
-echo echo $MYIP $(hostname) $(hostname | cut -d. -f1) >> /etc/hosts
+echo $MYIP $(hostname) $(hostname | cut -d. -f1) >> /etc/hosts

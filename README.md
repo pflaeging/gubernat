@@ -9,29 +9,21 @@ Gubernat is an approach to establish a production ready small kubernetes cluster
 The main goal in creating gubernat was: replace docker-compose in a portable open and
 upgradable way that is compatible with standard kubernetes configs and maintains a small footprint.
 
-It will typically run on a single server. But it's good practice to have the opportunity to scale it up 
+It will typically run on a single server. But it's good practice to have the opportunity to scale it up
 to a redundant configuration without too much effort.
 
 So we created a simple installation procedure for kubernetes 1.16+, flannel as networking layer, the kubernetes-dashboard, helm and the standard nginx ingress configuration.
 
-For persistent storage we are using local storage with explicit persitent volume allocation.
-
-## NEWS
-
-Our first attempt on Raspbian (Raspberry PI 4)!
-
-After this you have a running kubernetes cluster on a Raspbi!
-
-Follow the work in directory [raspbian](raspbian/)
 
 ## Components
 
-- Base OS: centos 7
-- kubernetes 1.16.2
-- standard k8s nginx ingress
-- helm 2
-- local storage provisioning
-- flannel network layer
+- Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 minimal installation
+- cri-o as container runtime
+- kubernetes 1.26.1
+- k8s contour-ingress with cert-manager
+- helm 3
+- local storage provisioning via local-path provisioner (under `/opt/k8s-data/`)
+- network layer with cilium CNI
 - kubernetes dashboard on port 32433
 
 ## Installation
@@ -39,13 +31,15 @@ Follow the work in directory [raspbian](raspbian/)
 - Base installation of CentOS 7 minimal
 - After the base installation I made a pair of very small shell scripts to aid the install:
 
-1. [config.sh](config.sh) -> open it to configure your interface/IP address and hostname
-1. [1-repo.sh](1-repo.sh) -> add kubernetes repo and install packages
-1. [2-system-setup.sh](2-system-setup.sh) -> disable swap, disable selinux
-1. [3-network-setup.sh](3-network-setup.sh) -> customize firewalld, setting hostname
-1. [4-kubeadm-run.sh](4-kubeadm-run.sh) -> install base cluster with kubeadm
-1. [5-post-install.sh](5-post-install.sh) -> install network plugin, ingress and dashboard
-1. [6-install-helm.sh](6-install-helm.sh) -> install helm for deployment of packaged apps
+1. [env.sh](env.sh) -> open it to configure your interface/IP address and hostname
+1. [0-prereq-like-hostname.sh](0-prereq-like-hostname.sh) -> setting hostname and IP config (optional)
+1. [1-base-install.sh](1-base-install.sh) -> configure firewall, disable swap, config ipV6, install helm
+1. [2-install-crio.sh](2-install-crio.sh) -> install cri-o
+1. [3-install-kubernetes.sh](3-install-kubernetes.sh) -> install kubernetes part I
+1. [4-config-kubeconfig-for-user.sh](4-config-kubeconfig-for-user.sh) -> setting kubeconfig for root user
+1. [5-finish-k8s-setup.sh](5-finish-k8s-setup.sh) -> install network plugin, make node schedulable
+1. [6-install-k8s-components.sh](6-install-k8s-components.sh) -> install additional components like persistance, ingress, dashboard and cert-manager
+1. [7-install-demo.sh](7-install-demo.sh) -> install demo app (httpbin) with ingress
 
 ## Accessing the Dashboard
 
@@ -71,7 +65,15 @@ You can now validate your login with `kubectl config get-contexts`
 
 ## Tests
 
-There is a small test deployment in the [tests](tests/) folder.
+There is a small test deployment in the [httpbin](httpbin/) folder.
+
+## Raspian (Raspberry PI)
+
+Our first attempt on Raspbian (Raspberry PI 4)!
+
+After this you have a running kubernetes cluster on a Raspbi!
+
+Follow the work in directory [raspbian](raspbian/)
 
 ---
 (c) peter pfläging <peter@pflaeging.net>
