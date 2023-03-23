@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: demo-dev
+
+resources:
+- namespace.yaml
+- deployment.yaml
+- ingress.yaml
+- svc.yaml
+
+patches:
+  - target:
+      kind: Ingress
+      name: httpbin
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: httpbin.i-am.replaced.by.install.sh
