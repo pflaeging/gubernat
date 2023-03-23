@@ -67,6 +67,11 @@ You can now validate your login with `kubectl config get-contexts`
 
 There is a small test deployment in the [httpbin](httpbin/) folder.
 
+To use the test you have to define one of the two DNS configs:
+
+- define a wildcard DNS entry pointing to your gubernat host or
+- add httpbin host with your gubernat IP to `/etc/hosts` (or in Windows `C:\Windows\System32\Drivers\etc\hosts`)
+
 ## Raspian (Raspberry PI)
 
 Our first attempt on Raspbian (Raspberry PI 4)!
@@ -74,6 +79,11 @@ Our first attempt on Raspbian (Raspberry PI 4)!
 After this you have a running kubernetes cluster on a Raspbi!
 
 Follow the work in directory [raspbian](raspbian/)
+
+## ToDO
+
+- [ ] Documentation for multi-host cluster
+- [ ] more components like Multus
 
 ---
 (c) peter pfläging <peter@pflaeging.net>

@@ -7,7 +7,7 @@ cp install/sysctl.d--80-crio.conf /etc/sysctl.d/80-crio.conf
 
 dnf update -y 
 sysctl --system
-dnf install -y cri-o cri-tools containernetworking-plugins
+dnf install -y cri-o cri-tools containernetworking-plugins tar git
 mkdir -p /var/lib/crio
 modprobe overlay
 modprobe br_netfilter

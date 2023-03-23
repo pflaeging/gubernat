@@ -9,7 +9,9 @@ KUBECONFIG=/etc/kubernetes/admin.conf
 for task in $COMPONENTS
 do
   echo $task
-  kubectl apply -k $task/
+  cd $task
+  sh ./install.sh
+  cd ..
 done
 
 
