@@ -1,6 +1,7 @@
 #! /bin/sh
 
-. ./env.sh
+cd httpbin
 
-kubectl apply -k httpbin/
+sh ./install.sh
 
+cd ..

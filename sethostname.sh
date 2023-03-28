@@ -1,6 +1,12 @@
 #! /bin/sh
 
-ip=$(ip route show default | awk '{print $9}')
+if [ -z $1 ]; then
+        echo "usage: $0 hostname"
+        echo "       sets hostname and entry of first primary interface in /etc/hosts"
+        exit 0
+fi
+
+ip=$(ip route show default | head -1 |awk '{print $9}')
 name=$1
 unqualified=$(echo $name | cut -d. -f1)
 domain=$(echo $name | cut -d. -f2-)
