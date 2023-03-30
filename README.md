@@ -49,6 +49,19 @@ The dashboard is always listening on port 32443 with SSL and a private certifica
 
 <https://myfamous-minicluster-hostname.cloud:32443>
 
+## Getting Prometheus metric for an external monitoring
+
+You must rollout the component `metrics-server` (enable this in `env.sh`).
+
+After this you get the config by executing `./get-metrics-reader-config.sh`.
+
+The config makes a:
+
+- ServiceAccount
+- ClusterRole
+- Rolebinding
+- Bearer Token to access the metrics via the API
+
 ## Getting login info for your cluster
 
 You can copy the admin.conf in your local kube environment. As normal user:
