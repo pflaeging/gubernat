@@ -10,5 +10,5 @@ WILDCARD_INGRESS=gubernat1.pflaeging.net
 MYIP=192.168.254.130
 
 # all components:
-#   cert-manager contour-ingress kubernetes-dashboard local-storage metrics-server
-COMPONENTS="contour-ingress kubernetes-dashboard local-storage metrics-server"
+#   cert-manager contour-ingress kubernetes-dashboard local-storage metrics-server multus
+COMPONENTS="contour-ingress kubernetes-dashboard local-storage metrics-server multus"
