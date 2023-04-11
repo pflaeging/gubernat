@@ -18,7 +18,7 @@ sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
 sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
 rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
 # install network
-cilium install
+cilium install --config cluster-pool-ipv4-cidr=10.85.0.0/16
 
 # make the master nodes (like this one) schedulable 
 # (may create an error on the second command. Just ignore it)
