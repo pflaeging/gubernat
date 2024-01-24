@@ -1,0 +1,7 @@
+- name: Generate Local doc file ./LoadBalancerConfig.txt
+  ansible.builtin.template:
+    src: roles/loadbalancer/templates/LoadBalancerConfig.txt.j2
+    dest: ./LoadBalancerConfig.txt
+  delegate_to: 127.0.0.1
+  tags:
+    - printconfig

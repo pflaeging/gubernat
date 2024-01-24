@@ -1,0 +1,75 @@
+# Do not edit!
+# generated with kubernetes ansible rollout
+#
+global
+    maxconn     20000
+    log         /dev/log local0 info
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+defaults
+    mode                    http
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          300s
+    timeout server          300s
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 20000
+
+listen stats
+    bind :9000
+    mode http
+    stats enable
+    stats uri /
+
+
+## Service definition for k8s-api
+frontend k8s-api-frontend
+    bind :{{ lb_api_port }}
+    default_backend k8s-api-backend
+    mode tcp
+    option tcplog
+
+backend k8s-api-backend
+    balance roundrobin
+    mode tcp
+{% for name in groups.master %}
+    server {{ name }} {{ hostvars[name].ansible_host }}:{{ api_port }} check
+{% endfor %}
+
+
+{% for service in services %}
+{% for ports in service.ports %}
+
+## Service definition for {{ service.name }}-{{ ports.name }}
+frontend {{ service.name }}-{{ ports.name }}-frontend
+    bind :{{ports.gatewayport }}
+    default_backend {{ service.name }}-{{ ports.name }}-backend
+    mode tcp
+    option tcplog
+
+backend {{ service.name }}-{{ ports.name }}-backend
+    balance roundrobin
+    mode tcp
+{% for name in groups.master %}
+    server {{ name }} {{ hostvars[name].ansible_host }}:{{ ports.sourceport }} check
+{% endfor %}
+{% for name in groups.worker %}
+    server {{ name }} {{ hostvars[name].ansible_host }}:{{ ports.sourceport }} check
+{% endfor %}
+{% endfor %}
+{% endfor %}

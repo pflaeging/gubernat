@@ -1,0 +1,16 @@
+services:
+# Kubernetes dashboard runs on 32443 and is proxied to 8443
+- name: dashboard
+  ports:
+  - name: ssl
+    sourceport: 32443
+    gatewayport: 8443
+# Every application needs the port definitions here!
+# - name: contour-ingress
+#   ports:
+#   - name: ssl
+#     sourceport: 31443
+#     gatewayport: 443
+#   - name: http
+#     sourceport: 31080
+#     gatewayport: 80

@@ -1,0 +1,59 @@
+---
+- name: Set Variables
+  ansible.builtin.set_fact:
+    firewall_ports: |
+      {% set res = [] -%}
+      {% for service in services -%}
+          {% for ports in service.ports -%}
+          {% set ignored = res.extend([{ 'Gateway' : ports.gatewayport, 'Source' : ports.sourceport }]) -%}
+          {%- endfor %}
+      {%- endfor %}
+      {{ res }}
+
+- name: Install needed packages
+  ansible.builtin.yum:
+    name:
+      - haproxy
+      - python3-libsemanage
+    state: present
+  tags: base-packages
+
+- name: Generate haproxy.cfg
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+  register: result
+
+- name: Setup Firewall (open haproxy status on port 9000)
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-port=9000/tcp --zone public"
+
+- name: Setup Firewall (open api port {{ lb_api_port }})
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-port={{ lb_api_port }}/tcp --zone public"
+
+- name: Setup Firewall (open gateway ports from services_vars.yaml )
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-port={{ item.Gateway }}/tcp --zone public"
+  with_items: "{{ firewall_ports }}"
+
+- name: Reload Firewall
+  ansible.builtin.command:
+    cmd: "firewall-cmd --reload"
+
+- name: Set haproxy selinux
+  ansible.builtin.command:
+    cmd: "setsebool -P haproxy_connect_any 1"
+
+- name: Service haproxy should be started
+  ansible.builtin.systemd:
+    name: haproxy
+    state: started
+    enabled: true
+    masked: no
+
+- name: Reload haproxy, if changed config
+  ansible.builtin.systemd:
+    state: reloaded
+    name: haproxy
+  when: result is changed

@@ -1,0 +1,135 @@
+---
+# Source: prometheus-blackbox-exporter/templates/serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: g8s-prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    helm.sh/chart: prometheus-blackbox-exporter-8.4.0
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: g8s
+    app.kubernetes.io/version: "v0.24.0"
+    app.kubernetes.io/managed-by: Helm
+---
+# Source: prometheus-blackbox-exporter/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: g8s-prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    helm.sh/chart: prometheus-blackbox-exporter-8.4.0
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: g8s
+    app.kubernetes.io/version: "v0.24.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  blackbox.yaml: |
+    modules:
+      http_2xx:
+        http:
+          follow_redirects: true
+          preferred_ip_protocol: ip4
+          valid_http_versions:
+          - HTTP/1.1
+          - HTTP/2.0
+        prober: http
+        timeout: 5s
+---
+# Source: prometheus-blackbox-exporter/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: g8s-prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    helm.sh/chart: prometheus-blackbox-exporter-8.4.0
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: g8s
+    app.kubernetes.io/version: "v0.24.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9115
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: g8s
+---
+# Source: prometheus-blackbox-exporter/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: g8s-prometheus-blackbox-exporter
+  namespace: monitoring
+  labels:
+    helm.sh/chart: prometheus-blackbox-exporter-8.4.0
+    app.kubernetes.io/name: prometheus-blackbox-exporter
+    app.kubernetes.io/instance: g8s
+    app.kubernetes.io/version: "v0.24.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: prometheus-blackbox-exporter
+      app.kubernetes.io/instance: g8s
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: prometheus-blackbox-exporter-8.4.0
+        app.kubernetes.io/name: prometheus-blackbox-exporter
+        app.kubernetes.io/instance: g8s
+        app.kubernetes.io/version: "v0.24.0"
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/config: 2566feef6f831be99335670e442128d422d63492b09b4a9968ca094e1de1ffe6
+    spec:
+      automountServiceAccountToken: false
+      serviceAccountName: g8s-prometheus-blackbox-exporter
+      restartPolicy: Always
+      containers:
+      - name: blackbox-exporter
+        image: quay.io/prometheus/blackbox-exporter:v0.24.0
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: true
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+        env:
+        args:
+        - "--config.file=/config/blackbox.yaml"
+        ports:
+        - containerPort: 9115
+          name: http
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /-/healthy
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /-/healthy
+            port: http
+        volumeMounts:
+        - mountPath: /config
+          name: config
+      hostNetwork: false
+      volumes:
+      - name: config
+        configMap:
+          name: g8s-prometheus-blackbox-exporter

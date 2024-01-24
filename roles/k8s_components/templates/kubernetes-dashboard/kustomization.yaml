@@ -1,0 +1,17 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+# - https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+- recommended.yaml
+- admin-user.yaml
+- svc.yaml
+
+patches:
+- target:
+    kind: Deployment
+    name: kubernetes-dashboard
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/args/2
+      value: --token-ttl=43200

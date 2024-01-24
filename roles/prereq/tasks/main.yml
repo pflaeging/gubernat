@@ -1,0 +1,104 @@
+---
+- name: Set Variables
+  ansible.builtin.set_fact:
+    k8s_ports: |
+        {% set res = [] -%}
+        {% for service in services -%}
+            {% for ports in service.ports -%}
+            {% set ignored = res.extend([{ 'Source' : ports.sourceport }]) -%}
+            {%- endfor %}
+        {%- endfor %}
+        {{ res }}
+
+- name: Setup Firewall (add masquerade)
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-masquerade --zone public"
+
+- name: Reload Firewall
+  ansible.builtin.command:
+    cmd: "firewall-cmd --reload"
+
+- name: Copy modules definitions to /etc/modules-load.d
+  ansible.builtin.copy:
+    src: roles/prereq/files/modules-load.d/
+    dest: /etc/modules-load.d/
+
+- name: Copy sysctl definitions to /etc/sysctl.d.d
+  ansible.builtin.copy:
+    src: roles/prereq/files/sysctl.d/
+    dest: /etc/sysctl.d/
+  register: sysctl_files
+
+- name: Reload sysctl
+  shell: |
+    sysctl --system
+  when: sysctl_files is changed
+
+- name: Disable SWAP in fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+.*)$'
+    replace: '# \1'
+  register: swap_disabled
+
+- name: Disable SWAP now
+  shell: |
+    swapoff -a
+  when: swap_disabled is changed
+
+- name: "Install crio, kubernetes-{{ k8s_version }} and other tools"
+  ansible.builtin.yum:
+    name:
+      - cri-o 
+      - cri-tools 
+      - containernetworking-plugins 
+      - tar 
+      - git
+      - kubelet-{{ k8s_version }} 
+      - kubeadm-{{ k8s_version }}
+      - kubectl-{{ k8s_version }}
+    disable_excludes: all
+    state: present
+  tags: k8s
+
+- name: link /usr/bin/kubectl-> /usr/local/bin/k
+  ansible.builtin.file:
+    src: /usr/bin/kubectl
+    dest: /usr/local/bin/k
+    state: link
+
+- name: Copy get-dashboard-admin-token.sh script to /usr/local/sbin
+  ansible.builtin.copy:
+    src: roles/prereq/files/kcd
+    dest: /usr/local/bin/kcd
+    owner: root
+    group: root
+    mode: 0o755
+
+- name: Add the overlay kernel module
+  ansible.builtin.command:
+    cmd: "modprobe overlay"
+  
+- name: Add the br_netfilter kernel module
+  ansible.builtin.command:
+    cmd: "modprobe br_netfilter"
+
+- name: Create a directory for crio (/var/lib/crio)
+  ansible.builtin.file:
+    path: /var/lib/crio
+    state: directory
+    mode: '0755'
+
+- name: Enable crio
+  ansible.builtin.systemd:
+    name: crio
+    state: started
+    enabled: true
+    masked: no
+
+- name: Enable kubelet
+  ansible.builtin.systemd:
+    name: kubelet
+    state: started
+    enabled: true
+    masked: no

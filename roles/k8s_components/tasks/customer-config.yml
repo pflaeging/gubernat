@@ -1,0 +1,45 @@
+
+- name: Get customer ServiceAccount token
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf kubectl get secret customer -n default -o jsonpath='{.data.token}' | base64 -d
+  register: customer_token
+  delegate_to: "{{ groups.master[0] }}"
+
+- name: Get cluster cert
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf kubectl config view -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' --raw
+  register: cluster_cert
+  delegate_to: "{{ groups.master[0] }}"
+
+- name: Make kubernetes config dir for setup user
+  ansible.builtin.file:
+    path: /home/setup/.kube
+    owner: setup
+    group: setup
+    mode: 0o700
+    state: directory
+
+- name: Generate kubeconfig for setup user
+  ansible.builtin.template:
+    src: customer-config.yaml.j2
+    dest: /home/setup/.kube/config
+    owner: setup
+    group: setup
+    mode: 0o600
+  register: setup_config
+
+- name: Generate kubeconfig backup for setup user
+  ansible.builtin.template:
+    src: customer-config.yaml.j2
+    dest: /home/setup/.kube/config.installsave
+    owner: setup
+    group: setup
+    mode: 0o400
+  
+- name: Copy get-dashboard-admin-token.sh script to /usr/local/bin
+  ansible.builtin.copy:
+    src: roles/k8s_components/files/get-customer-token.sh
+    dest: /usr/local/bin/get-customer-token.sh
+    owner: root
+    group: root
+    mode: 0o755

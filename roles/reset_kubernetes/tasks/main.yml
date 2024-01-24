@@ -1,0 +1,92 @@
+- name: Reset with kubeadm
+  ansible.builtin.shell:
+    cmd: "kubeadm reset -f"
+  register: kubeadm_reset
+
+- name: Clear /etc/kubernetes
+  ansible.builtin.file:
+    state: absent
+    path: /etc/kubernetes/
+  when: kubeadm_reset is changed
+
+- name: Remove /root/.kube/config
+  ansible.builtin.file:
+    state: absent
+    path: /root/.kube/config
+  when: kubeadm_reset is changed
+
+- name: clear running containers
+  ansible.builtin.shell:
+    cmd: |
+      crictl ps -q | xargs -n 1 crictl stop
+      crictl ps -q | xargs -n 1 crictl rm
+
+- name: Remove /opt/kubernetes configs
+  ansible.builtin.file:
+    state: absent
+    path: /opt/kubernetes/
+  when: kubeadm_reset is changed
+
+- name: remove  /etc/cni/net.d/05-cilium.conf
+  ansible.builtin.file:
+    dest:  /etc/cni/net.d/05-cilium.conf
+    state: absent
+  ignore_errors: true
+
+- name: remove  /etc/NetworkManager/dnsmasq.d/15-listen.conf
+  ansible.builtin.file:
+    dest:  /etc/NetworkManager/dnsmasq.d/15-listen.conf
+    state: absent
+  ignore_errors: true
+
+- name: remove  /etc/NetworkManager/dnsmasq.d/00-dnsmasq.conf
+  ansible.builtin.file:
+    dest:  /etc/NetworkManager/dnsmasq.d/00-dnsmasq.conf
+    state: absent
+  ignore_errors: true
+
+- name: Restart crio, if changed config
+  ansible.builtin.systemd:
+    state: reloaded
+    name: crio
+
+- name: Copy resolv.conf back from save
+  ansible.builtin.copy:
+    src: /etc/resolv.conf.orig
+    dest: /etc/resolv.conf
+    remote_src: yes
+
+- name: Reenable firewall
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true
+    masked: false
+
+- name: Delete firewall zone 000-kubernetes and rulesets
+  ansible.builtin.shell:
+    cmd: |
+      firewall-cmd --permanent --delete-zone 000-kubernetes
+      firewall-cmd --permanent --remove-port=9000/tcp --zone public
+      firewall-cmd --permanent --remove-port=7443/tcp --zone public
+      firewall-cmd --permanent --remove-port=80-90/tcp --zone public
+      firewall-cmd --permanent --remove-port=443-453/tcp --zone public
+      firewall-cmd --reload
+  ignore_errors: true
+
+- name: Delete hosts from trusted zone
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --zone=trusted --remove-source={{ hostvars[item].ansible_host }}/32"
+  with_items: "{{ groups.all }}"
+  ignore_errors: true
+
+- name: Disable haproxy
+  ansible.builtin.systemd:
+    name: haproxy
+    state: stopped
+    enabled: false
+    masked: false
+
+- name: Restart VM
+  ansible.builtin.command:
+    cmd: systemctl reboot

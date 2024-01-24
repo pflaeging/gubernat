@@ -1,0 +1,25 @@
+# This file is only used in generating 
+server:
+  persistentVolume:
+    enabled: false
+
+alertmanager:
+  persistence:
+    enabled: false
+
+extraScrapeConfigs: |
+  - job_name: 'prometheus-blackbox-exporter'
+    scrape_interval: 5m
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    file_sd_configs:
+      - files:
+          - /etc/prometheus/blackbox-targets.yml
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement:  g8s-prometheus-blackbox-exporter:9115

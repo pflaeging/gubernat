@@ -1,0 +1,47 @@
+
+- name: create place for configs /opt/kubernetes
+  ansible.builtin.file:
+    path: /opt/kubernetes
+    state: directory
+    mode: '0755'
+
+- name: create place for configs /opt/kubernetes/config
+  ansible.builtin.file:
+    path: /opt/kubernetes/config
+    state: directory
+    mode: '0755'
+
+- name: create place for configs /opt/kubernetes/etc
+  ansible.builtin.file:
+    path: /opt/kubernetes/etc
+    state: directory
+    mode: '0755'
+ 
+- name: Generate kubeadm config /opt/kubernetes/etc/kubeadm-config.yaml
+  ansible.builtin.template:
+    src: kubeadm-config.yaml.j2
+    dest: /opt/kubernetes/etc/kubeadm-config.yaml
+  register: kubeadm_config
+
+- name: Generate cilium helm values /opt/kubernetes/etc/cilium-helm-values.yaml
+  ansible.builtin.template:
+    src: cilium-helm-values.yaml.j2
+    dest: /opt/kubernetes/etc/cilium-helm-values.yaml
+  register: helm_values
+
+- name: Init cluster on first node
+  ansible.builtin.command: 
+    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml
+    creates: /etc/kubernetes/admin.conf
+  register: running_first_master
+
+- name: Install cilium on first master
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf cilium install --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+  ignore_errors: true
+
+- name: Make node schedulable
+  ansible.builtin.shell: |
+    export KUBECONFIG=/etc/kubernetes/admin.conf
+    kubectl taint nodes --kubeconfig /etc/kubernetes/admin.conf --all node-role.kubernetes.io/control-plane:NoSchedule-
+  ignore_errors: true

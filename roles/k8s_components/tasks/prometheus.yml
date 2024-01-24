@@ -1,0 +1,18 @@
+- name: Create a directory for prometheus
+  ansible.builtin.file:
+    path: /opt/kubernetes/config/prometheus
+    state: directory
+    mode: '0755'
+  register: prometheus_created_config
+
+- name: Generate prometheus config on first master
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: /opt/kubernetes/config/prometheus/
+  with_fileglob: ../templates/prometheus/*
+  register: prometheus_created_config
+
+- name: Install or update prometheus with kustomize
+  ansible.builtin.command:
+    cmd: kubectl apply -k /opt/kubernetes/config/prometheus/
+  when: prometheus_created_config is changed

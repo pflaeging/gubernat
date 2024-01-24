@@ -1,0 +1,43 @@
+- name: create place for configs /opt/kubernetes
+  ansible.builtin.file:
+    path: /opt/kubernetes
+    state: directory
+    mode: '0755'
+
+- name: create place for configs /opt/kubernetes/config
+  ansible.builtin.file:
+    path: /opt/kubernetes/config
+    state: directory
+    mode: '0755'
+
+- name: create place for configs /opt/kubernetes/etc
+  ansible.builtin.file:
+    path: /opt/kubernetes/etc
+    state: directory
+    mode: '0755'
+
+- name: Generate kubeadm config /opt/kubernetes/etc/kubeadm-config.yaml
+  ansible.builtin.template:
+    src: kubeadm-config.yaml.j2
+    dest: /opt/kubernetes/etc/kubeadm-config.yaml
+  register: kubeadm_config
+
+- name: Generate certificate-key for other masters
+  ansible.builtin.shell: 
+    cmd: "KUBECONFIG=/etc/kubernetes/admin.conf kubeadm init phase upload-certs --upload-certs | grep -vw -e certificate -e Namespace"
+  delegate_to: "{{ groups.master[0] }}"
+  register: certificate_key
+  run_once: true
+
+- name: Generate token and join for other masters on first master
+  ansible.builtin.shell:
+    cmd: "echo $(KUBECONFIG=/etc/kubernetes/admin.conf kubeadm token create --print-join-command) --control-plane --certificate-key {{ certificate_key.stdout }}"
+  register: join_content
+  delegate_to: "{{ groups.master[0] }}"
+
+- name: Execute join command on other masters
+  ansible.builtin.shell: 
+    cmd: "KUBECONFIG=/etc/kubernetes/admin.conf {{ join_content.stdout }}"
+    creates: /etc/kubernetes/admin.conf
+  when: join_content is defined
+ 

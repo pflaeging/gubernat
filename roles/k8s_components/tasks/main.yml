@@ -1,0 +1,49 @@
+- set_fact:
+    api_host: |
+      {% if groups.loadbalancer[0] is defined %}
+        {{ groups.loadbalancer[0] }}
+      {% else %}
+        {{ groups.master[0] }}
+      {% endif %}
+    control_plane: | 
+      {% if groups.loadbalancer[0] is defined %}
+        {{ groups.loadbalancer[0] }}:{{ lb_api_port }}
+      {% else %}
+        {{ groups.master[0] }}:{{ lb_api_port }}
+      {% endif %}
+
+- name: Install taint-master.sh in /usr/local/sbin/taint-master.sh
+  ansible.builtin.copy:
+    src: roles/k8s_components/files/sbin/taint-master.sh
+    dest: /usr/local/sbin/taint-master.sh
+    owner: root
+    group: root
+    mode: 0o755
+
+- name: Make ServiceAccount for customer
+  ansible.builtin.include_tasks: customeruser.yml
+  when: groups.master[0] in inventory_hostname
+
+- name: Generate customer config on all masters
+  ansible.builtin.include_tasks: customer-config.yml
+  when: inventory_hostname in groups["master"]
+
+- name: Install dashboard via first master into cluster
+  ansible.builtin.include_tasks: dashboard.yml
+  when: groups.master[0] in inventory_hostname
+
+- name: Install metrics-server via first master into cluster
+  ansible.builtin.include_tasks: metricsserver.yml
+  when: groups.master[0] in inventory_hostname
+
+- name: Install local-storage via first master into cluster
+  ansible.builtin.include_tasks: localstorage.yml
+  when: groups.master[0] in inventory_hostname
+
+- name: Install prometheus via first master into cluster
+  ansible.builtin.include_tasks: prometheus.yml
+  when: groups.master[0] in inventory_hostname
+
+# - name: Install opentelemetry via first master into cluster
+#   ansible.builtin.include_tasks: opentelemetry.yml
+#   when: groups.master[0] in inventory_hostname

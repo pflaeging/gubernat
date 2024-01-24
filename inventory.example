@@ -1,0 +1,24 @@
+
+# if you don't need a loadbalancer, please modify the playbook site.yml according the comments
+[loadbalancer]
+# g8s-haproxy.pfpk.lan ansible_host=192.168.50.111
+
+[master]
+g8s-m1.pfpk.lan ansible_host=192.168.50.192
+g8s-m2.pfpk.lan ansible_host=192.168.50.72
+g8s-m3.pfpk.lan ansible_host=192.168.50.171
+
+[worker]
+g8s-develop.pfpk.lan ansible_host=192.168.50.168
+
+[all:vars]
+clustername = "g8s-pfpk-lan"
+# only set development cluster = true if it is a development cluster
+development_cluster = True
+ntp_servers = ["ts1.aco.net", "europe.pool.ntp.org"]
+# which Kubernetes version are we using?
+k8s_version = 1.27.2
+# CIDR address for k8s internal network and cilium
+k8s_cidr = 10.85.0.0/16
+# CIDR address for k8s service network
+k8s_svc_cidr = 10.86.0.0/16

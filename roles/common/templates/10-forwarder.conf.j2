@@ -1,0 +1,9 @@
+# {{ ansible_managed}}
+cache-size=500
+neg-ttl=60
+domain-needed
+bogus-priv
+# Which forwarder to use
+{% for ip in dns_forwarders -%} 
+server={{ ip }}
+{% endfor %} 

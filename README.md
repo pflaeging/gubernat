@@ -19,84 +19,30 @@ So we created a simple installation procedure for kubernetes 1.16+, flannel as n
 
 - Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 minimal installation
 - cri-o as container runtime
-- kubernetes 1.26.1
+- kubernetes 1.27.2
 - k8s contour-ingress with cert-manager
+- haproxy for API and dashboard
 - helm 3
-- local storage provisioning via local-path provisioner (under `/opt/k8s-data/`)
+- local storage provisioning via local-path provisioner (under `/data/k8s/`)
 - network layer with cilium CNI
-- kubernetes dashboard on port 32433
+- kubernetes dashboard on port 8443
+- kubernetes API seervices at port 7443
 
 ## Installation
 
-- Base installation of CentOS 7 minimal
-- After the base installation I made a pair of very small shell scripts to aid the install:
-
-1. [env.sh](env.sh) -> open it to configure your interface/IP address and hostname
-1. [0-prereq-like-hostname.sh](0-prereq-like-hostname.sh) -> setting hostname and IP config (optional)
-1. [1-base-install.sh](1-base-install.sh) -> configure firewall, disable swap, config ipV6, install helm
-1. [2-install-crio.sh](2-install-crio.sh) -> install cri-o
-1. [3-install-kubernetes.sh](3-install-kubernetes.sh) -> install kubernetes part I
-1. [4-config-kubeconfig-for-user.sh](4-config-kubeconfig-for-user.sh) -> setting kubeconfig for root user
-1. [5-finish-k8s-setup.sh](5-finish-k8s-setup.sh) -> install network plugin, make node schedulable
-1. [6-install-k8s-components.sh](6-install-k8s-components.sh) -> install additional components like persistance, ingress, dashboard and cert-manager
-1. [7-install-demo.sh](7-install-demo.sh) -> install demo app (httpbin) with ingress
+- Base installation of Alma/Rocke/RHEL 9 minimal
+- Set the root ssh trusts between the cluster members
+- Copy inventory.example to inventory and edit it
+- run `ansible-playbook -i inventory site.yml`
+- Ready!
 
 ## Accessing the Dashboard
 
-Execute the script [dashboard-login-infos.sh](dashboard-login-infos.sh) and get the parameter for dashboard login.
+Execute the script `get-dashboard-admin-token.sh` and get your dashboard token.
 
-The dashboard is always listening on port 32443 with SSL and a private certificate. That means:
+The dashboard is always listening on port 8443 with SSL and a private certificate. That means:
 
-<https://myfamous-minicluster-hostname.cloud:32443>
-
-## Getting Prometheus metric for an external monitoring
-
-You must rollout the component `metrics-server` (enable this in `env.sh`).
-
-After this you get the config by executing `./get-metrics-reader-config.sh`.
-
-The config makes a:
-
-- ServiceAccount
-- ClusterRole
-- Rolebinding
-- Bearer Token to access the metrics via the API
-
-## Getting login info for your cluster
-
-You can copy the admin.conf in your local kube environment. As normal user:
-
-```shell
-mkdir -p ~/.kube
-sudo cp /etc/kubernetes/admin.conf ~/.kube/
-sudo chown $USER ~/.kube/admin.conf
-```
-
-Now you should put something like `export KUBECONFIG=~/.kube/admin.conf` in your shell startup.
-
-You can now validate your login with `kubectl config get-contexts`
-
-## Tests
-
-There is a small test deployment in the [httpbin](httpbin/) folder.
-
-To use the test you have to define one of the two DNS configs:
-
-- define a wildcard DNS entry pointing to your gubernat host or
-- add httpbin host with your gubernat IP to `/etc/hosts` (or in Windows `C:\Windows\System32\Drivers\etc\hosts`)
-
-## Raspian (Raspberry PI)
-
-Our first attempt on Raspbian (Raspberry PI 4)!
-
-After this you have a running kubernetes cluster on a Raspbi!
-
-Follow the work in directory [raspbian](raspbian/)
-
-## ToDO
-
-- [ ] Documentation for multi-host cluster
-- [ ] more components like Multus
+<https://myfamous-minicluster-hostname.cloud:8443>
 
 ---
 (c) peter pfläging <peter@pflaeging.net>

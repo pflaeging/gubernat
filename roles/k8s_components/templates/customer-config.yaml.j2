@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Config
+current-context: customer@{{ clustername | default('kubernetes') }}
+contexts:
+- name: customer@{{ clustername | default('kubernetes') }}
+  context:
+    cluster: {{ clustername | default('kubernetes') }}
+    user: customer
+clusters:
+- name: {{ clustername | default('kubernetes') }}
+  cluster:
+    certificate-authority-data: {{ cluster_cert.stdout }}
+    server: https://{{ control_plane|trim }}
+users:
+- name: customer
+  user:
+    token: {{ customer_token.stdout }}

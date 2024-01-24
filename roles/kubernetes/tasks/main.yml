@@ -1,0 +1,53 @@
+- set_fact:
+    api_host: |
+      {% if groups.loadbalancer[0] is defined %}
+        {{ groups.loadbalancer[0] }}
+      {% else %}
+        {{ groups.master[0] }}
+      {% endif %}
+    control_plane: | 
+      {% if groups.loadbalancer[0] is defined %}
+        {{ groups.loadbalancer[0] }}:{{ lb_api_port }}
+      {% else %}
+        {{ groups.master[0] }}:{{ lb_api_port }}
+      {% endif %}
+
+- name: Execute tasks on first master
+  ansible.builtin.include_tasks: firstmaster.yml
+  when: groups.master[0] in inventory_hostname 
+
+- name: Execute tasks on other masters
+  ansible.builtin.include_tasks: othermasters.yml
+  when: ((groups.master[1] is defined) and (groups.master[1] in inventory_hostname)) or ((groups.master[2] is defined) and (groups.master[2] in inventory_hostname))
+
+- name: Cleanup tokens on master (means in cluster)
+  ansible.builtin.shell: |
+    export KUBECONFIG=/etc/kubernetes/admin.conf 
+    kubeadm token list | awk '{if(NR!=1){print $1}}' | xargs -n 1 kubeadm token delete
+  delegate_to: "{{ groups.master[0] }}"
+  ignore_errors: true
+  register: certificate_key
+  run_once: true
+
+- name: Make kubernetes config dir for root
+  ansible.builtin.file:
+    path: /root/.kube
+    owner: root
+    group: root
+    mode: 0o700
+    state: directory
+  when: inventory_hostname in groups["master"]
+
+- name: Install kubernetes config for root user on masters
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    owner: root
+    group: root
+    mode: 0o600
+    remote_src: yes
+  when: inventory_hostname in groups["master"]
+
+- name: Execute script on workers
+  ansible.builtin.include_tasks: workers.yml
+  when: inventory_hostname in groups.worker

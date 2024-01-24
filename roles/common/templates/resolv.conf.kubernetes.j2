@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+# Don't edit directly
+
+{% for ip in groups.master -%} 
+nameserver {{ hostvars[ip].ansible_host }}
+{% endfor %} 

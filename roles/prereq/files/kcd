@@ -1,0 +1,12 @@
+#! /bin/sh
+
+if [ $# -ne 1 ]
+then
+  echo "usage: $0 namespace"
+  exit 255
+fi
+
+kubectl config set-context --namespace $1 --current
+echo -n "You are now in namespace: "
+kubectl config view --minify -o jsonpath='{.contexts[0].context.namespace}'
+echo

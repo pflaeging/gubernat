@@ -1,0 +1,20 @@
+LoadBalancer: k8s-api
+    On port TCP/{{ lb_api_port }}
+Level 4 Forwarding to:
+{% for name in groups.master %}
+     DNS-Name: {{ name }} IP-Address: {{ hostvars[name].ansible_host }} Port: {{ api_port }}
+{% endfor %}
+
+{% for service in services %}
+{% for ports in service.ports %}
+LoadBalancer {{ service.name }}-{{ ports.name }}
+    On port TCP/{{ports.gatewayport }}
+Level 4 Forwarding to:
+{% for name in groups.master %}
+    DNS-Name: {{ name }} IP-Address: {{ hostvars[name].ansible_host }} Port: {{ ports.sourceport }}
+{% endfor %}
+{% for name in groups.worker %}
+    DNS-Name: {{ name }} IP-Address: {{ hostvars[name].ansible_host }} Port: {{ ports.sourceport }}
+{% endfor %}
+{% endfor %}
+{% endfor %}

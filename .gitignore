@@ -1,2 +1,8 @@
-.vscode/*
+.vscode/
 httpbin/kustomization.yaml
+/private-install/
+/ansible/backups/*
+!/ansible/backups/.empty
+/LoadBalancerConfig.txt
+./inventory
+./vm-env.sh

@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- namespace.yaml
+- template.yaml
+- blackbox-template.yaml
+
+namespace: monitoring
+
+patches:
+# path in prometheus-server Deployment:
+# - add additional option to read web-config
+# - mount web-certs in container
+# - patch liveness and readiness to use HTTPS and auth
+# - patch reloader-sidecar reload-url
+- target:
+    kind: Deployment
+    name: g8s-prometheus-server
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/1/volumeMounts/-
+      value:
+        mountPath: /etc/prometheus/blackbox-targets.yml
+        name: blackbox-targets
+        subPath: blackbox-targets.yml
+    - op: add
+      path: /spec/template/spec/volumes/-
+      value:
+        name: blackbox-targets
+        configMap:
+          defaultMode: 420
+          name: prometheus-blackbox-targets
+
+configMapGenerator:
+  - name: prometheus-blackbox-targets
+    files:
+    - blackbox-targets.yml
+
+generatorOptions:
+  disableNameSuffixHash: true

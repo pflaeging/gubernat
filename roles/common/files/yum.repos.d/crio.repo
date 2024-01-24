@@ -1,0 +1,8 @@
+[devel_kubic_libcontainers_stable_cri-o_1.26_1.26.1]
+name=devel:kubic:libcontainers:stable:cri-o:1.26:1.26.1 (CentOS_8)
+type=rpm-md
+baseurl=https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.26:/1.26.1/CentOS_8/
+gpgcheck=1
+gpgkey=https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/1.26:/1.26.1/CentOS_8/repodata/repomd.xml.key
+enabled=1
+exclude=cri-tools,cri-o

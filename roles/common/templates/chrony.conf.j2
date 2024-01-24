@@ -1,0 +1,17 @@
+# {{ ansible_managed}}
+bindcmdaddress ::1
+bindcmdaddress 127.0.0.1
+driftfile /var/lib/chrony/drift
+#keyfile /etc/chrony.keys
+logchange 0.5
+logdir /var/log/chrony
+log measurements statistics tracking
+makestep 10 3
+maxupdateskew 10
+noclientlog
+rtcsync
+stratumweight 0
+
+{% for ip in ntp_servers -%} 
+server {{ ip }} iburst
+{% endfor -%} 

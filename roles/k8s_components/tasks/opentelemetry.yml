@@ -1,0 +1,18 @@
+- name: Create a directory for opentelemetry
+  ansible.builtin.file:
+    path: /opt/kubernetes/config/opentelemetry
+    state: directory
+    mode: '0755'
+  register: opentelemetry_created_config
+
+- name: Generate opentelemetry config on first master
+  ansible.builtin.template:
+    src: "{{ item }}"
+    dest: /opt/kubernetes/config/opentelemetry/
+  with_fileglob: ../templates/opentelemetry/*
+  register: opentelemetry_created_config
+
+- name: Install or update opentelemetry with kustomize
+  ansible.builtin.command:
+    cmd: kubectl apply -k /opt/kubernetes/config/opentelemetry/
+  when: opentelemetry_created_config is changed

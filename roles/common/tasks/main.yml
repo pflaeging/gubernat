@@ -1,0 +1,161 @@
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+    use: systemd
+
+- name: Install needed -> dnsmasq, chrony, open-vm-tools, tar
+  ansible.builtin.yum:
+    name:
+      - dnsmasq
+      - chrony
+      - open-vm-tools
+      - tar
+      - mkpasswd
+    state: present
+
+- name: enable open-vm-tools
+  ansible.builtin.systemd:
+    name: vmtoolsd
+    state: started
+    enabled: true
+    masked: no
+
+- name: Create custom DNS resolver file in /etc/resolv.conf.kubernetes
+  ansible.builtin.template:
+    src: resolv.conf.kubernetes.j2
+    dest: /etc/resolv.conf.kubernetes
+  register: forwarder
+
+- name: Save original nameservers in /etc/resolv.conf.orig
+  ansible.builtin.copy:
+    src: /etc/resolv.conf
+    dest: /etc/resolv.conf.orig
+    remote_src: yes
+    force: false
+
+- name: link /etc/resolv.conf.kubernetes -> /etc/resolv.conf
+  ansible.builtin.file:
+    src: /etc/resolv.conf.kubernetes
+    dest: /etc/resolv.conf
+    force: true
+    state: link
+
+- name: Update /etc/hosts file
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}.*$'
+    line: "{{ hostvars[item].ansible_host }} {{ item }} {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}"
+    state: present
+  with_items: "{{ groups.all }}"
+  register: hosts
+
+- name: Ensure hostname is in /etc/hosts
+  ansible.builtin.lineinfile:
+    dest: /etc/hosts
+    regexp: "^{{ ansible_default_ipv4.address }}.+$"
+    line: "{{ ansible_default_ipv4.address }} {{ ansible_fqdn }} {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}"
+  when: hosts is changed
+
+- name: DNS listen on Network interface
+  ansible.builtin.template:
+    src: 15-listen.conf.j2
+    dest: /etc/NetworkManager/dnsmasq.d/15-listen.conf
+  register: forwarder
+
+- name: Copy dnsmasq config to NetworkManager
+  ansible.builtin.copy:
+    src: roles/common/files/NetworkManager/00-dnsmasq.conf
+    dest: /etc/NetworkManager/conf.d/
+  register: enable
+
+- name: Enable reading of /etc/hosts file
+  ansible.builtin.copy:
+    src: roles/common/files/NetworkManager/05-add-hosts-file.conf
+    dest: /etc/NetworkManager/dnsmasq.d/
+  register: hostenable
+
+- name: Restart NetworkManager
+  ansible.builtin.systemd:
+    state: reloaded
+    name: NetworkManager
+
+- name: Enable firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: started
+    enabled: true
+    masked: false
+
+- name: Make a new trusted firewall zone between nodes (000-kubernetes)
+  ansible.builtin.command:
+    cmd: firewall-cmd --permanent --new-zone 000-kubernetes
+  ignore_errors: true
+  register: new_firewall_zone
+
+- name: Set zone 000-kubernetes to open
+  ansible.builtin.command:
+    cmd: firewall-cmd --permanent --set-target=ACCEPT --zone=000-kubernetes
+  ignore_errors: true
+
+- name: Enable masquerade on 000-kubernetes
+  ansible.builtin.command:
+    cmd: firewall-cmd --permanent --add-masquerade --zone=000-kubernetes
+  ignore_errors: true
+
+- name: Setup Firewall (add hosts to zone)
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --zone=000-kubernetes --add-source={{ hostvars[item].ansible_host }}/32"
+  with_items: "{{ groups.all }}"
+
+- name: Add kubernetes IP ranges from k8s_cidr and k8s_svc_cidr definitions to trusted zones (cilium specific?)
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --zone=000-kubernetes --add-source={{ k8s_cidr }} --add-source={{ k8s_svc_cidr }}"
+  with_items: "{{ groups.all }}"
+
+- name: Reload Firewall
+  ansible.builtin.command:
+    cmd: "firewall-cmd --reload"
+
+- name: Deploy chrony.conf template
+  ansible.builtin.template:
+     src: chrony.conf.j2
+     dest: /etc/chrony.conf
+     owner: root
+     group: root
+     mode: 0644
+     backup: yes
+  register: chrony_conf
+
+- name: Enable chrony
+  ansible.builtin.systemd:
+    name: chronyd
+    state: started
+    enabled: true
+    masked: no
+
+- name: Restart chrony
+  ansible.builtin.systemd:
+    name: chronyd
+    state: restarted
+  when: chrony_conf is changed
+
+- name: Copy additional repo definitions in place
+  ansible.builtin.copy:
+    src: roles/common/files/yum.repos.d/
+    dest: /etc/yum.repos.d/
+
+
+- name: Copy cilium installer and execute shell script for installation
+  ansible.builtin.script: roles/common/files/cilium-install.sh
+  args:
+    creates: /usr/local/bin/cilium
+
+- name: Copy helm installer and execute shell script for installation
+  ansible.builtin.script: roles/common/files/helm-install.sh
+  args:
+    creates: /usr/local/bin/helm
+
+- name: Add setup user (password should be set manually!)
+  ansible.builtin.user:
+    name: setup
+    comment: Kubernetes Setup User
