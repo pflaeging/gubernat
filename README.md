@@ -4,15 +4,14 @@ Gubernat means steer (latin).
 
 ## About
 
-Gubernat is an approach to establish a production ready small kubernetes cluster.
+Gubernat is an approach to establish a production ready kubernetes cluster.
 
 The main goal in creating gubernat was: replace docker-compose in a portable open and
 upgradable way that is compatible with standard kubernetes configs and maintains a small footprint.
 
-It will typically run on a single server. But it's good practice to have the opportunity to scale it up
-to a redundant configuration without too much effort.
+It will run on a single server, a small 3 node cluster and also a later 100 node cluster.
 
-So we created a simple installation procedure for kubernetes 1.16+, flannel as networking layer, the kubernetes-dashboard, helm and the standard nginx ingress configuration.
+So we created a simple installation procedure for kubernetes 1.27+, cilium as networking layer, the kubernetes-dashboard, helm and the contour ingress configuration.
 
 
 ## Components

@@ -41,3 +41,9 @@
     creates: /etc/kubernetes/admin.conf
   when: join_content is defined
  
+- name: Make the nodes schedulable (remove taint)
+  ansible.builtin.command: 
+    cmd: "kubectl taint nodes --kubeconfig /etc/kubernetes/admin.conf --all node-role.kubernetes.io/control-plane:NoSchedule-"
+  ignore_errors: true
+  when: join_content is defined
+  delegate_to: "{{ groups.master[0] }}"
