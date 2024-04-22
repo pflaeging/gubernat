@@ -1,16 +1,59 @@
-- set_fact:
-    api_host: |
-      {% if groups.loadbalancer[0] is defined %}
+- name: Define api_host
+  ansible.builtin.set_fact:
+    api_host: >-
+      {% if groups.loadbalancer[0] is defined -%}
         {{ groups.loadbalancer[0] }}
-      {% else %}
-        {{ groups.master[0] }}
-      {% endif %}
-    control_plane: | 
-      {% if groups.loadbalancer[0] is defined %}
-        {{ groups.loadbalancer[0] }}:{{ lb_api_port }}
-      {% else %}
-        {{ groups.master[0] }}:{{ lb_api_port }}
-      {% endif %}
+      {%- else -%}
+        {% if api_loadbalancer is defined -%}
+          {{ api_loadbalancer }}
+        {%- else -%}
+          {{ groups.master[0] }}
+        {%- endif %}
+      {%- endif %}
+- name: Define control_plane
+  ansible.builtin.set_fact:
+    control_plane: >-
+      {% if api_loadbalancer_port is defined -%}
+        {{ api_host }}:{{ api_loadbalancer_port }}
+      {%- else -%}
+        {{ api_host }}:{{ lb_api_port }}
+      {%- endif %}
+
+- name: create place for configs /opt/kubernetes
+  ansible.builtin.file:
+    path: /opt/kubernetes
+    state: directory
+    mode: '0755'
+  when: inventory_hostname in groups["master"]
+  
+
+- name: create place for configs /opt/kubernetes/config
+  ansible.builtin.file:
+    path: /opt/kubernetes/config
+    state: directory
+    mode: '0755'
+  when: inventory_hostname in groups["master"]
+
+- name: create place for configs /opt/kubernetes/etc
+  ansible.builtin.file:
+    path: /opt/kubernetes/etc
+    state: directory
+    mode: '0755'
+  when: inventory_hostname in groups["master"]
+ 
+- name: Generate kubeadm config /opt/kubernetes/etc/kubeadm-config.yaml
+  ansible.builtin.template:
+    src: kubeadm-config.yaml.j2
+    dest: /opt/kubernetes/etc/kubeadm-config.yaml
+  register: kubeadm_config
+  when: inventory_hostname in groups["master"]
+
+- name: Generate cilium helm values /opt/kubernetes/etc/cilium-helm-values.yaml
+  ansible.builtin.template:
+    src: cilium-helm-values.yaml.j2
+    dest: /opt/kubernetes/etc/cilium-helm-values.yaml
+  register: helm_values
+  when: inventory_hostname in groups["master"]
 
 - name: Execute tasks on first master
   ansible.builtin.include_tasks: firstmaster.yml

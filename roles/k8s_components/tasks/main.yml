@@ -1,16 +1,23 @@
-- set_fact:
-    api_host: |
-      {% if groups.loadbalancer[0] is defined %}
+- name: Define api_host
+  ansible.builtin.set_fact:
+    api_host: >-
+      {% if groups.loadbalancer[0] is defined -%}
         {{ groups.loadbalancer[0] }}
-      {% else %}
-        {{ groups.master[0] }}
-      {% endif %}
-    control_plane: | 
-      {% if groups.loadbalancer[0] is defined %}
-        {{ groups.loadbalancer[0] }}:{{ lb_api_port }}
-      {% else %}
-        {{ groups.master[0] }}:{{ lb_api_port }}
-      {% endif %}
+      {%- else -%}
+        {% if api_loadbalancer is defined -%}
+          {{ api_loadbalancer }}
+        {%- else -%}
+          {{ groups.master[0] }}
+        {%- endif %}
+      {%- endif %}
+- name: Define control_plane
+  ansible.builtin.set_fact:
+    control_plane: >-
+      {% if api_loadbalancer_port is defined -%}
+        {{ api_host }}:{{ api_loadbalancer_port }}
+      {%- else -%}
+        {{ api_host }}:{{ lb_api_port }}
+      {%- endif %}
 
 - name: Install taint-master.sh in /usr/local/sbin/taint-master.sh
   ansible.builtin.copy:
@@ -28,22 +35,18 @@
   ansible.builtin.include_tasks: customer-config.yml
   when: inventory_hostname in groups["master"]
 
-- name: Install dashboard via first master into cluster
-  ansible.builtin.include_tasks: dashboard.yml
-  when: groups.master[0] in inventory_hostname
+- name: Get components
+  ansible.builtin.find:
+    paths: components
+    recurse: no
+    file_type: directory
+    excludes: "*.disabled"
+  delegate_to: localhost
+  register: components_list
 
-- name: Install metrics-server via first master into cluster
-  ansible.builtin.include_tasks: metricsserver.yml
-  when: groups.master[0] in inventory_hostname
-
-- name: Install local-storage via first master into cluster
-  ansible.builtin.include_tasks: localstorage.yml
-  when: groups.master[0] in inventory_hostname
-
-- name: Install prometheus via first master into cluster
-  ansible.builtin.include_tasks: prometheus.yml
-  when: groups.master[0] in inventory_hostname
-
-# - name: Install opentelemetry via first master into cluster
-#   ansible.builtin.include_tasks: opentelemetry.yml
-#   when: groups.master[0] in inventory_hostname
+- name: Execute subtask for components
+  ansible.builtin.include_tasks: components.yml
+  loop: "{{ components_list.files }}"
+  loop_control:
+    loop_var: component
+  when: inventory_hostname in groups["master"]

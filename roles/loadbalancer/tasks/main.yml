@@ -28,6 +28,14 @@
   ansible.builtin.command:
     cmd: "firewall-cmd --permanent --add-port=9000/tcp --zone public"
 
+- name: Setup Firewall (open https service for contour ingress)
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-port=443/tcp --zone public"
+
+- name: Setup Firewall (open http service for contour ingress)
+  ansible.builtin.command:
+    cmd: "firewall-cmd --permanent --add-port=80/tcp --zone public"
+
 - name: Setup Firewall (open api port {{ lb_api_port }})
   ansible.builtin.command:
     cmd: "firewall-cmd --permanent --add-port={{ lb_api_port }}/tcp --zone public"

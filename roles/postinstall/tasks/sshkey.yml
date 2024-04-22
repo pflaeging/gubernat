@@ -1,10 +1,9 @@
 - name: Create new root ssh key
   ansible.builtin.shell:
     cmd: |
-      rm -rf /root/.ssh/kubernetes-g8s /root/.ssh/kubernetes-g8s.pub
       ssh-keygen -t ed25519 -C "Generated Key after kubernetes-g8s rollout" -f /root/.ssh/kubernetes-g8s -q -N ""
-  register: ssh_key 
-  run_once: true
+    creates: /root/.ssh/kubernetes-g8s
+  register: ssh_key
   when: groups.master[0] in inventory_hostname
 
 - name: Get new public ssh-key into variable

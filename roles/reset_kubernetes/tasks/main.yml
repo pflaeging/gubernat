@@ -89,4 +89,4 @@
 
 - name: Restart VM
   ansible.builtin.command:
-    cmd: systemctl reboot
+    cmd: shutdown -r 30s

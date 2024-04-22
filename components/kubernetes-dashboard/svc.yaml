@@ -13,6 +13,8 @@ spec:
     targetPort: 8443
     nodePort: 32443
   selector:
-    k8s-app: kubernetes-dashboard
+    app.kubernetes.io/component: app
+    app.kubernetes.io/instance: kubernetes-dashboard
+    app.kubernetes.io/name: kong
   sessionAffinity: None
   type: NodePort

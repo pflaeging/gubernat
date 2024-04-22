@@ -1,27 +1,3 @@
-- name: create place for configs /opt/kubernetes
-  ansible.builtin.file:
-    path: /opt/kubernetes
-    state: directory
-    mode: '0755'
-
-- name: create place for configs /opt/kubernetes/config
-  ansible.builtin.file:
-    path: /opt/kubernetes/config
-    state: directory
-    mode: '0755'
-
-- name: create place for configs /opt/kubernetes/etc
-  ansible.builtin.file:
-    path: /opt/kubernetes/etc
-    state: directory
-    mode: '0755'
-
-- name: Generate kubeadm config /opt/kubernetes/etc/kubeadm-config.yaml
-  ansible.builtin.template:
-    src: kubeadm-config.yaml.j2
-    dest: /opt/kubernetes/etc/kubeadm-config.yaml
-  register: kubeadm_config
-
 - name: Generate certificate-key for other masters
   ansible.builtin.shell: 
     cmd: "KUBECONFIG=/etc/kubernetes/admin.conf kubeadm init phase upload-certs --upload-certs | grep -vw -e certificate -e Namespace"

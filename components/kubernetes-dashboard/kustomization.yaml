@@ -6,6 +6,9 @@ resources:
 - recommended.yaml
 - admin-user.yaml
 - svc.yaml
+- namespace.yaml
+
+namespace: kubernetes-dashboard
 
 patches:
 - target:

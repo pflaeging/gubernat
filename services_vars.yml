@@ -5,12 +5,12 @@ services:
   - name: ssl
     sourceport: 32443
     gatewayport: 8443
-# Every application needs the port definitions here!
+# this is the contour ingress!
 # - name: contour-ingress
 #   ports:
 #   - name: ssl
-#     sourceport: 31443
+#     sourceport: 30443
 #     gatewayport: 443
 #   - name: http
-#     sourceport: 31080
+#     sourceport: 30080
 #     gatewayport: 80

@@ -36,7 +36,7 @@
     group: setup
     mode: 0o400
   
-- name: Copy get-dashboard-admin-token.sh script to /usr/local/bin
+- name: Copy get-customer-token.sh script to /usr/local/bin
   ansible.builtin.copy:
     src: roles/k8s_components/files/get-customer-token.sh
     dest: /usr/local/bin/get-customer-token.sh

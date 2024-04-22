@@ -1,5 +1,5 @@
 k8sServiceHost: {{ api_host }}
-k8sServicePort: {{ lb_api_port }}
+k8sServicePort: {{ api_loadbalancer_port|default(lb_api_port,true) }}
 ipv4NativeRoutingCIDR:  {{ k8s_cidr }}
 routingMode: native
 ipv4:

@@ -5,12 +5,12 @@
 
 [master]
 g8s-m1.pfpk.lan ansible_host=192.168.50.111
-g8s-m2.pfpk.lan ansible_host=192.168.50.87
-g8s-m3.pfpk.lan ansible_host=192.168.50.166
+g8s-m2.pfpk.lan ansible_host=192.168.50.40
+g8s-m3.pfpk.lan ansible_host=192.168.50.23
 
 
 [worker]
-g8s-m4.pfpk.lan ansible_host=192.168.50.38
+g8s-m4.pfpk.lan ansible_host=192.168.50.39
 
 [all:vars]
 clustername = "g8s-pfpk-lan"
@@ -18,7 +18,7 @@ clustername = "g8s-pfpk-lan"
 development_cluster = True
 ntp_servers = ["ts1.aco.net", "europe.pool.ntp.org"]
 # which Kubernetes version are we using?
-k8s_version = 1.27.2
+k8s_version = 1.29.3
 # CIDR address for k8s internal network and cilium
 k8s_cidr = 10.85.0.0/16
 # CIDR address for k8s service network

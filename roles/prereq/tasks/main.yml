@@ -49,9 +49,9 @@
 - name: "Install crio, kubernetes-{{ k8s_version }} and other tools"
   ansible.builtin.yum:
     name:
-      - cri-o 
-      - cri-tools 
-      - containernetworking-plugins 
+      - cri-o-{{ k8s_version }}
+      - socat
+      - conntrack-tools
       - tar 
       - git
       - kubelet-{{ k8s_version }} 

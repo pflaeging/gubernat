@@ -9,6 +9,16 @@ controlPlaneEndpoint: {{ control_plane|trim }}
 networking:
   podSubnet: {{ k8s_cidr | default('10.85.0.0/16')}}
   serviceSubnet: {{ k8s_svc_cidr | default('10.96.0.0/12')}}
+apiServer:
+  certSANs:
+{% for name in groups.master %}
+  - {{ name }}
+  - {{ hostvars[name].ansible_host }}
+{% endfor %}
+  - {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
+{% if api_loadbalancer is defined %}
+  - {{ api_loadbalancer }}
+{% endif %}
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
