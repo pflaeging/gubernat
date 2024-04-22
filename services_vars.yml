@@ -6,11 +6,11 @@ services:
     sourceport: 32443
     gatewayport: 8443
 # this is the contour ingress!
-# - name: contour-ingress
-#   ports:
-#   - name: ssl
-#     sourceport: 30443
-#     gatewayport: 443
-#   - name: http
-#     sourceport: 30080
-#     gatewayport: 80
+- name: contour-ingress
+  ports:
+  - name: ssl
+    sourceport: 30443
+    gatewayport: 443
+  - name: http
+    sourceport: 30080
+    gatewayport: 80

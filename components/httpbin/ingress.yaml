@@ -1,0 +1,18 @@
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: httpbin
+spec:
+  ingressClassName: contour
+  rules:
+    # This funny contruct generates a clustername from ansible (look in /etc/hosts ;-))
+    - host: {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: httpbin
+                port:
+                  number: 80
