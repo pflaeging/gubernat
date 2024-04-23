@@ -104,3 +104,15 @@
     state: started
     enabled: true
     masked: no
+
+- name: Create a directory for persistences (/data/k8s/)
+  ansible.builtin.file:
+    path: /data/k8s
+    state: directory
+    mode: '0755'
+  register: create_data_k8s
+
+- name: Set selinux context for persistences
+  ansible.builtin.shell: |
+    semanage fcontext -a -t container_file_t  "/data/k8s(/.*)?"
+    restorecon -R /data/k8s
