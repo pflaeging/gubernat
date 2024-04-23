@@ -9212,11 +9212,9 @@ spec:
                   fieldPath: metadata.name
           ports:
             - containerPort: 8080
-              hostPort: 80
               name: http
               protocol: TCP
             - containerPort: 8443
-              hostPort: 443
               name: https
               protocol: TCP
           readinessProbe:

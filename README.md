@@ -54,5 +54,23 @@ If you set "ert_manager_admin_mail" in your inventory, two ClusterIssuer "letsen
 
 If you want to rollout additional services, you have to make a DNS (or in small envs an /etc/hosts) record pointing on all hosts in the cluster or better pointing to the masters.
 
+## Automation and proxmox
+
+We are using proxmox VM Servers for our test environments. Though there's a minimal automation for this in this repo:
+
+1. make a AlmaLinux / RockyLinux / RHEL 9 minimal installation on a VM in proxmox.
+1. add your root ssh key, and give him the comment "root@g8s-img" (it shoult be replaced in the role "postinstall")
+1. shutdown the installation
+1. convert it to a template in proxmox
+1. replace the variable `templateid` in `./vm-env.sh` with the newly created id of your template above
+1. adopt the other variables in `./vm-env.sh` (help is in [./pve-auto/Readme.md](./pve-auto/Readme.md)
+
+After this you have to assistent shell scripts:
+
+- `./make-new-nodes.sh` this creates the new nodes, start them and gives you an output for your inventory file
+- `./kill-all-nodes.sh` this deletes all nodes ;-) (use with care)
+
+After `./make-new-nodes.sh` and editing the inventory file you can `ansible-playbook -i inventory site.yml` to rollout the cluster!
+
 ---
 (c) peter pfläging <peter@pflaeging.net>

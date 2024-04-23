@@ -25,14 +25,6 @@
     state: directory
     mode: '0755'
   when: inventory_hostname in groups["master"]
-  
-
-- name: create place for configs /opt/kubernetes/config
-  ansible.builtin.file:
-    path: /opt/kubernetes/config
-    state: directory
-    mode: '0755'
-  when: inventory_hostname in groups["master"]
 
 - name: create place for configs /opt/kubernetes/etc
   ansible.builtin.file:

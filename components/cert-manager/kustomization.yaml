@@ -3,8 +3,4 @@ kind: Kustomization
 
 resources:
 - cert-manager.yaml
-- gubernat-ca.yaml
-{% if cert_manager_admin_mail is defined %}
-- letsencrypt.yaml
-{% endif %}
 

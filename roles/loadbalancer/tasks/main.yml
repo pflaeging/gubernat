@@ -11,7 +11,7 @@
       {{ res }}
 
 - name: Install needed packages
-  ansible.builtin.yum:
+  ansible.builtin.dnf:
     name:
       - haproxy
       - python3-libsemanage
