@@ -52,6 +52,7 @@
       - cri-o-{{ k8s_version }}
       - socat
       - conntrack-tools
+      - python3-policycoreutils
       - container-selinux
       - containernetworking-plugins
       - tar 
