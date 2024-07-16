@@ -86,3 +86,8 @@
 - name: Execute script on workers
   ansible.builtin.include_tasks: workers.yml
   when: inventory_hostname in groups.worker
+
+- name: Wait for cluster to become ready
+  ansible.builtin.wait_for:
+    timeout: 180
+  delegate_to: localhost

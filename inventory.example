@@ -26,7 +26,7 @@ ntp_servers = ["ts1.aco.net", "europe.pool.ntp.org"]
 # which Kubernetes version are we using?
 # You can get a version list here: https://kubernetes.io/releases/
 # Every version from 1.28.0 is supported ;-)
-k8s_version = 1.29.3
+k8s_version = 1.29.5
 # CIDR address for k8s internal network and cilium
 k8s_cidr = 10.85.0.0/16
 # CIDR address for k8s service network

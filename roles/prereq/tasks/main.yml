@@ -52,7 +52,7 @@
       - cri-o-{{ k8s_version }}
       - socat
       - conntrack-tools
-      - python3-policycoreutils
+      - policycoreutils-python-utils
       - container-selinux
       - containernetworking-plugins
       - tar 
@@ -114,6 +114,9 @@
   register: create_data_k8s
 
 - name: Set selinux context for persistences
-  ansible.builtin.shell: |
-    semanage fcontext -a -t container_file_t  "/data/k8s(/.*)?"
-    restorecon -R /data/k8s
+  ansible.builtin.command:
+    cmd: semanage fcontext -a -t container_file_t  "/data/k8s(/.*)?"
+
+- name: Restore selinux context for persistences
+  ansible.builtin.command:
+    cmd: restorecon -R /data/k8s
