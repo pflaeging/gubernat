@@ -1,0 +1,18 @@
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: gubernat
+spec:
+  sources:
+  - useDefaultCAs: true
+  - secret:
+      name: "root-secret"
+      key: "ca.crt"
+  target:
+    configMap:
+      key: "root-certs.pem"
+    additionalFormats:
+      jks:
+        key: "bundle.jks"
+      pkcs12:
+        key: "bundle.p12"
