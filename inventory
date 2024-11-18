@@ -4,12 +4,12 @@
 # g8s-haproxy.pfpk.lan ansible_host=192.168.50.111
 
 [master]
-g8s-m1.pfpk.lan ansible_host=192.168.50.167
-g8s-m2.pfpk.lan ansible_host=192.168.50.3
-g8s-m3.pfpk.lan ansible_host=192.168.50.168
+g8s-m1.pfpk.lan ansible_host=192.168.64.100
+g8s-m2.pfpk.lan ansible_host=192.168.64.151
+g8s-m3.pfpk.lan ansible_host=192.168.64.156
 
 [worker]
-g8s-m4.pfpk.lan ansible_host=192.168.50.41
+g8s-m4.pfpk.lan ansible_host=192.168.64.73
 
 [all:vars]
 # Give your cluster a reasonable name
