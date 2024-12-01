@@ -47,16 +47,9 @@
   when: swap_disabled is changed
 
 - name: "Install crio, kubernetes-{{ k8s_version }} and other tools"
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name:
       - cri-o-{{ k8s_version }}
-      - socat
-      - conntrack-tools
-      - policycoreutils-python-utils
-      - container-selinux
-      - containernetworking-plugins
-      - tar 
-      - git
       - kubelet-{{ k8s_version }} 
       - kubeadm-{{ k8s_version }}
       - kubectl-{{ k8s_version }}

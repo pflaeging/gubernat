@@ -1,22 +1,11 @@
-- name: Bring system to newest software level
-  ansible.builtin.dnf:
-    name: "*"
-    state: latest
-
 - name: Set hostname
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
     use: systemd
 
-- name: Install needed -> dnsmasq, chrony, open-vm-tools, tar
-  ansible.builtin.dnf:
-    name:
-      - dnsmasq
-      - chrony
-      - open-vm-tools
-      - tar
-      - mkpasswd
-    state: present
+- name: Install for RedHat based systems
+  ansible.builtin.include_tasks: redhat.yml
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: enable open-vm-tools
   ansible.builtin.systemd:
@@ -143,16 +132,6 @@
     name: chronyd
     state: restarted
   when: chrony_conf is changed
-
-- name: Copy cri-o repo definitions in place
-  ansible.builtin.template:
-    src: cri-o.repo.j2
-    dest: /etc/yum.repos.d/cri-o.repo
-
-- name: Copy kubernetes repo definitions in place
-  ansible.builtin.template:
-    src: kubernetes.repo.j2
-    dest: /etc/yum.repos.d/kubernetes.repo
 
 - name: Copy cilium installer and execute shell script for installation
   ansible.builtin.script: roles/common/files/cilium-install.sh

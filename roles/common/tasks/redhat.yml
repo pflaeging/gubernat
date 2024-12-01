@@ -1,0 +1,30 @@
+- name: Bring system to newest software level
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+
+- name: Copy cri-o repo definitions in place
+  ansible.builtin.template:
+    src: cri-o.repo.j2
+    dest: /etc/yum.repos.d/cri-o.repo
+
+- name: Copy kubernetes repo definitions in place
+  ansible.builtin.template:
+    src: kubernetes.repo.j2
+    dest: /etc/yum.repos.d/kubernetes.repo
+
+- name: Install needed -> dnsmasq, chrony, open-vm-tools, tar
+  ansible.builtin.dnf:
+    name:
+      - dnsmasq
+      - chrony
+      - open-vm-tools
+      - tar
+      - mkpasswd
+      - socat
+      - conntrack-tools
+      - policycoreutils-python-utils
+      - container-selinux
+      - containernetworking-plugins
+      - git
+    state: present

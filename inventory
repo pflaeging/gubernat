@@ -4,12 +4,12 @@
 # g8s-haproxy.pfpk.lan ansible_host=192.168.50.111
 
 [master]
-g8s-m1.pfpk.lan ansible_host=192.168.64.100
-g8s-m2.pfpk.lan ansible_host=192.168.64.151
-g8s-m3.pfpk.lan ansible_host=192.168.64.156
+frapp.pfpk.lan ansible_host=192.168.64.104
+# g8s-m2.pfpk.lan ansible_host=192.168.64.151
+# g8s-m3.pfpk.lan ansible_host=192.168.64.156
 
 [worker]
-g8s-m4.pfpk.lan ansible_host=192.168.64.73
+# g8s-m4.pfpk.lan ansible_host=192.168.64.73
 
 [all:vars]
 # Give your cluster a reasonable name
@@ -25,7 +25,7 @@ ntp_servers = ["ts1.aco.net", "europe.pool.ntp.org"]
 # which Kubernetes version are we using?
 # You can get a version list here: https://kubernetes.io/releases/
 # Every version from 1.28.0 is supported ;-)
-k8s_version = 1.29.5
+k8s_version = 1.31.2
 # CIDR address for k8s internal network and cilium
 k8s_cidr = 10.85.0.0/16
 # CIDR address for k8s service network
