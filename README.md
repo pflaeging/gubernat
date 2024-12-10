@@ -15,11 +15,15 @@ It will run on a single server, a small 3 node cluster and also a later 100 node
 
 So we created a simple installation procedure for kubernetes 1.27+, cilium as networking layer, the kubernetes-dashboard, helm and the contour ingress configuration.
 
+**DANGER:** the config based on RHEL9 / AlmaLinux / RockyLinux is battle tested. The config for Debian 12 is more in a pre beta state. Debian is not very container-friendly, ...
+
 ## Components
 
-- Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 minimal installation
+- Base OS: 
+  - AlmaLinux / RockyLinux / RHEL / CentOS 9 minimal installation
+  - Debian 12
 - cri-o as container runtime
-- kubernetes 1.29.3
+- kubernetes 1.31.2
 - k8s contour-ingress with cert-manager
 - haproxy for API and dashboard
 - helm 3

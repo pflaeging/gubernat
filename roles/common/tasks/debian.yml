@@ -1,0 +1,78 @@
+- name: Bring system to newest software level
+  ansible.builtin.apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+
+- name: Install network-manager
+  ansible.builtin.apt:
+    name:
+      - network-manager
+      - dnsmasq
+    state: present
+
+- name: Remove classic network management things /etc/network
+  ansible.builtin.file:
+    state: absent
+    path: /etc/network
+
+- name: Disable dnsmasq daemon (managed by NetworkManager)
+  ansible.builtin.systemd:
+    name: dnsmasq
+    enabled: false
+    state: stopped
+
+- name: Save original nameservers for dnsmasq
+  ansible.builtin.copy:
+    src: /etc/resolv.conf
+    dest: /etc/resolv.dnsmasq
+    remote_src: yes
+    force: false
+
+- name: DNS listen on Network interface
+  ansible.builtin.template:
+    src: 20-upstream.conf.j2
+    dest: /etc/NetworkManager/dnsmasq.d/20-upstream.conf
+  register: forwarder
+
+- name: Restart network-manager
+  ansible.builtin.systemd:
+    name: NetworkManager
+    state: restarted
+
+- name: Copy cri-o repo definitions in place
+  ansible.builtin.template:
+    src: cri-o.list.j2
+    dest: /etc/apt/sources.list.d/cri-o.list
+
+- name: Copy kubernetes repo definitions in place
+  ansible.builtin.template:
+    src: kubernetes.list.j2
+    dest: /etc/apt/sources.list.d/kubernetes.list
+
+- name: Get cri-o apt-release key
+  ansible.builtin.get_url:
+    url: "https://pkgs.k8s.io/addons:/cri-o:/stable:/v{{ k8s_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/deb/Release.key"
+    dest: /etc/apt/keyrings/cri-o-apt-keyring.asc
+
+- name: Get kubernetes apt-release key
+  ansible.builtin.get_url:
+    url: "https://pkgs.k8s.io/core:/stable:/v{{ k8s_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}//deb/Release.key"
+    dest: /etc/apt/keyrings/kubernetes-apt-keyring.asc
+
+- name: Install needed -> firewalld, chrony, open-vm-tools, tar
+  ansible.builtin.apt:
+    name:
+      - firewalld
+      - chrony
+      - open-vm-tools
+      - tar
+      - whois # includes mkpasswd
+      - socat
+      - conntrack
+      - policycoreutils-python-utils
+      - golang-github-opencontainers-selinux-dev
+      - containernetworking-plugins
+      - git
+    state: present
+    update_cache: yes

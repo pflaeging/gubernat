@@ -4,7 +4,9 @@
 # g8s-haproxy.pfpk.lan ansible_host=192.168.50.111
 
 [master]
-frapp.pfpk.lan ansible_host=192.168.64.104
+#frapp.pfpk.lan ansible_host=192.168.64.104
+# nain.pfpk.pro ansible_host=194.59.204.234
+debian-develop ansible_host=192.168.64.93
 # g8s-m2.pfpk.lan ansible_host=192.168.64.151
 # g8s-m3.pfpk.lan ansible_host=192.168.64.156
 

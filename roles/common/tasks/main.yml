@@ -7,6 +7,10 @@
   ansible.builtin.include_tasks: redhat.yml
   when: ansible_facts['os_family'] == "RedHat"
 
+- name: Install for Debian based systems
+  ansible.builtin.include_tasks: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+
 - name: enable open-vm-tools
   ansible.builtin.systemd:
     name: vmtoolsd

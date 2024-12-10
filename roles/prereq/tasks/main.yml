@@ -50,7 +50,7 @@
   ansible.builtin.package:
     name:
       - cri-o-{{ k8s_version }}
-      - kubelet-{{ k8s_version }} 
+      - kubelet-{{ k8s_version }}
       - kubeadm-{{ k8s_version }}
       - kubectl-{{ k8s_version }}
     disable_excludes: all
