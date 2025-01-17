@@ -13,3 +13,11 @@
   ansible.builtin.shell:
     cmd: "cd {{ config_dir }}; ssh-keygen -t ed25519 -f root-ssh-key -C \"root key for {{ clustername }}\" -q -N \"\" "
     creates: "{{ config_dir }}/root-ssh-key"
+  delegate_to: localhost
+
+- name: Generate shell script to copy ssh key to all machines
+  ansible.builtin.template:
+    src: roles/initialsetup/templates/ssh-copy-id-to-all-hosts.sh.j2
+    dest: ../ssh-copy-id-to-all-host.sh
+    mode: '0755'
+  delegate_to: localhost

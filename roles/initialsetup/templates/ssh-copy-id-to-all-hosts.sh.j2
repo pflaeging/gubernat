@@ -1,0 +1,15 @@
+#!/bin/sh
+
+{% for name in groups.loadbalancer %}
+echo "copy ssh key to {{ name }}" 
+ssh-copy-id -i ./config:{{ clustername }}/root-ssh-key root@{{ hostvars[name].ansible_host }} 2> /dev/null
+{% endfor %}
+{% for name in groups.master %}
+echo "copy ssh key to {{ name }}" 
+ssh-copy-id -i ./config:{{ clustername }}/root-ssh-key root@{{ hostvars[name].ansible_host }} 2> /dev/null
+{% endfor %}
+{% for name in groups.worker %}
+echo "copy ssh key to {{ name }}" 
+ssh-copy-id -i ./config:{{ clustername }}/root-ssh-key root@{{ hostvars[name].ansible_host }} 2> /dev/null
+{% endfor %}
+exit 0
