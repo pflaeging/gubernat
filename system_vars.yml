@@ -4,3 +4,4 @@ lb_api_port: 7443
 api_port: 6443
 ansible_user: root
 use_private_certs: true
+ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"

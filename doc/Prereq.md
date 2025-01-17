@@ -19,3 +19,6 @@ What do you need for your kubernetes installation?
     dnf install -y ansible --enablerepo=epel
     dnf install -y git
     ```
+
+- 1 or 3+ cluster machines. The first machine can also double as management node.  
+  Set them up like described in [System](./System.md).

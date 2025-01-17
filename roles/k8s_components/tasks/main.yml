@@ -35,18 +35,9 @@
   ansible.builtin.include_tasks: customer-config.yml
   when: inventory_hostname in groups["master"]
 
-- name: Get components
-  ansible.builtin.find:
-    paths: components
-    recurse: no
-    file_type: directory
-    excludes: "*.disabled"
-  delegate_to: localhost
-  register: components_list
-
 - name: Execute subtask for components
   ansible.builtin.include_tasks: components.yml
-  loop: "{{ components_list.files }}"
+  loop: "{{ components }}"
   loop_control:
     loop_var: component
   when: inventory_hostname in groups["master"]

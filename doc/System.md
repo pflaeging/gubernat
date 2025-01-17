@@ -7,12 +7,68 @@ on all machines for the cluster:
 - install Linux as minimal image (no additional packages except ssh server)
 - be sure you have access to the machines root accounts via ssh
 
-Make a note of all IP addresses and prepare the ssh access to all nodes:
+## Config
 
-From th host you want to install (a machine with ansible installed):
+Make a note of all IP addresses and create an `inventory.yaml` file:
 
-- `ssh-copy-id root@almalinuxnode.my.net`
-- and then test with `ssh root@almalinuxnode.my.net`
+```yaml
+# master nodes (define 1 or 3 with ip-address in ansible_host)
+master:
+  hosts:
+    first.my.net:
+      ansible_host: 10.27.28.29
+    second.my.net:
+      ansible_host: 10.28.29.30
+    third.my.net:
+      ansible_host: 10.29.28.27
+# all machines more than 3 are workers
+worker:
+  hosts:
+    w1.my.net:
+      ansible_host: 10.27.28.30
+# there are use cases for dedicated loadbalancers.
+# If there are no loadbalancers, all other machines are loadbalancers
+loadbalancer:
+  hosts:
+    # lb.my.net:
+    #   ansible_host: 10.99.99.10
+# here are coming some global variables
+all:
+  vars:
+    # give your cluster a name
+    clustername: my-k8s-cluster
+    # which components do we roll out.
+    # You find the avialable components in the ./components directory
+    #     in the gubernat repo
+    components:
+      - cert-manager
+      - contour
+      - httpbin
+      - kubernetes-dashboard
+      - local-storage
+      - metrics-server
+      - opentelemetry
+      - prometheus
+    # only development clusters can be reseted
+    development_cluster: true
+    # the internal ip address range for pods
+    k8s_cidr: 10.85.0.0/16
+    # the internal ip address range for services
+    k8s_svc_cidr: 10.86.0.0/16
+    # which kubernetes and cri-o version do we roll out?
+    k8s_version: 1.31.3
+    # we need at least two ntp servers
+    ntp_servers:
+    - ts1.aco.net
+    - europe.pool.ntp.org
+```
 
-Now you're ready for cluster deployment ;-)
+## Rollout
 
+- Generate a root ssh key for rollout:  
+  `ansible-playbook -i inventory.yaml ./gubernat/initial-setup.yml`
+- The command generates a script which installs the ssh keys. You have to enter the root password of the machines if there are no trusts in place:  
+  `./ssh-copy-id-to-all-host.sh`  
+  (you can delete this script after successful execution)
+- Now it's time to roll out the cluster with all configured components:  
+  `ansible-playbook -i inventory.yaml ./gubernat/site.yml`
