@@ -1,0 +1,15 @@
+- name: Define config directory for cluster
+  ansible.builtin.set_fact:
+    config_dir: "../config:{{ clustername }}"
+
+- name: Make directory for secrets of cluster {{ config_dir }}
+  ansible.builtin.file:
+    path: "../config:{{ clustername }}"
+    state: directory
+    mode: u+rwx,g-rwx,o-rwx
+  delegate_to: localhost
+
+- name: Generate root ssh key for cluster
+  ansible.builtin.shell:
+    cmd: "cd {{ config_dir }}; ssh-keygen -t ed25519 -f root-ssh-key -C \"root key for {{ clustername }}\" -q -N \"\" "
+    creates: "{{ config_dir }}/root-ssh-key"
