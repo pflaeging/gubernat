@@ -11,7 +11,8 @@
     ```shell
     # You can get the admin login for the cluster with the script ./get-kubernetes-admin-token.sh
     kubectl port-forward -n monitoring svc/g8s-prometheus-server 8888:80
-    ```  
+    ```
+
     Then open <http://localhost:8888> in your browser.
 
 ## Tools on the master machines

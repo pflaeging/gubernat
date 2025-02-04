@@ -8,12 +8,18 @@ Gubernat means steer (latin).
 
 Gubernat is an approach to establish a production ready kubernetes cluster.
 
-The main goal in creating gubernat was: replace docker-compose in a portable open and
-upgradable way that is compatible with standard kubernetes configs and maintains a small footprint.
+The main goal in creating gubernat is:
 
-It will run on a single server, a small 3 node cluster and also a later 100 node cluster.
+- create a one or multi-node kubernetes cluster which is:
+  - highly customizable
+  - easy to understand
+  - as near as possible to the upstream k8s
+  - incorporate stable components preferable from CNCF projects
 
-So we created a simple installation procedure for kubernetes 1.27+, cilium as networking layer, the kubernetes-dashboard, helm and the contour ingress configuration.
+
+It will run on a single server, a small 3 node cluster and also a larger 100 node cluster.
+
+So we created a simple installation procedure for kubernetes 1.28+, cilium as networking layer, the kubernetes-dashboard, helm and the contour ingress configuration.
 
 ## Components
 
@@ -30,13 +36,7 @@ So we created a simple installation procedure for kubernetes 1.27+, cilium as ne
 
 ## Installation
 
-- Base installation of Alma/Rocke/RHEL 9 minimal
-- Set the root ssh trusts between the cluster members
-- Copy inventory.example to inventory and edit it
-- run `ansible-playbook -i inventory site.yml`
-- Ready!
-
-If you only want to rollout a new version of your components, just try `ansible-playbook -i inventory components.yml`.
+Look in the [documentation](./doc/Readme.md) (folder ./doc)
 
 ## Accessing the Dashboard
 
