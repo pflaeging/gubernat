@@ -1,4 +1,5 @@
 .vscode/
+.ansible/
 httpbin/kustomization.yaml
 /private-install/
 /ansible/backups/*
