@@ -36,8 +36,6 @@ spec:
           name: data
           subPath: config.yaml
           readOnly: true
-        - mountPath: /etc/ssl/certs/
-          name: cert-volume
       serviceAccount: otel-collector
       terminationGracePeriodSeconds: 30
       volumes:
@@ -47,7 +45,4 @@ spec:
       - name: data
         configMap:
           name: otel-collector-config
-      - name: cert-volume
-        secret:
-          secretName: splunk-certs-secret
 

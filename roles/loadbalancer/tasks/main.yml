@@ -25,40 +25,42 @@
   register: result
 
 - name: Setup Firewall (open haproxy status on port 9000)
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --add-port=9000/tcp --zone public"
-
-- name: Setup Firewall (open https service for contour ingress)
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --add-port=443/tcp --zone public"
-
-- name: Setup Firewall (open http service for contour ingress)
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --add-port=80/tcp --zone public"
+  ansible.posix.firewalld:
+    port: "9000/tcp"
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
 
 - name: Setup Firewall (open api port {{ lb_api_port }})
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --add-port={{ lb_api_port }}/tcp --zone public"
+  ansible.posix.firewalld:
+    port: "{{ lb_api_port }}/tcp"
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
 
 - name: Setup Firewall (open gateway ports from services_vars.yaml )
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --add-port={{ item.Gateway }}/tcp --zone public"
+  ansible.posix.firewalld:
+    port: "{{ item.Gateway }}/tcp"
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
   with_items: "{{ firewall_ports }}"
 
-- name: Reload Firewall
-  ansible.builtin.command:
-    cmd: "firewall-cmd --reload"
-
 - name: Set haproxy selinux
-  ansible.builtin.command:
-    cmd: "setsebool -P haproxy_connect_any 1"
+  ansible.posix.seboolean:
+    name: haproxy_connect_any
+    state: true
+    persistent: true
 
 - name: Service haproxy should be started
   ansible.builtin.systemd:
     name: haproxy
     state: started
     enabled: true
-    masked: no
+    masked: false
 
 - name: Reload haproxy, if changed config
   ansible.builtin.systemd:

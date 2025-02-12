@@ -10,13 +10,30 @@
         {%- endfor %}
         {{ res }}
 
-- name: Setup Firewall (add masquerade)
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --add-masquerade --zone public"
+- name: Setup Firewall (open api port 6443)
+  ansible.posix.firewalld:
+    port: "6443/tcp"
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
 
-- name: Reload Firewall
-  ansible.builtin.command:
-    cmd: "firewall-cmd --reload"
+# if we want to expose the nodeports outside (enable this with care!)
+# - name: Setup Firewall (open nodeport range)
+#   ansible.posix.firewalld:
+#     port: "30000-32767/tcp"
+#     zone: public
+#     state: enabled
+#     permanent: true
+#     immediate: true
+
+- name: Enable masquerade on public firewalld zone
+  ansible.posix.firewalld:
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
+    masquerade: true
 
 - name: Copy modules definitions to /etc/modules-load.d
   ansible.builtin.copy:
@@ -78,13 +95,15 @@
     group: root
     mode: 0o755
 
-- name: Add the overlay kernel module
-  ansible.builtin.command:
-    cmd: "modprobe overlay"
-  
-- name: Add the br_netfilter kernel module
-  ansible.builtin.command:
-    cmd: "modprobe br_netfilter"
+- name: Add the overlay module
+  community.general.modprobe:
+    name: overlay
+    state: present
+
+- name: Add the br_netfilter module
+  community.general.modprobe:
+    name: br_netfilter
+    state: present
 
 - name: Create a directory for crio (/var/lib/crio)
   ansible.builtin.file:

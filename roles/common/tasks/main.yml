@@ -52,14 +52,14 @@
     line: "{{ hostvars[item].ansible_host }} {{ item }} {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}"
     state: present
   with_items: "{{ groups.all }}"
-  register: hosts
+  register: hostsfile
 
 - name: Ensure hostname is in /etc/hosts
   ansible.builtin.lineinfile:
     dest: /etc/hosts
     regexp: "^{{ ansible_default_ipv4.address }}.+$"
     line: "{{ ansible_default_ipv4.address }} {{ ansible_fqdn }} {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}"
-  when: hosts is changed
+  when: hostsfile is changed
 
 - name: DNS listen on Network interface
   ansible.builtin.template:
@@ -92,34 +92,65 @@
     masked: false
 
 - name: Make a new trusted firewall zone between nodes (000-kubernetes)
-  ansible.builtin.command:
-    cmd: firewall-cmd --permanent --new-zone 000-kubernetes
-  ignore_errors: true
-  register: new_firewall_zone
+  ansible.posix.firewalld:
+    zone: 000-kubernetes
+    state: present
+    permanent: true
 
 - name: Set zone 000-kubernetes to open
-  ansible.builtin.command:
-    cmd: firewall-cmd --permanent --set-target=ACCEPT --zone=000-kubernetes
-  ignore_errors: true
+  ansible.posix.firewalld:
+    zone: 000-kubernetes
+    state: enabled
+    permanent: true
+    target: ACCEPT
+
+- name: Reload firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    state: reloaded
 
 - name: Enable masquerade on 000-kubernetes
-  ansible.builtin.command:
-    cmd: firewall-cmd --permanent --add-masquerade --zone=000-kubernetes
+  ansible.posix.firewalld:
+    zone: 000-kubernetes
+    state: enabled
+    permanent: true
+    immediate: true
+    masquerade: true
+
+- name: Setup Firewall (delete) hosts from trusted zone)
+  ansible.posix.firewalld:
+    source: "{{ hostvars[item].ansible_host }}/32"
+    zone: trusted
+    state: disabled
+    permanent: true
+    immediate: true
+  with_items: "{{ groups.all }}"
   ignore_errors: true
 
 - name: Setup Firewall (add hosts to zone)
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --zone=000-kubernetes --add-source={{ hostvars[item].ansible_host }}/32"
+  ansible.posix.firewalld:
+    source: "{{ hostvars[item].ansible_host }}/32"
+    zone: 000-kubernetes
+    state: enabled
+    permanent: true
+    immediate: true
   with_items: "{{ groups.all }}"
 
-- name: Add kubernetes IP ranges from k8s_cidr and k8s_svc_cidr definitions to trusted zones (cilium specific?)
-  ansible.builtin.command:
-    cmd: "firewall-cmd --permanent --zone=000-kubernetes --add-source={{ k8s_cidr }} --add-source={{ k8s_svc_cidr }}"
-  with_items: "{{ groups.all }}"
+- name: Add kubernetes IP ranges from k8s_cidr definitions to trusted zones (cilium specific?)
+  ansible.posix.firewalld:
+    source: "{{ k8s_cidr }}"
+    zone: 000-kubernetes
+    state: enabled
+    permanent: true
+    immediate: true
 
-- name: Reload Firewall
-  ansible.builtin.command:
-    cmd: "firewall-cmd --reload"
+- name: Add kubernetes IP ranges from k8s_svc_cidr definitions to trusted zones (cilium specific?)
+  ansible.posix.firewalld:
+    source: "{{ k8s_svc_cidr }}"
+    zone: 000-kubernetes
+    state: enabled
+    permanent: true
+    immediate: true
 
 - name: Deploy chrony.conf template
   ansible.builtin.template:
