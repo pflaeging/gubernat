@@ -36,7 +36,9 @@ So we created a simple installation procedure for kubernetes 1.28+, cilium as ne
 
 ## Installation
 
-Look in the [documentation](./doc/Readme.md) (folder ./doc)
+Look in the [documentation](./doc/Readme.md) (folder ./doc).
+
+Also take a look in the directory `./cluster-template` to find a small hint for a git-ops based example.
 
 ## Accessing the Dashboard
 

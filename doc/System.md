@@ -68,7 +68,6 @@ all:
 - Generate a root ssh key for rollout:  
   `ansible-playbook -i inventory.yaml ./gubernat/initial-setup.yml`
 - The command generates a script which installs the ssh keys. You have to enter the root password of the machines if there are no trusts in place:  
-  `./ssh-copy-id-to-all-host.sh`  
-  (you can delete this script after successful execution)
+  `./config:CLUSTERNAME/ssh-copy-id-to-all-host.sh`
 - Now it's time to roll out the cluster with all configured components:  
   `ansible-playbook -i inventory.yaml ./gubernat/site.yml`

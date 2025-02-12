@@ -18,6 +18,6 @@
 - name: Generate shell script to copy ssh key to all machines
   ansible.builtin.template:
     src: roles/initialsetup/templates/ssh-copy-id-to-all-hosts.sh.j2
-    dest: ../ssh-copy-id-to-all-host.sh
+    dest: "{{ config_dir }}/ssh-copy-id-to-all-host.sh"
     mode: '0755'
   delegate_to: localhost
