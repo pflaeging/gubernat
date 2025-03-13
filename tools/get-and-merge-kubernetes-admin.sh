@@ -9,9 +9,14 @@ fi
 
 userip=$1
 now=$(date +%Y%m%d-%H-%M-%S%z)
-kubeconfig=$HOME/.kube/config
 newconf=$(mktemp)
 tempstore=$(mktemp)
+if [ -z ${KUBECONFIG+x} ]; then
+  kubeconfig=$HOME/.kube/config
+else
+  kubeconfig=$KUBECONFIG
+fi
+
 
 # get cluster name
 clustername=$(ssh $userip k config view -o jsonpath='{.clusters[0].name}')

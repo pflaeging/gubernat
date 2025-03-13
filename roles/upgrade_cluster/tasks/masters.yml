@@ -1,0 +1,9 @@
+- name: Start common prereq for update
+  ansible.builtin.include_tasks: common_before.yml
+
+- name: Update other masters
+  ansible.builtin.command:
+    cmd: kubeadm upgrade node
+
+- name: Start common after jobs for update
+  ansible.builtin.include_tasks: common_after.yml

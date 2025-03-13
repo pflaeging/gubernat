@@ -1,0 +1,4 @@
+
+- name: Restart cilium pods
+  ansible.builtin.command:
+    cmd: "kubectl rollout restart daemonset/cilium -n kube-system"

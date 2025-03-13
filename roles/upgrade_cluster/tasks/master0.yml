@@ -1,0 +1,9 @@
+- name: Start common prereq for update
+  ansible.builtin.include_tasks: common_before.yml
+
+- name: Update first master to {{ k8s_version }}
+  ansible.builtin.command:
+    cmd: kubeadm upgrade apply v{{ k8s_version }} --yes
+
+- name: Start common after jobs for update
+  ansible.builtin.include_tasks: common_after.yml
