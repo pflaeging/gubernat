@@ -20,6 +20,7 @@ loadbalancer:
   # here are coming some global variables
 all:
   vars:
+    ansible_user: root
     # give your cluster a name
     clustername: g8s-m-cluster
     # which components do we roll out.
