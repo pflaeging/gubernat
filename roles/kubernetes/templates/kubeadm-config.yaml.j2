@@ -3,6 +3,9 @@ apiVersion: kubeadm.k8s.io/v1beta3
 ---
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
+{% if repo_mirror is defined %}
+imageRepository: {{ repo_mirror }}/registry.k8s.io
+{% endif %}
 kubernetesVersion: {{ k8s_version }}
 clusterName: {{ clustername | default('kubernetes') }}
 controlPlaneEndpoint: {{ control_plane|trim }}

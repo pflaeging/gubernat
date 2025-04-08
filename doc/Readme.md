@@ -3,4 +3,5 @@
 - [Prerequisites for install](./Prereq.md)
 - [System installation](./System.md)
 - [Usage tipps and components](./Usage.md)
-- [Optional Proxmox help](./Proxmox.md)
+- [Optional: disconnected usage (cluster is not internet connected)](./DisconnectedCluster.md)
+- [Optional: Proxmox help](./Proxmox.md)

@@ -3,19 +3,16 @@
     path: /etc/yum.repos.d/libcontainers.repo
     state: absent
   ignore_errors: true
-  when: not k8s_mirror is defined
 
 - name: Copy cri-o repo definitions in place
   ansible.builtin.template:
     src: roles/upgrade_cluster/templates/crio.repo.j2
     dest: /etc/yum.repos.d/crio.repo
-  when: not k8s_mirror is defined
 
 - name: Copy kubernetes repo definitions in place
   ansible.builtin.template:
     src: roles/upgrade_cluster/templates/kubernetes.repo.j2
     dest: /etc/yum.repos.d/kubernetes.repo
-  when: not k8s_mirror is defined
 
 - name: "Install or check for existence of some required tools"
   ansible.builtin.yum:
