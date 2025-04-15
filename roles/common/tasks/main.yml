@@ -199,3 +199,14 @@
   ansible.builtin.user:
     name: setup
     comment: Kubernetes Setup User
+
+- name: Ensure that SeLinux is enabled
+  ansible.posix.selinux:
+    policy: targeted
+    state: enforcing
+    update_kernel_param: true
+  register: selinux
+
+- name: Reboot 
+  ansible.builtin.reboot:
+  when: selinux is changed 
