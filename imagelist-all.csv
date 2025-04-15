@@ -5,9 +5,12 @@ registry.k8s.io/kube-proxy:v1.31.7,__REPOMIRROR__/registry.k8s.io/kube-proxy:v1.
 registry.k8s.io/coredns/coredns:v1.11.3,__REPOMIRROR__/registry.k8s.io/coredns/coredns:v1.11.3
 registry.k8s.io/pause:3.10,__REPOMIRROR__/registry.k8s.io/pause:3.10
 registry.k8s.io/coredns/coredns:v1.11.3,__REPOMIRROR__/registry.k8s.io/coredns:v1.11.3
-registry.k8s.io/etcd:3.5.15-0,__REPOMIRROR__/registry.k8s.io/etcd:3.5.15-0quay.io/jetstack/cert-manager-controller:v1.14.4,__REPOMIRROR__/quay.io/jetstack/cert-manager-controller:v1.14.4
+registry.k8s.io/etcd:3.5.15-0,__REPOMIRROR__/registry.k8s.io/etcd:3.5.15-0
+quay.io/jetstack/cert-manager-controller:v1.14.4,__REPOMIRROR__/quay.io/jetstack/cert-manager-controller:v1.14.4
 quay.io/jetstack/cert-manager-cainjector:v1.14.4,__REPOMIRROR__/quay.io/jetstack/cert-manager-cainjector:v1.14.4
 quay.io/jetstack/cert-manager-webhook:v1.14.4,__REPOMIRROR__/quay.io/jetstack/cert-manager-webhook:v1.14.4
+quay.io/jetstack/cert-manager-package-debian:20210119.0,__REPOMIRROR__/quay.io/jetstack/cert-manager-package-debian:20210119.0
+quay.io/jetstack/trust-manager:v0.11.1,__REPOMIRROR__/quay.io/jetstack/trust-manager:v0.11.1
 ghcr.io/projectcontour/contour:v1.28.3,__REPOMIRROR__/ghcr.io/projectcontour/contour:v1.28.3
 ghcr.io/projectcontour/contour:v1.28.3,__REPOMIRROR__/ghcr.io/projectcontour/contour:v1.28.3
 docker.io/envoyproxy/envoy:v1.29.3,__REPOMIRROR__/docker.io/envoyproxy/envoy:v1.29.3
@@ -31,3 +34,5 @@ quay.io/prometheus-operator/prometheus-config-reloader:v0.67.0,__REPOMIRROR__/qu
 quay.io/prometheus/prometheus:v2.47.0,__REPOMIRROR__/quay.io/prometheus/prometheus:v2.47.0
 quay.io/prometheus/alertmanager:v0.26.0,__REPOMIRROR__/quay.io/prometheus/alertmanager:v0.26.0
 quay.io/prometheus/node-exporter:v1.6.1,__REPOMIRROR__/quay.io/prometheus/node-exporter:v1.6.1
+quay.io/cilium/cilium:v1.17.2,__REPOMIRROR__/quay.io/cilium/cilium:v1.17.2
+quay.io/cilium/operator-generic:v1.17.2,__REPOMIRROR__/quay.io/cilium/operator-generic:v1.17.2
