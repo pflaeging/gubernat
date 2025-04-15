@@ -17,9 +17,9 @@ patches:
         path: /spec/template/spec/containers/0/args/-
         value: --kubelet-insecure-tls
 
-{% if image_mirror is defined %}
+{% if repo_mirror is defined %}
 images:
 - name: registry.k8s.io/metrics-server/metrics-server:v0.7.1
-  newName: {{ image_mirror }}/registry.k8s.io/metrics-server/metrics-server
+  newName: {{ repo_mirror }}/registry.k8s.io/metrics-server/metrics-server
   newTag: v0.7.1
 {% endif %}

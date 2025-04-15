@@ -1,21 +1,21 @@
-{% if image_mirror is defined %}
+{% if repo_mirror is defined %}
 images:
 - name: docker.io/kubernetesui/dashboard-api:1.5.0
-  newName: {{ image_mirror }}/docker.io/kubernetesui/dashboard-api
+  newName: {{ repo_mirror }}/docker.io/kubernetesui/dashboard-api
   newTag: 1.5.0
 - name: docker.io/kubernetesui/dashboard-auth:1.1.3
-  newName: {{ image_mirror }}/docker.io/kubernetesui/dashboard-auth
+  newName: {{ repo_mirror }}/docker.io/kubernetesui/dashboard-auth
   newTag: 1.1.3
 - name: kong:3.6
-  newName: {{ image_mirror }}/docker.io/library/kong
+  newName: {{ repo_mirror }}/docker.io/library/kong
   newTag: 3.6
 - name: kong:3.6
-  newName: {{ image_mirror }}/docker.io/library/kong
+  newName: {{ repo_mirror }}/docker.io/library/kong
   newTag: 3.6
 - name: docker.io/kubernetesui/dashboard-metrics-scraper:1.1.1
-  newName: {{ image_mirror }}/docker.io/kubernetesui/dashboard-metrics-scraper
+  newName: {{ repo_mirror }}/docker.io/kubernetesui/dashboard-metrics-scraper
   newTag: 1.1.1
 - name: docker.io/kubernetesui/dashboard-web:1.3.0
-  newName: {{ image_mirror }}/docker.io/kubernetesui/dashboard-web
+  newName: {{ repo_mirror }}/docker.io/kubernetesui/dashboard-web
   newTag: 1.3.0
 {% endif %}

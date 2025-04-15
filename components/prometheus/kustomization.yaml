@@ -40,27 +40,27 @@ configMapGenerator:
 generatorOptions:
   disableNameSuffixHash: true
 
-{% if image_mirror is defined %}
+{% if repo_mirror is defined %}
 images:
 - name: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.10.0
-  newName: {{ image_mirror }}/registry.k8s.io/kube-state-metrics/kube-state-metrics
+  newName: {{ repo_mirror }}/registry.k8s.io/kube-state-metrics/kube-state-metrics
   newTag: v2.10.0
 - name: quay.io/prometheus/blackbox-exporter:v0.24.0
-  newName: {{ image_mirror }}/quay.io/prometheus/blackbox-exporter
+  newName: {{ repo_mirror }}/quay.io/prometheus/blackbox-exporter
   newTag: v0.24.0
 - name: quay.io/prometheus/pushgateway:v1.6.0
-  newName: {{ image_mirror }}/quay.io/prometheus/pushgateway
+  newName: {{ repo_mirror }}/quay.io/prometheus/pushgateway
   newTag: v1.6.0
 - name: quay.io/prometheus-operator/prometheus-config-reloader:v0.67.0
-  newName: {{ image_mirror }}/quay.io/prometheus-operator/prometheus-config-reloader
+  newName: {{ repo_mirror }}/quay.io/prometheus-operator/prometheus-config-reloader
   newTag: v0.67.0
 - name: quay.io/prometheus/prometheus:v2.47.0
-  newName: {{ image_mirror }}/quay.io/prometheus/prometheus
+  newName: {{ repo_mirror }}/quay.io/prometheus/prometheus
   newTag: v2.47.0
 - name: quay.io/prometheus/alertmanager:v0.26.0
-  newName: {{ image_mirror }}/quay.io/prometheus/alertmanager
+  newName: {{ repo_mirror }}/quay.io/prometheus/alertmanager
   newTag: v0.26.0
 - name: quay.io/prometheus/node-exporter:v1.6.1
-  newName: {{ image_mirror }}/quay.io/prometheus/node-exporter
+  newName: {{ repo_mirror }}/quay.io/prometheus/node-exporter
   newTag: v1.6.1
 {% endif %}
