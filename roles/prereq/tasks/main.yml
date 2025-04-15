@@ -111,6 +111,14 @@
     state: directory
     mode: '0755'
 
+- name: Crio Image Conf
+  ansible.builtin.template:
+    src: 01-crio-image.conf.j2
+    dest: /etc/crio/crio.conf.d/01-crio-image.conf
+    owner: root
+    group: root
+  when: repo_mirror is defined
+
 - name: Enable crio
   ansible.builtin.systemd:
     name: crio
