@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - cert-manager.yaml
+- trustmanager.yaml
 
 {% if repo_mirror is defined %}
 images:
@@ -15,4 +16,10 @@ images:
 - name: quay.io/jetstack/cert-manager-webhook:v1.14.4
   newName: {{ repo_mirror }}/quay.io/jetstack/cert-manager-webhook
   newTag: v1.14.4
+- name: quay.io/jetstack/cert-manager-package-debian:20210119.0
+  newName: {{ repo_mirror }}/quay.io/jetstack/cert-manager-package-debian
+  newTag: 20210119.0
+- name: quay.io/jetstack/trust-manager:v0.11.1
+  newName: {{ repo_mirror }}/quay.io/jetstack/trust-manager
+  newTag: "v0.11.1"
 {% endif %}
