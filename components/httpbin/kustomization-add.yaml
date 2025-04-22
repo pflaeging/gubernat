@@ -1,6 +1,6 @@
 {% if repo_mirror is defined %}
 images:
-- name: docker.io/kennethreitz/httpbin
-  newName: {{ repo_mirror }}/docker.io/kennethreitz/httpbin
-  newTag: latest
+- name: ghcr.io/psf/httpbin
+  newName: {{ repo_mirror }}/ghcr.io/psf/httpbin
+  newTag: 0.10.2
 {% endif %}

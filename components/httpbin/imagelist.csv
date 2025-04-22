@@ -1,1 +1,1 @@
-docker.io/kennethreitz/httpbin:latest,__REPOMIRROR__/docker.io/kennethreitz/httpbin:latest
+ghcr.io/psf/httpbin:0.10.2,__REPOMIRROR__/ghcr.io/psf/httpbin:0.10.2
