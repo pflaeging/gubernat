@@ -7,21 +7,21 @@ resources:
 patches:
 - path: service-patch.yaml
 
-{% if image_mirror is defined %}
+{% if repo_mirror is defined %}
 images:
 - name: ghcr.io/projectcontour/contour:v1.28.3
-  newName: {{ image_mirror }}/ghcr.io/projectcontour/contour
+  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
   newTag: v1.28.3
 - name: ghcr.io/projectcontour/contour:v1.28.3
-  newName: {{ image_mirror }}/ghcr.io/projectcontour/contour
+  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
   newTag: v1.28.3
 - name: docker.io/envoyproxy/envoy:v1.29.3
-  newName: {{ image_mirror }}/docker.io/envoyproxy/envoy
+  newName: {{ repo_mirror }}/docker.io/envoyproxy/envoy
   newTag: v1.29.3
 - name: ghcr.io/projectcontour/contour:v1.28.3
-  newName: {{ image_mirror }}/ghcr.io/projectcontour/contour
+  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
   newTag: v1.28.3
 - name: ghcr.io/projectcontour/contour:v1.28.3
-  newName: {{ image_mirror }}/ghcr.io/projectcontour/contour
+  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
   newTag: v1.28.3
 {% endif %}

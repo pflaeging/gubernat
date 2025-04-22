@@ -1,6 +1,6 @@
-{% if image_mirror is defined %}
+{% if repo_mirror is defined %}
 images:
 - name: otel/opentelemetry-collector-contrib:0.51.0
-  newName: {{ image_mirror }}/docker.io/otel/opentelemetry-collector-contrib
-  newTag: 0.51.0
+  newName: {{ repo_mirror }}/docker.io/otel/opentelemetry-collector-contrib
+  newTag: "0.51.0"
 {% endif %}

@@ -63,10 +63,10 @@
     swapoff -a
   when: swap_disabled is changed
 
-- name: "Install crio, kubernetes-{{ k8s_version }} and other tools"
+- name: "Install crio-{{ crio_version }}, kubernetes-{{ k8s_version }} and other tools"
   ansible.builtin.dnf:
     name:
-      - cri-o-{{ k8s_version }}
+      - cri-o-{{ crio_version }}
       - socat
       - conntrack-tools
       - policycoreutils-python-utils
@@ -110,6 +110,14 @@
     path: /var/lib/crio
     state: directory
     mode: '0755'
+
+- name: Crio Image Conf
+  ansible.builtin.template:
+    src: 01-crio-image.conf.j2
+    dest: /etc/crio/crio.conf.d/01-crio-image.conf
+    owner: root
+    group: root
+  when: repo_mirror is defined
 
 - name: Enable crio
   ansible.builtin.systemd:

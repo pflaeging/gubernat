@@ -18,7 +18,7 @@ for imageStrings in os.popen(kubectlCmd + directory).read().split('\n'):
 imageListFile = open(imageList, mode='w')
 kustomizeAddFile = open(kustomizeAdd, mode='w')
 
-print('{% if image_mirror is defined %}\nimages:', file=kustomizeAddFile)
+print('{% if repo_mirror is defined %}\nimages:', file=kustomizeAddFile)
 
 for i in images:
     # make additional kustomization.yaml definitions
@@ -41,7 +41,7 @@ for i in images:
         else:
             ima = i
             outTag = "  newTag: latest"
-    print("  newName: {{ image_mirror }}/%s" % (ima), file=kustomizeAddFile)
+    print("  newName: {{ repo_mirror }}/%s" % (ima), file=kustomizeAddFile)
     print(outTag, file=kustomizeAddFile)
     if ima == i:
         i = ima + ':latest'

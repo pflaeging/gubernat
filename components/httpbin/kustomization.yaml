@@ -10,9 +10,9 @@ resources:
 - ingress.yaml
 - svc.yaml
 
-{% if image_mirror is defined %}
+{% if repo_mirror is defined %}
 images:
 - name: docker.io/kennethreitz/httpbin
-  newName: {{ image_mirror }}/docker.io/kennethreitz/httpbin
+  newName: {{ repo_mirror }}/docker.io/kennethreitz/httpbin
   newTag: latest
 {% endif %}

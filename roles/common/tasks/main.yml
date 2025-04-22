@@ -185,17 +185,45 @@
     src: kubernetes.repo.j2
     dest: /etc/yum.repos.d/kubernetes.repo
 
-- name: Copy cilium installer and execute shell script for installation
-  ansible.builtin.script: roles/common/files/cilium-install.sh
-  args:
-    creates: /usr/local/bin/cilium
-
-- name: Copy helm installer and execute shell script for installation
-  ansible.builtin.script: roles/common/files/helm-install.sh
-  args:
-    creates: /usr/local/bin/helm
+- name: Install Cilium
+  block:
+    - name: Copy cilium installer and execute shell script for installation
+      ansible.builtin.script: roles/common/files/cilium-install.sh
+      args:
+        creates: /usr/local/bin/cilium
+      timeout: 120
+  rescue:
+  - name: Copy cilium
+    ansible.builtin.copy:
+      src: cilium
+      dest: /usr/local/bin/cilium
+      mode: 755
+- name: Install Helm
+  block:
+    - name: Copy helm installer and execute shell script for installation
+      ansible.builtin.script: roles/common/files/helm-install.sh
+      args:
+        creates: /usr/local/bin/helm
+      timeout: 120 
+  rescue:
+  - name: Copy Helm
+    ansible.builtin.copy:
+      src: helm
+      dest: /usr/local/bin/helm
+      mode: 755
 
 - name: Add setup user (password should be set manually!)
   ansible.builtin.user:
     name: setup
     comment: Kubernetes Setup User
+
+- name: Ensure that SeLinux is enabled
+  ansible.posix.selinux:
+    policy: targeted
+    state: enforcing
+    update_kernel_param: true
+  register: selinux
+
+- name: Reboot 
+  ansible.builtin.reboot:
+  when: selinux is changed 

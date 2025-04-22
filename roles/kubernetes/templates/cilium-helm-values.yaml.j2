@@ -10,3 +10,16 @@ autoDirectNodeRoutes: true
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ k8s_cidr }}
+{% if repo_mirror is defined %}
+operator:
+  image:
+    repository: "{{ repo_mirror }}/quay.io/cilium/operator"
+    tag: "v1.17.2"
+    useDigest: false
+    digest: ""
+image:
+  repository: "{{ repo_mirror }}/quay.io/cilium/cilium"
+  tag: "v1.17.2"
+  useDigest: false
+  digest: ""
+{% endif %}
