@@ -36,6 +36,7 @@ all:
       - kubernetes-dashboard
       - local-storage
       - metrics-server
+      - multus
       - opentelemetry
       - prometheus
     # only development clusters can be reseted
