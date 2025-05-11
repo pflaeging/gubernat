@@ -61,6 +61,9 @@ all:
     ntp_servers:
     - ts1.aco.net
     - europe.pool.ntp.org
+    # ansible user
+    ansible_user: root
+    ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"
 ```
 
 ## Rollout
@@ -69,7 +72,7 @@ all:
   `ansible-playbook -i inventory.yaml ./gubernat/initial-setup.yml`
 - The command generates a script which installs the ssh keys. You have to enter the root password of the machines if there are no trusts in place:  
   `./config:CLUSTERNAME/ssh-copy-id-to-all-host.sh`
-- Add the keys to your ssh:  
+- Add the keys to your ssh (only required for actions beside ansible: login, ...):  
 
   ```shell
   # start ssh-agent
