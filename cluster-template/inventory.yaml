@@ -52,3 +52,6 @@ all:
     ntp_servers:
     - ts1.aco.net
     - europe.pool.ntp.org
+    # ansible user
+    ansible_user: root
+    ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"
