@@ -87,6 +87,16 @@
   ansible.builtin.include_tasks: workers.yml
   when: inventory_hostname in groups.worker
 
+- name: Get actual configured API endpoint from cluster
+  ansible.builtin.shell:
+    cmd: "KUBECONFIG=/etc/kubernetes/admin.conf kubectl get cm kubeadm-config -n kube-system -o jsonpath='{.data.ClusterConfiguration}' | grep '^controlPlaneEndpoint:' | cut -d ' ' -f2"
+  register: actual_control_plane
+  delegate_to: "{{ groups.master[0] }}"
+
+- name: Switch to customer managed loadbalancer for API
+  ansible.builtin.include_tasks: patch_lb_endpoint.yml
+  when: control_plane != actual_control_plane.stdout
+
 - name: Wait for cluster to become ready
   ansible.builtin.wait_for:
     timeout: 180

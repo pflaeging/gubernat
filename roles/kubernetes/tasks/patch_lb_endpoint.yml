@@ -1,0 +1,83 @@
+- name: delete old apiserver, ... certs
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - /etc/kubernetes/pki/apiserver.crt
+    - /etc/kubernetes/pki/apiserver.key
+    - /etc/kubernetes/pki/apiserver-kubelet-client.crt
+    - /etc/kubernetes/pki/apiserver-kubelet-client.key
+  when: inventory_hostname in groups["master"]
+
+- name: generate new certs for apiserver on all masters
+  ansible.builtin.shell: |
+    export KUBECONFIG=/etc/kubernetes/admin.conf 
+    kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase certs apiserver
+  register: new_apiserver_cert
+  when: inventory_hostname in groups["master"]
+
+- name: generate new certs for apiserver-kubelet-client on all masters
+  ansible.builtin.shell: |
+    export KUBECONFIG=/etc/kubernetes/admin.conf 
+    kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase certs apiserver-kubelet-client
+  register: new_apiserver_kubelet_client_cert
+  when: inventory_hostname in groups["master"]
+
+- name: Change configs on all hosts (kubelet) to reflect new API
+  ansible.builtin.shell:
+    cmd: "sed -i.bak 's/{{ actual_control_plane.stdout }}/{{ control_plane }}/g' /etc/kubernetes/kubelet.conf"
+
+- name: Change configs on masters to reflect new API
+  ansible.builtin.shell:
+    cmd: "sed -i.bak 's/{{ actual_control_plane.stdout }}/{{ control_plane }}/g' {{ item }}"
+  with_items:
+  - /etc/kubernetes/admin.conf
+  - /root/.kube/config
+  - /home/setup/.kube/config
+  when: inventory_hostname in groups["master"]
+
+- name: Change configs on ELGA masters (/home/brz/.kube/config) for new API
+  ansible.builtin.shell:
+    cmd: "sed -i.bak 's/{{ actual_control_plane.stdout }}/{{ control_plane }}/g' /home/brz/.kube/config"
+  when: ((inventory_hostname in groups["master"]) and (k8s_mirror is defined))
+
+- name: Publish kubeadm changes to cluster
+  ansible.builtin.shell:
+    cmd: "kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase upload-config kubeadm"
+  when: groups.master[0] in inventory_hostname
+
+- name: Publish kube-proxy changes to cluster
+  ansible.builtin.shell:
+    cmd: "kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase addon kube-proxy"
+  when: groups.master[0] in inventory_hostname
+
+- name: Restart apiserver on master0
+  ansible.builtin.shell:
+    cmd: "kubectl get pod -o wide -n kube-system| grep apiserver | awk '{print $1}' | xargs -n 1 kubectl -n kube-system delete pod"
+  when: groups.master[0] in inventory_hostname
+
+- name: Restart kube-proxy daemonset
+  ansible.builtin.shell:
+    cmd: "kubectl -n kube-system rollout restart daemonset kube-proxy"
+  when: groups.master[0] in inventory_hostname
+
+- name: Patch cilium-operator deployment for cilium 1.13 manually (OK for higher versions)
+  ansible.builtin.shell:
+    cmd: "kubectl set env -n kube-system deploy/cilium-operator KUBERNETES_SERVICE_HOST={{ api_host }} KUBERNETES_SERVICE_PORT={{ api_loadbalancer_port|default(lb_api_port,true) }}"
+  when: groups.master[0] in inventory_hostname
+
+- name: Patch cilium daemonset for version 1.13 manually (OK for higher versions)
+  ansible.builtin.shell:
+    cmd: "kubectl set env -n kube-system daemonset/cilium KUBERNETES_SERVICE_HOST={{ api_host }} KUBERNETES_SERVICE_PORT={{ api_loadbalancer_port|default(lb_api_port,true) }}"
+  when: groups.master[0] in inventory_hostname
+
+- name: Upgrade cilium to new setup (works only for 1.15 and higher. Ignore error on lower versions)
+  ansible.builtin.shell:
+    cmd: "cilium upgrade --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml"
+  when: groups.master[0] in inventory_hostname
+  ignore_errors: true
+
+- name: Restart kubelet on all hosts
+  ansible.builtin.systemd:
+    name: kubelet
+    state: restarted
