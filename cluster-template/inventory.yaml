@@ -30,6 +30,9 @@ all:
     #   and if you're not using the loadbalancer host defined here!
     # api_loadbalancer: "agw-loadbalancer.internal.myorg.at" 
     # api_loadbalancer_port: 5443
+    # if cert_manager_admin_mail is defined and we're internet connected we will
+    #   rollout a letsencrypt issuer for cert-manager
+    cert_manager_admin_mail: myuser@my.domain.net
     # which components do we roll out.
     # You find the avialable components in the ./components directory
     #     in the gubernat repo
@@ -43,6 +46,7 @@ all:
       - multus
       - opentelemetry
       - prometheus
+      - trust-manager
     # only development clusters can be reseted
     development_cluster: true
     # the internal ip address range for pods
