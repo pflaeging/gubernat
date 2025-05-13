@@ -98,6 +98,5 @@
   when: control_plane != actual_control_plane.stdout
 
 - name: Wait for cluster to become ready
-  ansible.builtin.wait_for:
-    timeout: 180
-  delegate_to: localhost
+  ansible.builtin.pause:
+    minutes: 3
