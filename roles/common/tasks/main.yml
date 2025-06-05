@@ -67,6 +67,12 @@
     dest: /etc/NetworkManager/dnsmasq.d/15-listen.conf
   register: forwarder
 
+- name: Generate forwarders for NetworkManager
+  ansible.builtin.template:
+    src: 10-forwarder.conf.j2
+    dest: /etc/NetworkManager/dnsmasq.d/10-forwarder.conf
+  register: forwarder
+
 - name: Copy dnsmasq config to NetworkManager
   ansible.builtin.copy:
     src: roles/common/files/NetworkManager/00-dnsmasq.conf
