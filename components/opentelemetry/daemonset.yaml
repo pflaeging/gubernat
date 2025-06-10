@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: otel-collector
-        image: otel/opentelemetry-collector-contrib:0.51.0
+        image: otel/opentelemetry-collector-contrib:0.128.0
         securityContext:
           privileged: true
         resources:

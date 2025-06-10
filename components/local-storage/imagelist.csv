@@ -1,2 +1,2 @@
 docker.io/library/busybox:latest,__REPOMIRROR__/docker.io/library/busybox:latest
-docker.io/rancher/local-path-provisioner:v0.0.26,__REPOMIRROR__/docker.io/rancher/local-path-provisioner:v0.0.26
+docker.io/rancher/local-path-provisioner:v0.0.31,__REPOMIRROR__/docker.io/rancher/local-path-provisioner:v0.0.31

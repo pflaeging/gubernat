@@ -2,7 +2,7 @@
 
 - create a project in your local registry (for example `gubernat-mirror`)
 - set the variable `repo_mirror` in `./inventory.yaml` to this mirror project:  
-  `repo_mirror = registry.my.domain/gubernat-mirror`
+  `repo_mirror: registry.my.domain/gubernat-mirror`
 - on an internet connected host execute the mirror script:  
   `./gubernat/tools/image-mirror.py -v registry.my.domain/gubernat-mirror gubernat/imagelist-all.csv`  
   or generate the list and execute the commands on an internet connected host:  
@@ -13,6 +13,7 @@
 
 - go in every `./components/` subdir and execute:  
   `../../tools/make-image-csv.py`  
+  after deleting the `{% if repo_mirror is defined %}` and `{% endif %}`  
   This creates 2 files: `imagelist.csv` and `kustomization-add.yaml`:  
   add the `kustomization-add.yaml` to the `kustomization.yaml` or change the existing file.
 - generate the core kubernetes components list:  
