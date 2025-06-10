@@ -3,12 +3,12 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: release-name-kong
+  name: kubernetes-dashboard-kong
   namespace: kubernetes-dashboard
   labels:
     app.kubernetes.io/name: kong
     helm.sh/chart: kong-2.46.0
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "kubernetes-dashboard"
     app.kubernetes.io/managed-by: "Helm"
     
     app.kubernetes.io/version: "3.8"
@@ -33,12 +33,12 @@ kind: ServiceAccount
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-api
+  name: kubernetes-dashboard-api
 ---
 # Source: kubernetes-dashboard/templates/rbac/metrics-scraper/serviceaccount.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -60,12 +60,12 @@ kind: ServiceAccount
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-metrics-scraper
+  name: kubernetes-dashboard-metrics-scraper
 ---
 # Source: kubernetes-dashboard/templates/rbac/web/serviceaccount.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -87,12 +87,12 @@ kind: ServiceAccount
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-web
+  name: kubernetes-dashboard-web
 ---
 # Source: kubernetes-dashboard/templates/secrets/csrf.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -114,14 +114,14 @@ kind: Secret
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-csrf
+  name: kubernetes-dashboard-csrf
 data:
-  private.key: "QUFoZ0p4SFNHWEczV1cyOE5ldDNyaUk0TkV2cURnY1czcVNheFNib21aZmVmUENva3VKWTNQODdhcG5pc0R2QUtJaDNqS1VwNVEvK3JXOFVLRlVucWc2VG83cW43M3FBSlZ6ZFhmWldXY3FxTlJZYm8zVDBRZUlUOUlKNmZLNzhMRlJTSWFtQlhMSWk2a1JNZmRSaGROQmtjS1FieFcvVXJXMkUwWUxHTVBUYWlsb29XRWRRWktXZERVQW1XN2J2bzlKNTRNZlNvdHhzdUwweTM1dFJUQy9CY2hBVE5Bem43N2dubzIwanFRRnZxaVpVSTBsbXNVZzRaMmlodTR6MG9QUzhETmJOUk1RSXorcjYraTVoWHd3NTdCZ2srZGpUYU4ybEkwc3RHZ2t5VWlqUmo4SHNheXFINDBUWXRIOTlwQTZjRzlicUtFVERZNlNhVWxvL0dRPT0="
+  private.key: "ZWJQMzM0UnNJa3NVb0d3ZndzVlBYSFpFOVhFaElld2tlUExLZy91R21aclRqV0VuL2dBWk5XWjlubU9kSTBKUDNKVTBXY2krSFUyT3RTejUzaGQzRGkwSFl5aGIxR1k2YnhnMklUdDBVdDlGYmNZYXBDd0Fvd3pVT1hTK0tRZUhJZldXZWxDZEJycEFDZmJCdEFlNTdNL25sSWh5aG5mZ011blpSZW9UZDhaTzNtK2VuY1A5N0xlbjBwT1AxRWFQQ3hBVE1IWTRMUjExSDVJZlZWY2tZbHptbzhzNlltbDY1L09iUjh4RXEydUVXRXp0OTRDa3R1aEtzTG9aRmczUW1kTkszWVBUNFYvN1lQQWw2RXNpdGpkMXNPUC9LYXJDRlZRcm45dTNmOXpCM0svZkRkb2Fhb2k5NXphTEl0UFgzTHhkTHJXVE4vWk9KNytjb1k1anlRPT0="
 ---
 # Source: kubernetes-dashboard/templates/config/gateway.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -143,7 +143,7 @@ kind: ConfigMap
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
@@ -154,7 +154,7 @@ data:
     _format_version: "3.0"
     services:
       - name: auth
-        host: release-name-kubernetes-dashboard-auth
+        host: kubernetes-dashboard-auth
         port: 8000
         protocol: http
         routes:
@@ -171,7 +171,7 @@ data:
               - /api/v1/me
             strip_path: false
       - name: api
-        host: release-name-kubernetes-dashboard-api
+        host: kubernetes-dashboard-api
         port: 8000
         protocol: http
         routes:
@@ -184,7 +184,7 @@ data:
               - /metrics
             strip_path: false
       - name: web
-        host: release-name-kubernetes-dashboard-web
+        host: kubernetes-dashboard-web
         port: 8000
         protocol: http
         routes:
@@ -213,12 +213,12 @@ kind: ConfigMap
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-web-settings
+  name: kubernetes-dashboard-web-settings
 data:
 ---
 # Source: kubernetes-dashboard/templates/rbac/metrics-scraper/clusterrole.yaml
@@ -241,12 +241,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-metrics-scraper
+  name: kubernetes-dashboard-metrics-scraper
 rules:
   # Allow Metrics Scraper to get metrics from the Metrics server
   - apiGroups: [ "metrics.k8s.io" ]
@@ -273,19 +273,19 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-metrics-scraper
+  name: kubernetes-dashboard-metrics-scraper
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: release-name-kubernetes-dashboard-metrics-scraper
+  name: kubernetes-dashboard-metrics-scraper
 subjects:
   - kind: ServiceAccount
-    name: release-name-kubernetes-dashboard-metrics-scraper
+    name: kubernetes-dashboard-metrics-scraper
     namespace: kubernetes-dashboard
 ---
 # Source: kubernetes-dashboard/templates/rbac/api/role.yaml
@@ -308,17 +308,17 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-api
+  name: kubernetes-dashboard-api
 rules:
     # Allow Dashboard API to get metrics from metrics-scraper.
   - apiGroups: [ "" ]
     resources: [ "services/proxy" ]
-    resourceNames: [ "release-name-kubernetes-dashboard-metrics-scraper", "http:release-name-kubernetes-dashboard-metrics-scraper" ]
+    resourceNames: [ "kubernetes-dashboard-metrics-scraper", "http:kubernetes-dashboard-metrics-scraper" ]
     verbs: [ "get" ]
 ---
 # Source: kubernetes-dashboard/templates/rbac/web/role.yaml
@@ -341,17 +341,17 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-web
+  name: kubernetes-dashboard-web
 rules:
     # Allow Dashboard Web to get and update 'kubernetes-dashboard-settings' config map.
   - apiGroups: [ "" ]
     resources: [ "configmaps" ]
-    resourceNames: [ "release-name-kubernetes-dashboard-web-settings" ]
+    resourceNames: [ "kubernetes-dashboard-web-settings" ]
     verbs: [ "get", "update" ]
 ---
 # Source: kubernetes-dashboard/templates/rbac/api/rolebinding.yaml
@@ -374,19 +374,19 @@ kind: RoleBinding
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-api
+  name: kubernetes-dashboard-api
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-kubernetes-dashboard-api
+  name: kubernetes-dashboard-api
 subjects:
   - kind: ServiceAccount
-    name: release-name-kubernetes-dashboard-api
+    name: kubernetes-dashboard-api
 ---
 # Source: kubernetes-dashboard/templates/rbac/web/rolebinding.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -408,30 +408,30 @@ kind: RoleBinding
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
   annotations:
     
-  name: release-name-kubernetes-dashboard-web
+  name: kubernetes-dashboard-web
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: release-name-kubernetes-dashboard-web
+  name: kubernetes-dashboard-web
 subjects:
   - kind: ServiceAccount
-    name: release-name-kubernetes-dashboard-web
+    name: kubernetes-dashboard-web
 ---
 # Source: kubernetes-dashboard/charts/kong/templates/service-kong-proxy.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: release-name-kong-proxy
+  name: kubernetes-dashboard-kong-proxy
   namespace: kubernetes-dashboard
   labels:
     app.kubernetes.io/name: kong
     helm.sh/chart: kong-2.46.0
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "kubernetes-dashboard"
     app.kubernetes.io/managed-by: "Helm"
     
     app.kubernetes.io/version: "3.8"
@@ -446,7 +446,7 @@ spec:
   selector:
     app.kubernetes.io/name: kong
     app.kubernetes.io/component: app
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "kubernetes-dashboard"
 ---
 # Source: kubernetes-dashboard/templates/services/api.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -468,7 +468,7 @@ apiVersion: v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-api
@@ -476,7 +476,7 @@ metadata:
     app.kubernetes.io/component: api
   annotations:
     
-  name: release-name-kubernetes-dashboard-api
+  name: kubernetes-dashboard-api
 spec:
   type: ClusterIP
   ports:
@@ -488,7 +488,7 @@ spec:
       
   
   selector:
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-api
 ---
@@ -512,7 +512,7 @@ apiVersion: v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-auth
@@ -520,7 +520,7 @@ metadata:
     app.kubernetes.io/component: auth
   annotations:
     
-  name: release-name-kubernetes-dashboard-auth
+  name: kubernetes-dashboard-auth
 spec:
   type: ClusterIP
   ports:
@@ -532,7 +532,7 @@ spec:
       
   
   selector:
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-auth
 ---
@@ -556,7 +556,7 @@ apiVersion: v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
@@ -564,7 +564,7 @@ metadata:
     app.kubernetes.io/component: metrics-scraper
   annotations:
     
-  name: release-name-kubernetes-dashboard-metrics-scraper
+  name: kubernetes-dashboard-metrics-scraper
 spec:
   type: ClusterIP
   ports:
@@ -577,7 +577,7 @@ spec:
       
   
   selector:
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
 ---
@@ -601,7 +601,7 @@ apiVersion: v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-web
@@ -609,7 +609,7 @@ metadata:
     app.kubernetes.io/component: web
   annotations:
     
-  name: release-name-kubernetes-dashboard-web
+  name: kubernetes-dashboard-web
 spec:
   type: ClusterIP
   ports:
@@ -621,7 +621,7 @@ spec:
       
   
   selector:
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-web
 ---
@@ -629,12 +629,12 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: release-name-kong
+  name: kubernetes-dashboard-kong
   namespace:  kubernetes-dashboard
   labels:
     app.kubernetes.io/name: kong
     helm.sh/chart: kong-2.46.0
-    app.kubernetes.io/instance: "release-name"
+    app.kubernetes.io/instance: "kubernetes-dashboard"
     app.kubernetes.io/managed-by: "Helm"
     
     app.kubernetes.io/version: "3.8"
@@ -646,27 +646,27 @@ spec:
     matchLabels:
       app.kubernetes.io/name: kong
       app.kubernetes.io/component: app
-      app.kubernetes.io/instance: "release-name"
+      app.kubernetes.io/instance: "kubernetes-dashboard"
 
   template:
     metadata:
       annotations:
-        kuma.io/service-account-token-volume: release-name-kong-token
+        kuma.io/service-account-token-volume: kubernetes-dashboard-kong-token
         kuma.io/gateway: "enabled"
         traffic.sidecar.istio.io/includeInboundPorts: ""
       labels:
         app.kubernetes.io/name: kong
         helm.sh/chart: kong-2.46.0
-        app.kubernetes.io/instance: "release-name"
+        app.kubernetes.io/instance: "kubernetes-dashboard"
         app.kubernetes.io/managed-by: "Helm"
         
         app.kubernetes.io/version: "3.8"
         app.kubernetes.io/component: app
-        app: release-name-kong
+        app: kubernetes-dashboard-kong
         
         version: "3.8"
     spec:
-      serviceAccountName: release-name-kong
+      serviceAccountName: kubernetes-dashboard-kong
       automountServiceAccountToken: false
       
       initContainers:
@@ -748,9 +748,9 @@ spec:
           value: "off"
         
         volumeMounts:
-        - name: release-name-kong-prefix-dir
+        - name: kubernetes-dashboard-kong-prefix-dir
           mountPath: /kong_prefix/
-        - name: release-name-kong-tmp
+        - name: kubernetes-dashboard-kong-tmp
           mountPath: /tmp
         - name: kong-custom-dbless-config-volume
           mountPath: /kong_dbless/
@@ -843,9 +843,9 @@ spec:
           containerPort: 8100
           protocol: TCP
         volumeMounts:
-          - name: release-name-kong-prefix-dir
+          - name: kubernetes-dashboard-kong-prefix-dir
             mountPath: /kong_prefix/
-          - name: release-name-kong-tmp
+          - name: kubernetes-dashboard-kong-tmp
             mountPath: /tmp
           - name: kong-custom-dbless-config-volume
             mountPath: /kong_dbless/
@@ -876,13 +876,13 @@ spec:
         {}
       terminationGracePeriodSeconds: 30
       volumes:
-        - name: release-name-kong-prefix-dir
+        - name: kubernetes-dashboard-kong-prefix-dir
           emptyDir:
             sizeLimit: 256Mi
-        - name: release-name-kong-tmp
+        - name: kubernetes-dashboard-kong-tmp
           emptyDir:
             sizeLimit: 1Gi
-        - name: release-name-kong-token
+        - name: kubernetes-dashboard-kong-token
           projected:
             sources:
             - serviceAccountToken:
@@ -923,7 +923,7 @@ apiVersion: apps/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-api
@@ -931,27 +931,27 @@ metadata:
     app.kubernetes.io/component: api
   annotations:
     
-  name: release-name-kubernetes-dashboard-api
+  name: kubernetes-dashboard-api
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/instance: kubernetes-dashboard
       app.kubernetes.io/part-of: kubernetes-dashboard
       app.kubernetes.io/name: kubernetes-dashboard-api
   template:
     metadata:
       labels:
         helm.sh/chart: kubernetes-dashboard-7.13.0
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/instance: kubernetes-dashboard
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: kubernetes-dashboard
         app.kubernetes.io/name: kubernetes-dashboard-api
         app.kubernetes.io/version: 1.13.0
         app.kubernetes.io/component: api
       annotations:
-        checksum/config: d90c478d1f88f5bf09cad4449f1eb78debf1951926c85c9976a1ebc7386a7abe
+        checksum/config: 8478e3ea4d77c59f71430592ef91b0f0019b28b7f7b09e5f4074b537aa7108b4
     spec:
       containers:
         - name: kubernetes-dashboard-api
@@ -959,13 +959,13 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - --namespace=kubernetes-dashboard
-            - --metrics-scraper-service-name=release-name-kubernetes-dashboard-metrics-scraper
+            - --metrics-scraper-service-name=kubernetes-dashboard-metrics-scraper
 
           env:
             - name: CSRF_KEY
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kubernetes-dashboard-csrf
+                  name: kubernetes-dashboard-csrf
                   key: private.key
             - name: GOMAXPROCS
               valueFrom:
@@ -1014,7 +1014,7 @@ spec:
       
         - emptyDir: {}
           name: tmp-volume
-      serviceAccountName: release-name-kubernetes-dashboard-api
+      serviceAccountName: kubernetes-dashboard-api
 ---
 # Source: kubernetes-dashboard/templates/deployments/auth.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -1036,7 +1036,7 @@ apiVersion: apps/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-auth
@@ -1044,27 +1044,27 @@ metadata:
     app.kubernetes.io/component: auth
   annotations:
     
-  name: release-name-kubernetes-dashboard-auth
+  name: kubernetes-dashboard-auth
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/instance: kubernetes-dashboard
       app.kubernetes.io/part-of: kubernetes-dashboard
       app.kubernetes.io/name: kubernetes-dashboard-auth
   template:
     metadata:
       labels:
         helm.sh/chart: kubernetes-dashboard-7.13.0
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/instance: kubernetes-dashboard
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: kubernetes-dashboard
         app.kubernetes.io/name: kubernetes-dashboard-auth
         app.kubernetes.io/version: 1.3.0
         app.kubernetes.io/component: auth
       annotations:
-        checksum/config: 85045fa9003fa03dbe8d4a5083d36ac9e03d778b1f2ceb156c8ab925ffe41701
+        checksum/config: 2cc55524badc77bec611cb4a0312ca30ed6271b926fd94b44abd80d028d2890b
     spec:
       containers:
         - name: kubernetes-dashboard-auth
@@ -1076,7 +1076,7 @@ spec:
             - name: CSRF_KEY
               valueFrom:
                 secretKeyRef:
-                  name: release-name-kubernetes-dashboard-csrf
+                  name: kubernetes-dashboard-csrf
                   key: private.key
             - name: GOMAXPROCS
               valueFrom:
@@ -1146,7 +1146,7 @@ apiVersion: apps/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
@@ -1154,20 +1154,20 @@ metadata:
     app.kubernetes.io/component: metrics-scraper
   annotations:
     
-  name: release-name-kubernetes-dashboard-metrics-scraper
+  name: kubernetes-dashboard-metrics-scraper
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/instance: kubernetes-dashboard
       app.kubernetes.io/part-of: kubernetes-dashboard
       app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
   template:
     metadata:
       labels:
         helm.sh/chart: kubernetes-dashboard-7.13.0
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/instance: kubernetes-dashboard
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: kubernetes-dashboard
         app.kubernetes.io/name: kubernetes-dashboard-metrics-scraper
@@ -1236,7 +1236,7 @@ spec:
         - emptyDir: {}
           name: tmp-volume
 
-      serviceAccountName: release-name-kubernetes-dashboard-metrics-scraper
+      serviceAccountName: kubernetes-dashboard-metrics-scraper
 ---
 # Source: kubernetes-dashboard/templates/deployments/web.yaml
 # Copyright 2017 The Kubernetes Authors.
@@ -1258,7 +1258,7 @@ apiVersion: apps/v1
 metadata:
   labels:
     helm.sh/chart: kubernetes-dashboard-7.13.0
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: kubernetes-dashboard
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: kubernetes-dashboard
     app.kubernetes.io/name: kubernetes-dashboard-web
@@ -1266,20 +1266,20 @@ metadata:
     app.kubernetes.io/component: web
   annotations:
     
-  name: release-name-kubernetes-dashboard-web
+  name: kubernetes-dashboard-web
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: release-name
+      app.kubernetes.io/instance: kubernetes-dashboard
       app.kubernetes.io/part-of: kubernetes-dashboard
       app.kubernetes.io/name: kubernetes-dashboard-web
   template:
     metadata:
       labels:
         helm.sh/chart: kubernetes-dashboard-7.13.0
-        app.kubernetes.io/instance: release-name
+        app.kubernetes.io/instance: kubernetes-dashboard
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/part-of: kubernetes-dashboard
         app.kubernetes.io/name: kubernetes-dashboard-web
@@ -1293,7 +1293,7 @@ spec:
           imagePullPolicy: IfNotPresent
           args:
             - --namespace=kubernetes-dashboard
-            - --settings-config-map-name=release-name-kubernetes-dashboard-web-settings
+            - --settings-config-map-name=kubernetes-dashboard-web-settings
 
           env:
             - name: GOMAXPROCS
@@ -1344,7 +1344,7 @@ spec:
         - emptyDir: {}
           name: tmp-volume
 
-      serviceAccountName: release-name-kubernetes-dashboard-web
+      serviceAccountName: kubernetes-dashboard-web
 ---
 # Source: kubernetes-dashboard/templates/extras/manifests.yaml
 # Copyright 2017 The Kubernetes Authors.
