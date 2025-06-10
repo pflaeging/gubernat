@@ -13,12 +13,12 @@ processors:
   batch:
 
 exporters:
-  logging:
-    loglevel: debug
+  debug:
+    verbosity: detailed
 
 service:
   pipelines:
     logs:
       receivers: [filelog]
       processors: [batch]
-      exporters: [logging]
+      exporters: [debug]
