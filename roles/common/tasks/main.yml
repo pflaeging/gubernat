@@ -204,6 +204,7 @@
       src: cilium
       dest: /usr/local/bin/cilium
       mode: 755
+
 - name: Install Helm
   block:
     - name: Copy helm installer and execute shell script for installation
@@ -222,6 +223,18 @@
   ansible.builtin.user:
     name: setup
     comment: Kubernetes Setup User
+
+- name: Enable Cgroupv2 
+  block:
+  - name: Check current kernel command line
+    ansible.builtin.command: cat /proc/cmdline
+    register: proc_cmdline
+
+  - name: Add systemd.unified_cgroup_hierarchy=1 to grub 
+    ansible.builtin.command: "grubby --update-kernel=ALL --args='systemd.unified_cgroup_hierarchy=1'"
+    register: grubby_update_result
+    when: "'systemd.unified_cgroup_hierarchy=1' not in proc_cmdline.stdout"
+  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
 
 - name: Ensure that SeLinux is enabled
   ansible.posix.selinux:
