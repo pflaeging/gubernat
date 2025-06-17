@@ -236,13 +236,33 @@
     when: "'systemd.unified_cgroup_hierarchy=1' not in proc_cmdline.stdout"
   when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
 
-- name: Ensure that SeLinux is enabled
+- name: Ensure that SeLinux is enabled (permissive mode)
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
+    update_kernel_param: true
+  register: selinux_permissive
+  when: ansible_selinux is defined and ansible_selinux.status == 'disabled'
+
+- name: Relabel files on next boot if SELinux mode changed
+  ansible.builtin.file:
+    path: /.autorelabel
+    state: touch
+    mode: "0644"
+  when: selinux_permissive is changed 
+
+- name: Reboot 
+  ansible.builtin.reboot:
+  when: selinux_permissive is changed or grubby_update_result is changed 
+
+- name: Ensure that SeLinux is enabled (enforcing mode)
   ansible.posix.selinux:
     policy: targeted
     state: enforcing
     update_kernel_param: true
-  register: selinux
+  register: selinux_enforcing
+  when: ansible_selinux is defined and ansible_selinux.mode == 'permissive'
 
 - name: Reboot 
   ansible.builtin.reboot:
-  when: selinux is changed 
+  when: selinux_enforcing is changed
