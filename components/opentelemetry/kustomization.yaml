@@ -14,6 +14,9 @@ configMapGenerator:
     files:
       - config.yaml=collector-config.yaml
 
+generatorOptions:
+  disableNameSuffixHash: true
+
 {% if repo_mirror is defined %}
 images:
 - name: otel/opentelemetry-collector-contrib:0.128.0
