@@ -1,7 +1,12 @@
 [kubernetes]
 name=Kubernetes
+{% if kub_pkg_mirror is defined %}
+baseurl={{ kub_pkg_mirror }}/kubernetes-{{ k8s_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}
+gpgcheck=0
+{% else %}
 baseurl=https://pkgs.k8s.io/core:/stable:/v{{ k8s_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/rpm/
-enabled=1
 gpgcheck=1
 gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ k8s_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/rpm/repodata/repomd.xml.key
+{% endif %}
+enabled=1
 exclude=kubelet kubeadm kubectl cri-tools

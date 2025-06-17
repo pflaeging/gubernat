@@ -88,5 +88,5 @@
     masked: false
 
 - name: Restart VM
-  ansible.builtin.command:
-    cmd: shutdown -r 30s
+  ansible.builtin.reboot:
+    pre_reboot_delay: 15
