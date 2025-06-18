@@ -44,7 +44,7 @@
   ansible.builtin.template:
     src: cilium-helm-values.yaml.j2
     dest: /opt/kubernetes/etc/cilium-helm-values.yaml
-  register: helm_values
+  register: cilium_helm_values
   when: inventory_hostname in groups["master"]
 
 - name: Execute tasks on first master
@@ -55,14 +55,21 @@
   ansible.builtin.include_tasks: othermasters.yml
   when: ((groups.master[1] is defined) and (groups.master[1] in inventory_hostname)) or ((groups.master[2] is defined) and (groups.master[2] in inventory_hostname))
 
+- name: Find remaining tokens in cluster
+  ansible.builtin.shell:
+    cmd: |
+      export KUBECONFIG=/etc/kubernetes/admin.conf 
+      kubeadm token list | awk '{if(NR!=1){print $1}}'
+  delegate_to: "{{ groups.master[0] }}"  
+  register: certificate_key
+
 - name: Cleanup tokens on master (means in cluster)
   ansible.builtin.shell: |
     export KUBECONFIG=/etc/kubernetes/admin.conf 
     kubeadm token list | awk '{if(NR!=1){print $1}}' | xargs -n 1 kubeadm token delete
   delegate_to: "{{ groups.master[0] }}"
-  ignore_errors: true
-  register: certificate_key
   run_once: true
+  loop: "{{ certificate_key.stdout_lines }}"
 
 - name: Make kubernetes config dir for root
   ansible.builtin.file:

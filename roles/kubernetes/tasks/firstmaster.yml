@@ -5,13 +5,31 @@
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
 
-- name: Install cilium on first master
+- name: Check if cillium is installed and ready
   ansible.builtin.shell:
-    cmd: KUBECONFIG=/etc/kubernetes/admin.conf cilium install --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium status
   ignore_errors: true
+  register: cilium_installed
 
-- name: Make node schedulable
-  ansible.builtin.shell: |
-    export KUBECONFIG=/etc/kubernetes/admin.conf
-    kubectl taint nodes --kubeconfig /etc/kubernetes/admin.conf --all node-role.kubernetes.io/control-plane:NoSchedule-
+- name: Install cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
   ignore_errors: true
+  when: (cilium_helm_values.changed) and (cilium_installed.rc  == 1)
+
+- name: Upgrade cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+  ignore_errors: true
+  when: cilium_helm_values.changed
+
+- name: Which nodes have taints?
+  ansible.builtin.shell:
+    cmd: kubectl get nodes --kubeconfig /etc/kubernetes/admin.conf -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}' | grep NoSchedule |awk '{print $1}'
+  register: taint_nodes
+
+- name: Make node(s) schedulable
+  ansible.builtin.shell:
+    cmd: kubectl taint nodes {{ item }} --kubeconfig /etc/kubernetes/admin.conf node-role.kubernetes.io/control-plane:NoSchedule-
+  ignore_errors: true
+  loop: "{{ taint_nodes.stdout_lines }}"
