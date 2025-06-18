@@ -66,7 +66,7 @@
 - name: Cleanup tokens on master (means in cluster)
   ansible.builtin.shell: |
     export KUBECONFIG=/etc/kubernetes/admin.conf 
-    kubeadm token list | awk '{if(NR!=1){print $1}}' | xargs -n 1 kubeadm token delete
+    kubeadm token delete {{ item }}
   delegate_to: "{{ groups.master[0] }}"
   run_once: true
   loop: "{{ certificate_key.stdout_lines }}"
