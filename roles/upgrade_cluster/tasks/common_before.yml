@@ -24,6 +24,7 @@
       - tar 
       - git
       - kubernetes-cni
+      - yum-utils
     disable_excludes: all
     state: latest
 

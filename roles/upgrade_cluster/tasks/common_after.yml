@@ -23,6 +23,24 @@
     state: restarted
     name: cri-o
 
+- name: Upgrade OS
+  block:
+  - name: Bring system to newest software level
+    ansible.builtin.dnf:
+      name: "*"
+      state: latest
+
+  - name: Check if a reboot is required
+    ansible.builtin.command: needs-restarting -r
+    register: reboot_required
+    failed_when: false
+
+  - name: Reboot the server if required
+    ansible.builtin.reboot:
+      msg: "Rebooting after updates"
+    when: reboot_required.rc != 0
+  when: upgrade_os is true
+
 - name: Wait for sure until node is ready again (3 minutes)
   ansible.builtin.pause:
     minutes: 3
