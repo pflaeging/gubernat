@@ -4,9 +4,9 @@ name=CRI-O
 baseurl={{ crio_pkg_mirror }}/cri-o-{{ crio_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}
 gpgcheck=0
 {% else %}
-baseurl=https://pkgs.k8s.io/addons:/cri-o:/stable:/v{{ crio_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/rpm/
+baseurl=https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/rpm/
 gpgcheck=1
-gpgkey=https://pkgs.k8s.io/addons:/cri-o:/stable:/v{{ crio_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/rpm/repodata/repomd.xml.key
+gpgkey=https://download.opensuse.org/repositories/isv:/cri-o:/stable:/v{{ crio_version | regex_replace('^(\\d+\\.\\d+)\\.\\d+$', '\\1') }}/rpm/repodata/repomd.xml.key
 {% endif %}
 enabled=1
 exclude=cri-o
