@@ -12,16 +12,19 @@
     - cri-o-{{ crio_version }}
     disable_excludes: all
     state: present
+  register: k8s_dnf_update
 
 - name: Restart kubelet
   ansible.builtin.systemd:
     state: restarted
     name: kubelet
+  when: k8s_dnf_update is changed 
 
 - name: Restart cri-o
   ansible.builtin.systemd:
     state: restarted
     name: cri-o
+  when: k8s_dnf_update is changed 
 
 - name: Upgrade OS
   block:
