@@ -56,7 +56,12 @@ all:
     # the internal ip address range for services
     k8s_svc_cidr: 10.86.0.0/16
     # which kubernetes and cri-o version do we roll out?
-    k8s_version: 1.31.3
+    k8s_version: 1.33.1
+    crio_version: 1.32.1
+    # which nameserver do we use
+    dns_forwarders:
+    - 8.8.8.8
+    - 8.8.4.4
     # we need at least two ntp servers
     ntp_servers:
     - ts1.aco.net
