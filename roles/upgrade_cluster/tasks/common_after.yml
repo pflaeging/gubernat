@@ -1,6 +1,6 @@
 - name: Drain node
   ansible.builtin.command:
-    cmd: "kubectl drain {{ ansible_fqdn }} --force --ignore-daemonsets --delete-emptydir-data"
+    cmd: "kubectl drain {{ ansible_fqdn }} --force --ignore-daemonsets --delete-emptydir-data --disable-eviction"
   delegate_to: "{{ groups.master[0] }}"
   ignore_errors: true
 

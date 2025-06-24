@@ -16,6 +16,11 @@ spec:
         app: opentelemetry
         component: otel-collector
     spec:
+      tolerations:
+      - operator: Exists
+        effect: NoExecute
+      - operator: Exists
+        effect: NoSchedule
       containers:
       - name: otel-collector
         image: otel/opentelemetry-collector-contrib:0.128.0
