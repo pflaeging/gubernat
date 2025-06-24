@@ -33,4 +33,4 @@
     name:
       - kubeadm-{{ k8s_version }}
     disable_excludes: all
-    state: present
+    state: latest

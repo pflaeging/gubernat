@@ -16,7 +16,7 @@
       - open-vm-tools
       - tar
       - mkpasswd
-    state: present
+    state: latest
 
 - name: enable open-vm-tools
   ansible.builtin.systemd:
