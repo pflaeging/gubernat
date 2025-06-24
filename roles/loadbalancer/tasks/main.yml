@@ -15,7 +15,7 @@
     name:
       - haproxy
       - python3-libsemanage
-    state: present
+    state: latest
   tags: base-packages
 
 - name: Generate haproxy.cfg

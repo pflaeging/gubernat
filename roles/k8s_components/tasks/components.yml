@@ -1,4 +1,3 @@
-
 - name: Create component dir for {{ component }}
   ansible.builtin.file:
     path: "/opt/kubernetes/components/{{ component }}"
@@ -10,6 +9,7 @@
     src: "{{ item }}"
     dest: "/opt/kubernetes/components/{{ component }}"
   with_fileglob: "components/{{ component }}/*"
+  register: changed_config
 
 - name: Is there an install.sh? 
   ansible.builtin.stat:
@@ -21,10 +21,10 @@
   ansible.builtin.command:
     chdir: "/opt/kubernetes/components/{{ component }}"
     cmd: "sh ./install.sh"
-  when: (groups.master[0] in inventory_hostname) and (install_sh.stat.exists)
+  when: (groups.master[0] in inventory_hostname) and (install_sh.stat.exists) and (changed_config.changed)
 
 - name: Else install via kustomize 
   ansible.builtin.command:
     chdir: "/opt/kubernetes/components/{{ component }}"
     cmd: "kubectl apply -k ."
-  when: (groups.master[0] in inventory_hostname) and (not install_sh.stat.exists)
+  when: (groups.master[0] in inventory_hostname) and (not install_sh.stat.exists) and (changed_config.changed)

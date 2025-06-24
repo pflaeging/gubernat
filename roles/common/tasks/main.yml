@@ -16,7 +16,7 @@
       - open-vm-tools
       - tar
       - mkpasswd
-    state: present
+    state: latest
 
 - name: enable open-vm-tools
   ansible.builtin.systemd:
@@ -24,6 +24,7 @@
     state: started
     enabled: true
     masked: no
+  changed_when: false
 
 - name: Create custom DNS resolver file in /etc/resolv.conf.kubernetes
   ansible.builtin.template:
@@ -89,6 +90,7 @@
   ansible.builtin.systemd:
     state: reloaded
     name: NetworkManager
+  changed_when: false
 
 - name: Enable firewalld
   ansible.builtin.systemd:
@@ -114,6 +116,7 @@
   ansible.builtin.systemd:
     name: firewalld
     state: reloaded
+  changed_when: false
 
 - name: Enable masquerade on 000-kubernetes
   ansible.posix.firewalld:

@@ -4,12 +4,14 @@
   delegate_to: "{{ groups.master[0] }}"
   register: certificate_key
   run_once: true
+  changed_when: false
 
 - name: Generate token and join for other masters on first master
   ansible.builtin.shell:
     cmd: "echo $(KUBECONFIG=/etc/kubernetes/admin.conf kubeadm token create --print-join-command) --control-plane --certificate-key {{ certificate_key.stdout }}"
   register: join_content
   delegate_to: "{{ groups.master[0] }}"
+  changed_when: false
 
 - name: Execute join command on other masters
   ansible.builtin.shell: 
@@ -21,6 +23,7 @@
   ansible.builtin.shell:
     cmd: kubectl get nodes --kubeconfig /etc/kubernetes/admin.conf -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}' | grep NoSchedule |awk '{print $1}'
   register: taint_nodes
+  changed_when: false
 
 - name: Make node(s) schedulable
   ansible.builtin.shell:

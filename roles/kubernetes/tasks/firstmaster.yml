@@ -10,6 +10,7 @@
     cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium status
   ignore_errors: true
   register: cilium_installed
+  changed_when: false
 
 - name: Install cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
   ansible.builtin.shell:
@@ -27,6 +28,7 @@
   ansible.builtin.shell:
     cmd: kubectl get nodes --kubeconfig /etc/kubernetes/admin.conf -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}' | grep NoSchedule |awk '{print $1}'
   register: taint_nodes
+  changed_when: false
 
 - name: Make node(s) schedulable
   ansible.builtin.shell:

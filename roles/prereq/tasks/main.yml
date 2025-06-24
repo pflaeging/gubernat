@@ -67,18 +67,19 @@
   ansible.builtin.dnf:
     name:
       - cri-o-{{ crio_version }}
+      - cri-tools
       - socat
       - conntrack-tools
       - policycoreutils-python-utils
       - container-selinux
       - containernetworking-plugins
-      - tar 
+      - tar
       - git
-      - kubelet-{{ k8s_version }} 
+      - kubelet-{{ k8s_version }}
       - kubeadm-{{ k8s_version }}
       - kubectl-{{ k8s_version }}
     disable_excludes: all
-    state: present
+    state: latest
   tags: k8s
 
 - name: link /usr/bin/kubectl-> /usr/local/bin/k
@@ -143,7 +144,9 @@
 - name: Set selinux context for persistences
   ansible.builtin.command:
     cmd: semanage fcontext -a -t container_file_t  "/data/k8s(/.*)?"
+  changed_when: false
 
 - name: Restore selinux context for persistences
   ansible.builtin.command:
     cmd: restorecon -R /data/k8s
+  changed_when: false
