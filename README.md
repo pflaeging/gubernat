@@ -22,9 +22,9 @@ So we created a simple installation procedure for kubernetes 1.28+, cilium as ne
 
 ## Components
 
-- Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 minimal installation
+- Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 or 10 minimal installation
 - cri-o as container runtime
-- kubernetes 1.31.3
+- kubernetes 1.33.1
 - k8s contour-ingress with cert-manager
 - haproxy for API and dashboard
 - helm 3

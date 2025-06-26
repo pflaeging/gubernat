@@ -72,7 +72,6 @@
       - conntrack-tools
       - policycoreutils-python-utils
       - container-selinux
-      - containernetworking-plugins
       - tar
       - git
       - kubelet-{{ k8s_version }}

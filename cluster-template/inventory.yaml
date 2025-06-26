@@ -39,11 +39,13 @@ all:
     components:
       - cert-manager
       - contour
-      - httpbin
+      # test app
+      # - httpbin
       - kubernetes-dashboard
       - local-storage
       - metrics-server
-      - multus
+      # only for multiple network stacks
+      # - multus
       - opentelemetry
       - prometheus
       - trust-manager

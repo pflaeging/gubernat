@@ -16,6 +16,7 @@
       - open-vm-tools
       - tar
       - mkpasswd
+      - openssl
     state: latest
 
 - name: enable open-vm-tools
