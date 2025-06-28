@@ -1,29 +1,46 @@
 k8sServiceHost: {{ api_host }}
 k8sServicePort: {{ api_loadbalancer_port|default(lb_api_port,true) }}
 ipv4NativeRoutingCIDR:  {{ k8s_cidr }}
-routingMode:  {{ cilium.routingmode | default(tunnel,true) }}
 envoy:
   enabled: false
 ipv4:
   enabled: true
-autoDirectNodeRoutes: {% if routingMode == "tunnel" %} false {% else %} true {% endif %}
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ k8s_cidr }}
 
-{% if cilium.hubble is true %}
+{% if cilium.routingmode is defined %}
+{% if cilium.routingmode == "native" %}
+routingMode:  native
+autoDirectNodeRoutes: true
+{% else %}
+routingMode:  tunnel
+autoDirectNodeRoutes: false
+{% endif %}
+{% endif %}
+
 hubble:
   relay:
-    enabled: true
+    enabled: {{ cilium.hubble |default(false) }}
+  ui:
+    enabled: {{ cilium.hubble |default(false) }}
 {% if cilium.metrics.enabled is true %}
-    metrics:
-      enableOpenMetrics: true
+  metrics:
+    enableOpenMetrics: true
+    enabled:  
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
     serviceMonitor:
       enabled: {{ cilium.metrics.servicemonitor|default(false) }}
     dashboards:
-      enabled: {{ cilium.metrics.grafana|default(false) }}
+      enabled: {{ cilium.metrics.grafana.enabled |default(false) }}
       label: grafana_dashboard
       labelValue: "true"
+      namespace: {{ cilium.metrics.grafana.namespace |default(kube-system) }}
 {% endif %}
 {% if repo_mirror is defined or cilium.version is defined %}
     image:
@@ -35,8 +52,6 @@ hubble:
       useDigest: false
 {% endif %}
 {% endif %}
-  ui:
-    enabled: true
 {% if repo_mirror is defined %}
     frontend:
       image:
@@ -48,7 +63,6 @@ hubble:
         repository: "{{ repo_mirror }}/quay.io/cilium/hubble-ui-backend"
         tag: "v0.13.2"
         useDigest: false
-{% endif %}
 {% endif %}
 
 {% if repo_mirror is defined or cilium.version is defined or cilium.metrics is defined %}
@@ -64,16 +78,15 @@ operator:
     digest: ""
 {% endif %}
 {% endif %}
-{% endif %}
-{% if cilium.metrics.enabled is true %}
   prometheus: 
-    enabled: true
+    enabled: {{ cilium.metrics.enabled|default(false) }}
     serviceMonitor:
       enabled: {{ cilium.metrics.servicemonitor|default(false) }}
-    dashboards:
-      enabled: {{ cilium.metrics.grafana|default(false) }}
-      label: grafana_dashboard
-      labelValue: "true"
+  dashboards:
+    enabled: {{ cilium.metrics.grafana.enabled |default(false) }}
+    label: grafana_dashboard
+    labelValue: "true"
+    namespace: {{ cilium.metrics.grafana.namespace |default(kube-system) }}
 {% endif %}
 
 {% if repo_mirror is defined or cilium.version is defined %}
@@ -88,6 +101,7 @@ image:
 {% endif %}
 {% endif %}
 
+{# as the bandwithmanager changes some deep system things, its better to don't include in the values that it  fallback to the defaults of the helm charts  #}
 {% if cilium.bandwidthManager is true %}
 bandwidthManager:
   enabled: true
@@ -96,13 +110,12 @@ bpf:
 kubeProxyReplacement: true
 {% endif %}
 
-{% if cilium.metrics.enabled is true %}
 prometheus:
-  enabled: true
+  enabled: {{ cilium.metrics.enabled|default(false) }}
   serviceMonitor:
     enabled: {{ cilium.metrics.servicemonitor|default(false) }}
 dashboards:
-  enabled: {{ cilium.metrics.grafana|default(false) }}
+  enabled: {{ cilium.metrics.grafana.enabled |default(false) }}
   label: grafana_dashboard
   labelValue: "true"
-{% endif %}
+  namespace: {{ cilium.metrics.grafana.namespace |default(kube-system) }}
