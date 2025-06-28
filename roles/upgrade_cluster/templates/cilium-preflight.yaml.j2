@@ -1,0 +1,16 @@
+preflight:
+    enabled: true
+agent: false
+operator:
+    enabled: false
+{% if repo_mirror is defined or cilium.version is defined %}
+image:
+{% if repo_mirror is defined %}
+  repository: "{{ repo_mirror }}/quay.io/cilium/cilium"
+{% endif %}
+{% if cilium.version is defined %}
+  tag: "{{ cilium.version }}"
+  useDigest: false
+  digest: ""
+{% endif %}
+{% endif %}

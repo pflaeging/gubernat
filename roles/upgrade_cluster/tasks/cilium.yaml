@@ -1,0 +1,38 @@
+
+
+- name: Check if cillium is installed and ready
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium status
+  register: cilium_installed
+  changed_when: false
+
+- name: Generate cilium helm values /opt/kubernetes/etc/cilium-helm-values.yaml
+  ansible.builtin.template:
+    src: cilium-helm-values.yaml.j2
+    dest: /opt/kubernetes/etc/cilium-helm-values.yaml
+  register: cilium_helm_values
+
+- name: Generate cilium helm values /opt/kubernetes/etc/cilium-preflight-helm-values.yaml
+  ansible.builtin.template:
+    src: cilium-preflight.yaml.j2
+    dest: /opt/kubernetes/etc/cilium-preflight.yaml
+  when: cilium_helm_values.changed
+
+- name: Create Cilium Preflight 
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install --helm-values /opt/kubernetes/etc/cilium-preflight.yaml
+  when: cilium_helm_values.changed
+
+- name: Wait for deployment cilium-pre-flight-check to be ready
+  ansible.builtin.shell: 
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf kubectl get deployment -n kube-system cilium-pre-flight-check -o jsonpath='{.status.readyReplicas}{" "}{.status.replicas}' | awk '{if ($1 != $2) {exit 1}}'
+  until: deployment_status.rc == 0
+  retries: 10
+  delay: 30
+  register: deployment_status
+  when: cilium_helm_values.changed
+
+- name: Upgrade cilium 
+  ansible.builtin.shell:
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+  when: cilium_helm_values.changed
