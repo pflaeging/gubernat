@@ -5,6 +5,13 @@
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
 
+- name: Init cluster on first node without Kubeproxy
+  ansible.builtin.command: 
+    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml -skip-phases=addon/kube-proxy
+    creates: /etc/kubernetes/admin.conf
+  register: running_first_master
+  when: cilium.bandwidthManager is true
+
 - name: Check if cillium is installed and ready
   ansible.builtin.shell:
     cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium status

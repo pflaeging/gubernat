@@ -1,25 +1,108 @@
 k8sServiceHost: {{ api_host }}
 k8sServicePort: {{ api_loadbalancer_port|default(lb_api_port,true) }}
 ipv4NativeRoutingCIDR:  {{ k8s_cidr }}
-routingMode: tunnel
+routingMode:  {{ cilium.routingmode | default(tunnel,true) }}
 envoy:
   enabled: false
 ipv4:
   enabled: true
-autoDirectNodeRoutes: false
+autoDirectNodeRoutes: {% if routingMode == "tunnel" %} false {% else %} true {% endif %}
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ k8s_cidr }}
+
+{% if cilium.hubble is true %}
+hubble:
+  relay:
+    enabled: true
+{% if cilium.metrics.enabled is true %}
+    metrics:
+      enableOpenMetrics: true
+    serviceMonitor:
+      enabled: {{ cilium.metrics.servicemonitor|default(false) }}
+    dashboards:
+      enabled: {{ cilium.metrics.grafana|default(false) }}
+      label: grafana_dashboard
+      labelValue: "true"
+{% endif %}
+{% if repo_mirror is defined or cilium.version is defined %}
+    image:
 {% if repo_mirror is defined %}
+      repository: "{{ repo_mirror }}/quay.io/cilium/hubble-relay"
+{% endif %}
+{% if cilium.version is defined %}
+      tag: "{{ cilium.version }}"
+      useDigest: false
+{% endif %}
+{% endif %}
+  ui:
+    enabled: true
+{% if repo_mirror is defined %}
+    frontend:
+      image:
+        repository: "{{ repo_mirror }}/quay.io/cilium/hubble-ui"
+        tag: "v0.13.2"
+        useDigest: false
+    backend:
+      image:
+        repository: "{{ repo_mirror }}/quay.io/cilium/hubble-ui-backend"
+        tag: "v0.13.2"
+        useDigest: false
+{% endif %}
+{% endif %}
+
+{% if repo_mirror is defined or cilium.version is defined or cilium.metrics is defined %}
 operator:
+{% if repo_mirror is defined or cilium.version is defined %}
   image:
+{% if repo_mirror is defined %}
     repository: "{{ repo_mirror }}/quay.io/cilium/operator"
-    tag: "v1.17.2"
+{% endif %}
+{% if cilium.version is defined %}
+    tag: "{{ cilium.version }}"
     useDigest: false
     digest: ""
+{% endif %}
+{% endif %}
+{% endif %}
+{% if cilium.metrics.enabled is true %}
+  prometheus: 
+    enabled: true
+    serviceMonitor:
+      enabled: {{ cilium.metrics.servicemonitor|default(false) }}
+    dashboards:
+      enabled: {{ cilium.metrics.grafana|default(false) }}
+      label: grafana_dashboard
+      labelValue: "true"
+{% endif %}
+
+{% if repo_mirror is defined or cilium.version is defined %}
 image:
+{% if repo_mirror is defined %}
   repository: "{{ repo_mirror }}/quay.io/cilium/cilium"
-  tag: "v1.17.2"
+{% endif %}
+{% if cilium.version is defined %}
+  tag: "{{ cilium.version }}"
   useDigest: false
   digest: ""
+{% endif %}
+{% endif %}
+
+{% if cilium.bandwidthManager is true %}
+bandwidthManager:
+  enabled: true
+bpf:
+  masquerade: true
+kubeProxyReplacement: true
+{% endif %}
+
+{% if cilium.metrics.enabled is true %}
+prometheus:
+  enabled: true
+  serviceMonitor:
+    enabled: {{ cilium.metrics.servicemonitor|default(false) }}
+dashboards:
+  enabled: {{ cilium.metrics.grafana|default(false) }}
+  label: grafana_dashboard
+  labelValue: "true"
 {% endif %}
