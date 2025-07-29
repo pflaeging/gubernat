@@ -195,34 +195,37 @@
     src: kubernetes.repo.j2
     dest: /etc/yum.repos.d/kubernetes.repo
 
-- name: Install Cilium
+- name: Check if we can reach https://github.com for downloads
+  ansible.builtin.command: curl --output /dev/null --silent --head --fail https://github.com/
+  register: github_is_reachable
+  changed_when: false
+
+- name: Install Cilium and Helm from github
+  when: github_is_reachable.rc == 0
   block:
-    - name: Copy cilium installer and execute shell script for installation
+    - name: Install Cilium with shell script
       ansible.builtin.script: roles/common/files/cilium-install.sh
       args:
         creates: /usr/local/bin/cilium
-      timeout: 120
-  rescue:
-  - name: Copy cilium
-    ansible.builtin.copy:
-      src: cilium
-      dest: /usr/local/bin/cilium
-      mode: 755
-
-- name: Install Helm
-  block:
     - name: Copy helm installer and execute shell script for installation
       ansible.builtin.script: roles/common/files/helm-install.sh
       args:
         creates: /usr/local/bin/helm
-      timeout: 120 
-  rescue:
-  - name: Copy Helm
-    ansible.builtin.copy:
-      src: helm
-      dest: /usr/local/bin/helm
-      mode: 755
 
+- name: Copy Cilium and helm command from local if github.com is unreachable from here
+  when: github_is_reachable.rc != 0
+  block:
+    - name: Copy cilium
+      ansible.builtin.copy:
+        src: cilium
+        dest: /usr/local/bin/cilium
+        mode: 755
+    - name: Copy Helm
+      ansible.builtin.copy:
+        src: helm
+        dest: /usr/local/bin/helm
+        mode: 755
+  
 - name: Add setup user (password should be set manually!)
   ansible.builtin.user:
     name: setup
