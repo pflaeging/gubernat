@@ -262,6 +262,12 @@
   ansible.builtin.reboot:
   when: selinux_permissive is changed or grubby_update_result is changed 
 
+- name: Get SELinux Facts
+  ansible.builtin.setup:
+    filter:
+      - 'ansible_selinux'
+  when: selinux_permissive is changed
+
 - name: Ensure that SeLinux is enabled (enforcing mode)
   ansible.posix.selinux:
     policy: targeted

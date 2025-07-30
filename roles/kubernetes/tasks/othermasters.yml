@@ -30,3 +30,4 @@
     cmd: kubectl taint nodes {{ item }} --kubeconfig /etc/kubernetes/admin.conf node-role.kubernetes.io/control-plane:NoSchedule-
   ignore_errors: true
   loop: "{{ taint_nodes.stdout_lines }}"
+  when: taint_master is false

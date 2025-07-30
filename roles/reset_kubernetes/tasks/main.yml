@@ -86,6 +86,7 @@
     state: stopped
     enabled: false
     masked: false
+  when: "'contour-ds' not in components"
 
 - name: Restart VM
   ansible.builtin.reboot:
