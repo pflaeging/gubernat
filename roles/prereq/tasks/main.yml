@@ -18,6 +18,24 @@
     permanent: true
     immediate: true
 
+- name: Setup Firewall (open Contour HostPort 80)
+  ansible.posix.firewalld:
+    port: "80/tcp"
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
+  when: '"contour-ds" in components'
+
+- name: Setup Firewall (open  Contour HostPort 443)
+  ansible.posix.firewalld:
+    port: "443/tcp"
+    zone: public
+    state: enabled
+    permanent: true
+    immediate: true
+  when: '"contour-ds" in components'
+
 # if we want to expose the nodeports outside (enable this with care!)
 # - name: Setup Firewall (open nodeport range)
 #   ansible.posix.firewalld:

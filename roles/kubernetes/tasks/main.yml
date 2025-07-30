@@ -58,9 +58,9 @@
 - name: Find remaining tokens in cluster
   ansible.builtin.shell:
     cmd: |
-      export KUBECONFIG=/etc/kubernetes/admin.conf 
+      export KUBECONFIG=/etc/kubernetes/admin.conf
       kubeadm token list | awk '{if(NR!=1){print $1}}'
-  delegate_to: "{{ groups.master[0] }}"  
+  delegate_to: "{{ groups.master[0] }}"
   register: certificate_key
   changed_when: false
 
