@@ -17,7 +17,6 @@
 - name: "Install or check for existence of some required tools"
   ansible.builtin.yum:
     name:
-      - containernetworking-plugins
       - socat
       - conntrack-tools
       - container-selinux

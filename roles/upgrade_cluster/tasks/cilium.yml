@@ -1,0 +1,66 @@
+- name: Define api_host
+  ansible.builtin.set_fact:
+    api_host: >-
+      {% if groups.loadbalancer[0] is defined -%}
+        {{ groups.loadbalancer[0] }}
+      {%- else -%}
+        {% if api_loadbalancer is defined -%}
+          {{ api_loadbalancer }}
+        {%- else -%}
+          {{ groups.master[0] }}
+        {%- endif %}
+      {%- endif %}
+- name: Define control_plane
+  ansible.builtin.set_fact:
+    control_plane: >-
+      {% if api_loadbalancer_port is defined -%}
+        {{ api_host }}:{{ api_loadbalancer_port }}
+      {%- else -%}
+        {{ api_host }}:{{ lb_api_port }}
+      {%- endif %}
+
+
+- name: Check if cillium is installed and ready
+  ansible.builtin.shell:
+    cmd: /usr/local/bin/cilium status
+  register: cilium_installed
+  changed_when: false
+
+- name: Generate cilium helm values /opt/kubernetes/etc/cilium-helm-values.yaml
+  ansible.builtin.template:
+    src: roles/kubernetes/templates/cilium-helm-values.yaml.j2
+    dest: /opt/kubernetes/etc/cilium-helm-values.yaml
+  register: cilium_helm_values
+
+- name: Generate cilium helm values /opt/kubernetes/etc/cilium-preflight-helm-values.yaml
+  ansible.builtin.template:
+    src: roles/upgrade_cluster/templates/cilium-preflight.yaml.j2
+    dest: /opt/kubernetes/etc/cilium-preflight.yaml
+  when: cilium_helm_values.changed
+
+- name: Create Cilium Preflight
+  ansible.builtin.shell:
+    cmd: /usr/local/bin/cilium install --helm-values /opt/kubernetes/etc/cilium-preflight.yaml --dry-run | kubectl apply -f - 
+  when: cilium_helm_values.changed
+  # as it will complain about Namespace already existing
+  ignore_errors: true
+
+- name: Wait for deployment cilium-pre-flight-check to be ready
+  ansible.builtin.shell: 
+    cmd:  kubectl get deployment -n kube-system cilium-pre-flight-check -o jsonpath='{.status.readyReplicas}{" "}{.status.replicas}' 2>&1 | awk '{if ($1 == "Error"){exit 1}else if ($1 != $2) {exit 2} else if ($1 == $2) {exit 0}}'
+  until: deployment_status.rc == 0
+  retries: 10
+  delay: 30
+  register: deployment_status
+  when: cilium_helm_values.changed
+
+- name: Upgrade cilium 
+  ansible.builtin.shell:
+    cmd: /usr/local/bin/cilium upgrade --values /opt/kubernetes/etc/cilium-helm-values.yaml
+  when: cilium_helm_values.changed
+
+- name: Cleanup Preflight Check
+  ansible.builtin.shell:
+    cmd: kubectl delete clusterrole cilium-pre-flight -n kube-system; kubectl delete serviceaccount cilium-pre-flight -n kube-system; kubectl delete clusterrolebinding cilium-pre-flight; kubectl delete daemonset cilium-pre-flight-check -n kube-system; kubectl delete deployment cilium-pre-flight-check -n kube-system
+  when: cilium_helm_values.changed
+  ignore_errors: true

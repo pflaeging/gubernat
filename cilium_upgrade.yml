@@ -1,0 +1,18 @@
+- name: Read service definitions from services.yml
+  hosts: "*, localhost"
+  tasks:
+    - name: Include basic system definitions from system_vars.yaml
+      ansible.builtin.include_vars:
+        file: system_vars.yml
+    - name: Include service defnitions from services_vars.yaml
+      ansible.builtin.include_vars:
+        file: services_vars.yml
+
+- name: Upgrade Cilium
+  hosts: "{{ groups.master[0] }}"
+  serial: 1
+  tasks:
+    - name: Kick Cilium upgrade
+      ansible.builtin.include_tasks: roles/upgrade_cluster/tasks/cilium.yml
+  environment:
+    KUBECONFIG: /etc/kubernetes/admin.conf

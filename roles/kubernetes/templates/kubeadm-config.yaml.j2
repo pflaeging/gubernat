@@ -22,6 +22,15 @@ apiServer:
 {% if api_loadbalancer is defined %}
   - {{ api_loadbalancer }}
 {% endif %}
+{% if oidc.issuer_url is defined %}
+  extraArgs: 
+    oidc-issuer-url: {{ oidc.issuer_url }}
+    oidc-client-id: {{ oidc.client_id }}
+    oidc-username-claim: {{ oidc.username.claim | default("preferred_username", true) }}
+    oidc-username-prefix: {{  "'" + oidc.username.prefix + "'"  | default("'oidc:'", true) }}
+    oidc-groups-prefix: {{  "'" + oidc.groups.prefix + "'"  | default("'oidc:'", true) }}
+    oidc-groups-claim: {{ oidc.groups.claim | default("groups", true) }}
+{% endif %}
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
