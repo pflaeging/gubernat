@@ -11,19 +11,19 @@
   with_fileglob: "components/{{ component }}/*"
   register: changed_config
 
-- name: Is there an install.sh? 
+- name: Is there an install.sh for {{ component }} ? 
   ansible.builtin.stat:
     path: "/opt/kubernetes/components/{{ component }}/install.sh"
   register: install_sh
   when: groups.master[0] in inventory_hostname
 
-- name: Install via install.sh
+- name: Install {{ component }} via install.sh
   ansible.builtin.command:
     chdir: "/opt/kubernetes/components/{{ component }}"
     cmd: "sh ./install.sh"
   when: (groups.master[0] in inventory_hostname) and (install_sh.stat.exists) and (changed_config.changed)
 
-- name: Else install via kustomize 
+- name: Else install {{ component }} via kustomize 
   ansible.builtin.command:
     chdir: "/opt/kubernetes/components/{{ component }}"
     cmd: "kubectl apply -k ."
