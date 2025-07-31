@@ -73,7 +73,7 @@ all:
     upgrade_os: false
     # Change this to True if Master should stay tainted
     taint_master: false
-    # Cilium and OIDC Config (optimal)
+    # Cilium and OIDC Config (optional)
     # cilium:
     #   operator:
     #     replicas: 3
