@@ -71,6 +71,8 @@ all:
     ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"
     # Upgrade the OS version when Upgrading K8s
     upgrade_os: false
+    # Change this to True if Master should stay tainted
+    taint_master: false
     # Cilium and OIDC Config (optimal)
     # cilium:
     #   operator:
