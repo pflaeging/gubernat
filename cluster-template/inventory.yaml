@@ -73,6 +73,8 @@ all:
     upgrade_os: false
     # Cilium and OIDC Config (optimal)
     # cilium:
+    #   operator:
+    #     replicas: 3
     #   hubble: 
     #     enabled: true
     #     export: 

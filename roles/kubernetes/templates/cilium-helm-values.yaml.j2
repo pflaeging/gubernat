@@ -87,7 +87,7 @@ hubble:
         - '{"destination_pod":["kube-system/"]}'
 
 operator:
-  replicas: 3
+  replicas: {{cilium.operator.replicas | default(1, true)}}
 {{ cilium_image(cilium, repo_mirror, "operator") | indent (2, true) }}
   prometheus: 
     enabled: {{ cilium.metrics.enabled | default("false", true) }}
