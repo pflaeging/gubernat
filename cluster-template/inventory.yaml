@@ -23,7 +23,6 @@ all:
     # define a registry mirror. All images have to be in this mirror
     # if it's not defined, we're internet connected
     # registry_mirror: registry.pflaeging.net/gubernat_mirror
-    ansible_user: root
     # give your cluster a name
     clustername: g8s-m-cluster
     # The api_loadbalancer_port is optional if you want to use an api-loadbalancer 
