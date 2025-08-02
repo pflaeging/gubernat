@@ -44,7 +44,7 @@ Then, simply look through the rest of the config and change settings like the cl
 - To give ansible root access to all our nodes without prompting for passwords, we will create a root ssh key and install it on every node.
 
   1. To generate the key, run:  
-  `ansible-playbook -i inventory.yaml ./gubernat/initial-setup.yml`
+  `ansible-playbook -i inventory.yaml ./gubernat/initial-ssh-setup.yml`
   2. Ansible created a script to install the ssh key on the nodes. You have to enter the root password of the machines if there are no trusts in place. Run:  
   `./config:*/ssh-copy-id-to-all-host.sh`
 - (Optinal) If you want to use this ssh key yourself for something other than ansible, you can add the key to your ssh (temporarily, only for the current shell session):  
