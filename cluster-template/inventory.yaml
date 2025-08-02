@@ -1,72 +1,72 @@
 ---
+# == CLUSTER NODES DEFINITION ==
+# master nodes (define 1 or 3 with ip-address in ansible_host)
 master:
   hosts:
-    g8s-m1.pfpk.lan:
-      ansible_host: 192.168.64.207
-    g8s-m2.pfpk.lan:
-      ansible_host: 192.168.64.250
-    g8s-m3.pfpk.lan:
-      ansible_host: 192.168.64.175
+# if you use more than 3 machines, define the rest as workers
 worker:
   hosts:
-    g8s-m4.pfpk.lan:
-      ansible_host: 192.168.64.31
-  # there are use cases for dedicated loadbalancers.
-  # If there are no loadbalancers, all other machines are loadbalancers
+# there are use cases for dedicated loadbalancers.
+# if you don't use dedicated loadbalancers, all machines will act as loadbalancers
 loadbalancer:
   hosts:
-  # lb.my.net:
-  #   ansible_host: 10.99.99.10
-  # here are coming some global variables
+
+# == GLOBAL VARIABLES ==
 all:
   vars:
-    # define a registry mirror. All images have to be in this mirror
-    # if it's not defined, we're internet connected
-    # registry_mirror: registry.pflaeging.net/gubernat_mirror
     # give your cluster a name
     clustername: g8s-m-cluster
-    # The api_loadbalancer_port is optional if you want to use an api-loadbalancer 
+
+    # (optional) to enable disconnected installation, define a registry mirror
+    # all images have to be in this mirror
+    # registry_mirror: registry.pflaeging.net/gubernat_mirror
+
+    # (optinal) The api_loadbalancer_port is optional if you want to use an api-loadbalancer 
     #   and if you're not using the loadbalancer host defined here!
     # api_loadbalancer: "agw-loadbalancer.internal.myorg.at" 
     # api_loadbalancer_port: 5443
-    # if cert_manager_admin_mail is defined and we're internet connected we will
-    #   rollout a letsencrypt issuer for cert-manager
+
+    # (optional) if cert_manager_admin_mail is defined and we're internet connected,
+    # we will rollout a letsencrypt issuer for cert-manager
     cert_manager_admin_mail: myuser@my.domain.net
+
     # which components do we roll out.
-    # You find the avialable components in the ./components directory
-    #     in the gubernat repo
+    # you can find the available components in the ./components directory
+    # in the gubernat repo
     components:
       - cert-manager
       - contour
-      # test app
-      # - httpbin
+      # - httpbin    # (test app)
       - kubernetes-dashboard
       - local-storage
       - metrics-server
-      # only for multiple network stacks
-      # - multus
+      # - multus    # (only for multiple network stacks)
       - opentelemetry
       - prometheus
       - trust-manager
-    # only development clusters can be reseted
-    development_cluster: true
+
     # the internal ip address range for pods
     k8s_cidr: 10.85.0.0/16
     # the internal ip address range for services
     k8s_svc_cidr: 10.86.0.0/16
+
     # which kubernetes and cri-o version do we roll out?
     k8s_version: 1.33.1
     crio_version: 1.32.1
+
     # specify your DNS servers here. They will act as forwarders
     dns_forwarders:
     - 8.8.8.8
     - 8.8.4.4
-    # we need at least two ntp servers
+
+    # specify at least two ntp servers
     ntp_servers:
     - ts1.aco.net
     - europe.pool.ntp.org
-    # ansible user
-    ansible_user: root
-    ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"
+
     # Upgrade the OS version when Upgrading K8s
     upgrade_os: false
+
+    # ansible settings (don't change uneless you know what you're doing)
+    ansible_user: root
+    ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"
