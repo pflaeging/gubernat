@@ -5,7 +5,9 @@
 - ### Kubernetes Dashboard
   Accessible via `https://any-master-node.my.net:8443`
 
-  You can get the admin login token by executing the script `get-kubernetes-admin-token.sh` on a master node
+  You can get the admin login token by executing the script `get-dashboard-admin-token.sh` on a master node ([see below](#tools-on-the-master-machines))
+  
+  *(Note: The SSL certificate of the dashboard webpage is self-signed by design)*
 - ### Prometheus  
   Not exposed over the web. You can access it from your local machine by port-forwarding the service:
 
