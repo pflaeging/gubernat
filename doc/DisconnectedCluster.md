@@ -1,12 +1,12 @@
-# Howto work with disconnected clusters
+# How to work with disconnected clusters
 
 - create a project in your local registry (for example `gubernat-mirror`)
 - set the variable `repo_mirror` in `./inventory.yaml` to this mirror project:  
   `repo_mirror: registry.my.domain/gubernat-mirror`
 - on an internet connected host execute the mirror script:  
-  `./gubernat/tools/image-mirror.py -v registry.my.domain/gubernat-mirror gubernat/imagelist-all.csv`  
+  `./gubernat/tools/image-mirror.py -v registry.my.domain/gubernat-mirror gubernat/imagelist.csv`  
   or generate the list and execute the commands on an internet connected host:  
-  `./gubernat/tools/image-mirror.py -n registry.my.domain/gubernat-mirror gubernat/imagelist-all.csv`
+  `./gubernat/tools/image-mirror.py -n registry.my.domain/gubernat-mirror gubernat/imagelist.csv`
 - and now you can install like you were internet connected ;-)
 
 ## Generate image list for mirror images

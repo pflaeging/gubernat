@@ -7,7 +7,7 @@ on all machines for the cluster:
 
 - download ISO image: <https://almalinux.org/get-almalinux/>
 - install Linux as minimal image (no additional packages except ssh server)
-- be sure you have access to the machines root accounts via ssh
+- be sure you have access to the machines root accounts via ssh (eg. via root password)
 
 ## Gubernat Configuration
 
@@ -44,10 +44,10 @@ Then, simply look through the rest of the config and change settings like the cl
 - To give ansible root access to all our nodes without prompting for passwords, we will create a root ssh key and install it on every node.
 
   1. To generate the key, run:  
-  `ansible-playbook -i inventory.yaml ./gubernat/initial-ssh-setup.yml`
+  `ansible-playbook -i inventory.yaml ./gubernat/playbooks/01-initial-ssh-setup.yml`
   2. Ansible created a script to install the ssh key on the nodes. You have to enter the root password of the machines if there are no trusts in place. Run:  
   `./config:*/ssh-copy-id-to-all-host.sh`
-- (Optinal) If you want to use this ssh key yourself for something other than ansible, you can add the key to your ssh (temporarily, only for the current shell session):  
+- (Optional) If you want to use this ssh key yourself for something other than ansible, you can add the key to your ssh (temporarily, only for the current shell session):  
 
   ```shell
   # start ssh-agent
@@ -57,4 +57,4 @@ Then, simply look through the rest of the config and change settings like the cl
   ```
   
 - Now it's time to roll out the cluster with all configured components:  
-  `ansible-playbook -i inventory.yaml ./gubernat/site.yml`
+  `ansible-playbook -i inventory.yaml ./gubernat/playbooks/02-cluster-installation.yml`

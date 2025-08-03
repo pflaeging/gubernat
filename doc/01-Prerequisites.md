@@ -1,7 +1,5 @@
 # Prerequesites
 
-What do you need for your gubernat installation?
-
 - A management machine with a recent ansible installation:
 
   - This can be your workstation:
@@ -10,7 +8,7 @@ What do you need for your gubernat installation?
       - Red Hat-based: `sudo dnf install ansible`
       - Other: See the [official docs](https://docs.ansible.com/ansible/latest/installation_guide/installation_distros.html)
     - Windows: Not supported; use WSL
-  - Or your first node in the cluster (as management node):
+  - Or your first node in the cluster (doubling as management node):
 
     ```shell
     # enter management node
@@ -24,4 +22,4 @@ What do you need for your gubernat installation?
     ```
 
 - 1 or 3+ cluster machines. The first machine can also double as management node.  
-  Set them up like described in [Installation](./Installation.md).
+  Set them up like described in [Installation](./02-Installation.md).
