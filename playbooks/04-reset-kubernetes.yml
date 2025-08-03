@@ -1,0 +1,17 @@
+- name: Read variable definitions
+  hosts: "*, localhost"
+  tasks:
+    - name: Include ansible definitions from ansible_vars.yaml
+      ansible.builtin.include_vars:
+        file: ../vars/ansible_vars.yml
+    - name: Include kubernetes system definitions from k8s_system_vars.yaml
+      ansible.builtin.include_vars:
+        file: ../vars/ansible_vars.yml
+    - name: Include kubernetes service definitions from k8s_services_vars.yaml
+      ansible.builtin.include_vars:
+        file: ../vars/ansible_vars.yml
+
+- name: Install master and workers
+  hosts: master, worker
+  roles:
+    - reset_kubernetes

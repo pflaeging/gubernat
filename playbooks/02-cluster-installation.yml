@@ -1,18 +1,22 @@
-- name: Read service definitions from services.yml
+- name: Read variable definitions
   hosts: "*, localhost"
   tasks:
-    - name: Include basic system definitions from system_vars.yaml
+    - name: Include ansible definitions from ansible_vars.yaml
       ansible.builtin.include_vars:
-        file: system_vars.yml
-    - name: Include service defnitions from services_vars.yaml
+        file: ../vars/ansible_vars.yml
+    - name: Include kubernetes system definitions from k8s_system_vars.yaml
       ansible.builtin.include_vars:
-        file: services_vars.yml
+        file: ../vars/ansible_vars.yml
+    - name: Include kubernetes service definitions from k8s_services_vars.yaml
+      ansible.builtin.include_vars:
+        file: ../vars/ansible_vars.yml
 
 - name: Common setup
   hosts: loadbalancer, master, worker
   roles:
     - common
 
+# TODO fix this below
 # If you don't want an explicit loadbalancer, simpler comment out this part of the playbook
 # and declare the hosts here to master.
 # In this case there's a loadbalancer on every master
