@@ -1,31 +1,11 @@
 ---
-- name: Set Variables
-  ansible.builtin.set_fact:
-    k8s_ports: |
-        {% set res = [] -%}
-        {% for service in services -%}
-            {% for ports in service.ports -%}
-            {% set ignored = res.extend([{ 'Source' : ports.sourceport }]) -%}
-            {%- endfor %}
-        {%- endfor %}
-        {{ res }}
-
-- name: Setup Firewall (open api port 6443)
+- name: Setup Firewall (open api port {{ k8s_api_port }})
   ansible.posix.firewalld:
-    port: "6443/tcp"
+    port: "{{ k8s_api_port }}/tcp"
     zone: public
     state: enabled
     permanent: true
     immediate: true
-
-# if we want to expose the nodeports outside (enable this with care!)
-# - name: Setup Firewall (open nodeport range)
-#   ansible.posix.firewalld:
-#     port: "30000-32767/tcp"
-#     zone: public
-#     state: enabled
-#     permanent: true
-#     immediate: true
 
 - name: Enable masquerade on public firewalld zone
   ansible.posix.firewalld:

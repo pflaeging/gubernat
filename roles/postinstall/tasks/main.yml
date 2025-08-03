@@ -1,3 +1,0 @@
-- name: Generate new ssh keys for root
-  ansible.builtin.debug:
-    msg: Nothing todo here. We are ready!

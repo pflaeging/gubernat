@@ -40,7 +40,7 @@
     permanent: true
     immediate: true
 
-- name: Setup Firewall (open gateway ports from services_vars.yaml )
+- name: Setup Firewall (open gateway ports from k8s_services_vars.yaml )
   ansible.posix.firewalld:
     port: "{{ item.Gateway }}/tcp"
     zone: public

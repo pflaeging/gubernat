@@ -11,23 +11,7 @@
       ansible.builtin.include_vars:
         file: ../vars/k8s_services_vars.yml
 
-- name: Common setup
-  hosts: loadbalancer, master, worker
-  roles:
-    - common
-
-# TODO fix this below - can't this be automated ?
-# If you don't want a dedicated loadbalancer, simply comment out this part of the playbook
-# and declare the hosts here to master.
-# In this case there's a loadbalancer on every master
-- name: Rollout loadbalancer
-  hosts: master, worker
-  roles:
-    - loadbalancer
-
 - name: Install master and workers
   hosts: master, worker
   roles:
-    - prereq
-    - kubernetes
     - k8s_components

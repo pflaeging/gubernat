@@ -48,7 +48,7 @@
     state: link
 
 - name: Update /etc/hosts file
-  lineinfile:
+  ansible.builtin.lineinfile:
     dest: /etc/hosts
     regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}.*$'
     line: "{{ hostvars[item].ansible_host }} {{ item }}"
@@ -127,7 +127,7 @@
     immediate: true
     masquerade: true
 
-- name: Setup Firewall (delete) hosts from trusted zone)
+- name: Setup Firewall (delete hosts from trusted zone)
   ansible.posix.firewalld:
     source: "{{ hostvars[item].ansible_host }}/32"
     zone: trusted
@@ -137,7 +137,7 @@
   with_items: "{{ groups.all }}"
   ignore_errors: true
 
-- name: Setup Firewall (add hosts to zone)
+- name: Setup Firewall (add hosts to 000-kubernetes zone)
   ansible.posix.firewalld:
     source: "{{ hostvars[item].ansible_host }}/32"
     zone: 000-kubernetes
@@ -231,7 +231,7 @@
     name: setup
     comment: Kubernetes Setup User
 
-- name: Enable Cgroupv2 
+- name: Enable Cgroupv2 for RHEL 8
   block:
   - name: Check current kernel command line
     ansible.builtin.command: cat /proc/cmdline

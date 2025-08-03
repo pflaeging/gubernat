@@ -4,12 +4,12 @@
     - name: Include ansible definitions from ansible_vars.yaml
       ansible.builtin.include_vars:
         file: ../vars/ansible_vars.yml
-    - name: Include kubernetes system definitions from k8s_system_vars.yaml
+    - name: Include system definitions from system_vars.yaml
       ansible.builtin.include_vars:
-        file: ../vars/ansible_vars.yml
+        file: ../vars/system_vars.yml
     - name: Include kubernetes service definitions from k8s_services_vars.yaml
       ansible.builtin.include_vars:
-        file: ../vars/ansible_vars.yml
+        file: ../vars/k8s_services_vars.yml
 
 - name: Install master and workers
   hosts: master, worker
