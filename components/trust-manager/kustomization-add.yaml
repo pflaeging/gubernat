@@ -1,9 +1,0 @@
-{% if repo_mirror is defined %}
-images:
-- name: quay.io/jetstack/trust-manager:v0.17.1
-  newName: {{ repo_mirror }}/quay.io/jetstack/trust-manager
-  newTag: v0.17.1
-- name: quay.io/jetstack/trust-pkg-debian-bookworm:20230311.0
-  newName: {{ repo_mirror }}/quay.io/jetstack/trust-pkg-debian-bookworm
-  newTag: 20230311.0
-{% endif %}

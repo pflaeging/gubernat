@@ -1,9 +1,0 @@
-{% if repo_mirror is defined %}
-images:
-- name: busybox
-  newName: {{ repo_mirror }}/docker.io/library/busybox
-  newTag: latest
-- name: rancher/local-path-provisioner:v0.0.31
-  newName: {{ repo_mirror }}/docker.io/rancher/local-path-provisioner
-  newTag: v0.0.31
-{% endif %}

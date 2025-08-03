@@ -12,16 +12,7 @@ images:
 - name: ghcr.io/projectcontour/contour:v1.32.0
   newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
   newTag: v1.32.0
-- name: ghcr.io/projectcontour/contour:v1.32.0
-  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
-  newTag: v1.32.0
 - name: docker.io/envoyproxy/envoy:v1.34.1
   newName: {{ repo_mirror }}/docker.io/envoyproxy/envoy
   newTag: v1.34.1
-- name: ghcr.io/projectcontour/contour:v1.32.0
-  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
-  newTag: v1.32.0
-- name: ghcr.io/projectcontour/contour:v1.32.0
-  newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
-  newTag: v1.32.0
 {% endif %}

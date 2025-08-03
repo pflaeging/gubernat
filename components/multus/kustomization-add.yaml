@@ -1,6 +1,0 @@
-{% if repo_mirror is defined %}
-images:
-- name: ghcr.io/k8snetworkplumbingwg/multus-cni:v4.2.0-thick
-  newName: {{ repo_mirror }}/ghcr.io/k8snetworkplumbingwg/multus-cni
-  newTag: v4.2.0-thick
-{% endif %}
