@@ -8,7 +8,7 @@
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "/opt/kubernetes/components/{{ component }}"
-  with_fileglob: "components/{{ component }}/*"
+  with_fileglob: "../components/{{ component }}/*"
   register: changed_config
 
 - name: Check if custom config file exists for {{ component }}
