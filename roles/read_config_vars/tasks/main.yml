@@ -1,9 +1,13 @@
 - name: Include system definitions from system_vars.yaml
   ansible.builtin.include_vars:
     file: ../vars/system_vars.yml
+  delegate_to: localhost
+  run_once: true
 - name: Check if config files exist
   ansible.builtin.stat:
     path: "../../config/components/{{ item }}.yaml"
+  delegate_to: localhost
+  run_once: true
   loop: "{{ components }}"
   register: config_files_stat
 
@@ -11,6 +15,8 @@
   ansible.builtin.include_vars:
     file: "../../config/components/{{ item.item }}.yaml"
     name: "{{ item.item }}_config"
+  delegate_to: localhost
+  run_once: true
   loop: "{{ config_files_stat.results }}"
   when: item.stat.exists
   loop_control:
