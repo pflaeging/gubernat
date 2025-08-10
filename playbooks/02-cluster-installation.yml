@@ -20,6 +20,7 @@
           - lb_rollout_group
       loop: "{{ groups['loadbalancer'] }}"
       when: groups['loadbalancer'] is defined and groups['loadbalancer'] | length > 0
+      changed_when: false
 
     - name: Add hosts from 'master' and 'worker' groups to 'lb_rollout_group' if 'loadbalancer' group does NOT exist
       ansible.builtin.add_host:
@@ -28,6 +29,7 @@
           - lb_rollout_group
       loop: "{{ groups['master'] + groups['worker'] }}"
       when: groups['loadbalancer'] is not defined or groups['loadbalancer'] | length == 0
+      changed_when: false
 
 - name: Rollout loadbalancer (haproxy) on correct hosts
   hosts: lb_rollout_group
