@@ -1,10 +1,10 @@
 - name: Define config directory for cluster
   ansible.builtin.set_fact:
-    config_dir: "../config:{{ clustername }}"
+    config_dir: "../../config:{{ clustername }}"
 
 - name: Create directory for secrets of cluster {{ config_dir }}
   ansible.builtin.file:
-    path: "../config:{{ clustername }}"
+    path: "../../config:{{ clustername }}"
     state: directory
     mode: u+rwx,g-rwx,o-rwx
   delegate_to: localhost
@@ -17,7 +17,7 @@
 
 - name: Generate shell script to copy ssh key to all machines
   ansible.builtin.template:
-    src: roles/initialsetup/templates/ssh-copy-id-to-all-hosts.sh.j2
+    src: ssh-copy-id-to-all-hosts.sh.j2
     dest: "{{ config_dir }}/ssh-copy-id-to-all-host.sh"
     mode: '0755'
   delegate_to: localhost
