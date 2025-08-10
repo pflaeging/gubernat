@@ -1,12 +1,4 @@
 ---
-- name: Setup Firewall (open api port {{ k8s_internal_api_port }})
-  ansible.posix.firewalld:
-    port: "{{ k8s_internal_api_port }}/tcp"
-    zone: public
-    state: enabled
-    permanent: true
-    immediate: true
-
 - name: Enable masquerade on public firewalld zone
   ansible.posix.firewalld:
     zone: public
