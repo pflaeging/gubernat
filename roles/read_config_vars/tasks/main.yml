@@ -1,9 +1,7 @@
-- name: Include system definitions from system_vars.yaml
+- name: Include custom cluster config from config/loadbalancer.yaml
   ansible.builtin.include_vars:
-    file: ../vars/system_vars.yml
-  delegate_to: localhost
-  run_once: true
-- name: Check if config files exist
+    file: ../../config/loadbalancer.yaml
+- name: Check if config files exist for each component
   ansible.builtin.stat:
     path: "../../config/components/{{ item }}.yaml"
   delegate_to: localhost

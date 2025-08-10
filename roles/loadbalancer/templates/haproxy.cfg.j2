@@ -48,7 +48,7 @@ backend k8s-api-backend
     balance roundrobin
     mode tcp
 {% for name in groups.master %}
-    server {{ name }} {{ hostvars[name].ansible_host }}:{{ k8s_internal_api_port }} check
+    server {{ name }} {{ hostvars[name].ansible_host }}:6443 check
 {% endfor %}
 
 

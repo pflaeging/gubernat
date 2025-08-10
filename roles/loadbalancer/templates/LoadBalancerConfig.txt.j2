@@ -2,7 +2,7 @@ LoadBalancer: k8s-api
     On port TCP/{{ k8s_loadbalancer_api_port }}
 Level 4 Forwarding to:
 {% for name in groups.master %}
-     DNS-Name: {{ name }} IP-Address: {{ hostvars[name].ansible_host }} Port: {{ k8s_internal_api_port }}
+     DNS-Name: {{ name }} IP-Address: {{ hostvars[name].ansible_host }} Port: 6443
 {% endfor %}
 
 {% for service in exposed_services %}

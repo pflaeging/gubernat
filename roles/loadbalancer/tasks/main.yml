@@ -1,7 +1,4 @@
 ---
-- name: Include custom cluster config from config/loadbalancer.yaml
-  ansible.builtin.include_vars:
-    file: ../../config/loadbalancer.yaml
 - name: Set Variables
   ansible.builtin.set_fact:
     firewall_ports: |
