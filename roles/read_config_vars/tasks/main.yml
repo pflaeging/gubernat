@@ -1,6 +1,3 @@
-- name: Include ansible definitions from ansible_vars.yaml
-  ansible.builtin.include_vars:
-    file: ../vars/ansible_vars.yml
 - name: Include system definitions from system_vars.yaml
   ansible.builtin.include_vars:
     file: ../vars/system_vars.yml

@@ -62,3 +62,8 @@ all:
 
     # Upgrade the OS version when Upgrading K8s
     upgrade_os: false
+
+    # Variables so ansible knows which user and ssh key to use
+    # Don't change unless you know what you're doing
+    ansible_user: root
+    ansible_ssh_private_key_file: "./config:{{ clustername }}/root-ssh-key"
