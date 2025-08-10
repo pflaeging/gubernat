@@ -1,7 +1,7 @@
 
 - name: Init cluster on first node
   ansible.builtin.command: 
-    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml
+    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml --skip-phases=addon/kube-proxy
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
 

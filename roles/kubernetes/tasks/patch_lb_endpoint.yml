@@ -46,19 +46,9 @@
     cmd: "kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase upload-config kubeadm"
   when: groups.master[0] in inventory_hostname
 
-- name: Publish kube-proxy changes to cluster
-  ansible.builtin.shell:
-    cmd: "kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase addon kube-proxy"
-  when: groups.master[0] in inventory_hostname
-
 - name: Restart apiserver on master0
   ansible.builtin.shell:
     cmd: "kubectl get pod -o wide -n kube-system| grep apiserver | awk '{print $1}' | xargs -n 1 kubectl -n kube-system delete pod"
-  when: groups.master[0] in inventory_hostname
-
-- name: Restart kube-proxy daemonset
-  ansible.builtin.shell:
-    cmd: "kubectl -n kube-system rollout restart daemonset kube-proxy"
   when: groups.master[0] in inventory_hostname
 
 - name: Patch cilium-operator deployment for cilium 1.13 manually (OK for higher versions)
