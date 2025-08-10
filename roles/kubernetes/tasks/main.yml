@@ -16,7 +16,7 @@
       {% if api_loadbalancer_port is defined -%}
         {{ api_host }}:{{ api_loadbalancer_port }}
       {%- else -%}
-        {{ api_host }}:{{ lb_api_port }}
+        {{ api_host }}:{{ k8s_loadbalancer_api_port }}
       {%- endif %}
 
 - name: create place for configs /opt/kubernetes

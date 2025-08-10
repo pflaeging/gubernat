@@ -1,7 +1,7 @@
 ---
-- name: Setup Firewall (open api port {{ k8s_api_port }})
+- name: Setup Firewall (open api port {{ k8s_internal_api_port }})
   ansible.posix.firewalld:
-    port: "{{ k8s_api_port }}/tcp"
+    port: "{{ k8s_internal_api_port }}/tcp"
     zone: public
     state: enabled
     permanent: true

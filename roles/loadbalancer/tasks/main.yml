@@ -32,9 +32,9 @@
     permanent: true
     immediate: true
 
-- name: Setup Firewall (open api port {{ lb_api_port }})
+- name: Setup Firewall (open api port {{ k8s_loadbalancer_api_port }})
   ansible.posix.firewalld:
-    port: "{{ lb_api_port }}/tcp"
+    port: "{{ k8s_loadbalancer_api_port }}/tcp"
     zone: public
     state: enabled
     permanent: true

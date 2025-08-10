@@ -1,5 +1,5 @@
 k8sServiceHost: {{ api_host }}
-k8sServicePort: {{ api_loadbalancer_port|default(lb_api_port,true) }}
+k8sServicePort: {{ api_loadbalancer_port|default(k8s_loadbalancer_api_port,true) }}
 ipv4NativeRoutingCIDR:  {{ k8s_cidr }}
 routingMode: tunnel
 envoy:
