@@ -1,0 +1,2 @@
+ssl_nodeport: 30443
+http_nodeport: 30080

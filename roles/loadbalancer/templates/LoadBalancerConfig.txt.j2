@@ -5,7 +5,7 @@ Level 4 Forwarding to:
      DNS-Name: {{ name }} IP-Address: {{ hostvars[name].ansible_host }} Port: {{ k8s_internal_api_port }}
 {% endfor %}
 
-{% for service in services %}
+{% for service in exposed_services %}
 {% for ports in service.ports %}
 LoadBalancer {{ service.name }}-{{ ports.name }}
     On port TCP/{{ports.gatewayport }}

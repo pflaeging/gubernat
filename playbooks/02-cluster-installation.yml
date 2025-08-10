@@ -1,15 +1,7 @@
 - name: Read variable definitions
   hosts: "*, localhost"
-  tasks:
-    - name: Include ansible definitions from ansible_vars.yaml
-      ansible.builtin.include_vars:
-        file: ../vars/ansible_vars.yml
-    - name: Include system definitions from system_vars.yaml
-      ansible.builtin.include_vars:
-        file: ../vars/system_vars.yml
-    - name: Include kubernetes service definitions from k8s_services_vars.yaml
-      ansible.builtin.include_vars:
-        file: ../vars/k8s_services_vars.yml
+  roles:
+    - read_config_vars
 
 - name: Common setup
   hosts: loadbalancer, master, worker

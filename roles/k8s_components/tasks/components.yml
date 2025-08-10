@@ -11,6 +11,17 @@
   with_fileglob: "components/{{ component }}/*"
   register: changed_config
 
+- name: Check if custom config file exists for {{ component }}
+  stat:
+    path: "../../config/components/{{ component }}.yaml"
+  register: custom_config_file_stat
+
+- name: Include {{ component }} vars with namespace
+  ansible.builtin.include_vars:
+    file: "../../config/components/{{ component }}.yaml"
+    name: "{{ component }}_config"
+  when: custom_config_file_stat.stat.exists
+
 - name: Is there an install.sh for {{ component }} ? 
   ansible.builtin.stat:
     path: "/opt/kubernetes/components/{{ component }}/install.sh"

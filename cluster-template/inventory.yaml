@@ -17,19 +17,6 @@ all:
     # give your cluster a name
     clustername: g8s-m-cluster
 
-    # (optional) to enable disconnected installation, define a registry mirror
-    # all images have to be in this mirror
-    # registry_mirror: registry.pflaeging.net/gubernat_mirror
-
-    # (optional) The api_loadbalancer_port is optional if you want to use an api-loadbalancer 
-    #   and if you're not using the loadbalancer host defined here!
-    # api_loadbalancer: "agw-loadbalancer.internal.myorg.at" 
-    # api_loadbalancer_port: 5443
-
-    # (optional) if cert_manager_admin_mail is defined and we're internet connected,
-    # we will rollout a letsencrypt issuer for cert-manager
-    cert_manager_admin_mail: myuser@my.domain.net
-
     # which components do we roll out.
     # you can find the available components in the ./components directory
     # in the gubernat repo
@@ -44,6 +31,15 @@ all:
       - opentelemetry
       - prometheus
       - trust-manager
+
+    # (optional) to enable disconnected installation, define a registry mirror
+    # all images have to be in this mirror
+    # registry_mirror: registry.pflaeging.net/gubernat_mirror
+
+    # (optional) The api_loadbalancer_port is optional if you want to use an api-loadbalancer 
+    #   and if you're not using the loadbalancer host defined here!
+    # api_loadbalancer: "agw-loadbalancer.internal.myorg.at" 
+    # api_loadbalancer_port: 5443
 
     # the internal ip address range for pods
     k8s_cidr: 10.85.0.0/16

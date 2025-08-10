@@ -1,3 +1,7 @@
+- name: Read variable definitions
+  hosts: "*, localhost"
+  roles:
+    - read_config_vars
 - name: Upgrade master0
   hosts: "{{ groups.master[0] }}"
   serial: 1

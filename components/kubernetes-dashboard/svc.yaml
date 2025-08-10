@@ -11,7 +11,7 @@ spec:
     port: 443
     protocol: TCP
     targetPort: 8443
-    nodePort: 32443
+    nodePort: {{ kubernetes-dashboard_config.nodeport }}
   selector:
     app.kubernetes.io/component: app
     app.kubernetes.io/instance: kubernetes-dashboard

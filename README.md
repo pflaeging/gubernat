@@ -51,7 +51,7 @@ The dashboard is always listening on port 8443 with SSL and a private certificat
 
 Cert-manager is configured with an own root-ca and a ClusterIssuer "gubernat-issuer". This is for non productive environments only and in isolated environments.
 
-If you set "cert_manager_admin_mail" in your inventory, two ClusterIssuer "letsencrypt-staging" and "letsencrypt-prod" are installed. This should be used.
+If you set "admin_mail" in your cert-manager config, two ClusterIssuer "letsencrypt-staging" and "letsencrypt-prod" are installed. This should be used.
 
 If you want to rollout additional services, you have to make a DNS (or in small envs an /etc/hosts) record pointing on all hosts in the cluster or better pointing to the masters.
 

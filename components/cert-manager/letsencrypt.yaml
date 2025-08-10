@@ -6,7 +6,7 @@ metadata:
   namespace: cert-manager
 spec:
   acme:
-    email: {{ cert_manager_admin_mail |  default('user@example.com') }}
+    email: {{ cert-manager_config.admin_mail |  default('user@example.com') }}
     privateKeySecretRef:
       name: letsencrypt-staging
     server: https://acme-staging-v02.api.letsencrypt.org/directory
@@ -22,7 +22,7 @@ metadata:
   namespace: cert-manager
 spec:
   acme:
-    email: {{ cert_manager_admin_mail |  default('user@example.com') }}
+    email: {{ cert-manager_config.admin_mail |  default('user@example.com') }}
     privateKeySecretRef:
       name: letsencrypt-prod
     server: https://acme-v02.api.letsencrypt.org/directory

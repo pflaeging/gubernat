@@ -1,0 +1,23 @@
+- name: Include ansible definitions from ansible_vars.yaml
+  ansible.builtin.include_vars:
+    file: ../vars/ansible_vars.yml
+- name: Include system definitions from system_vars.yaml
+  ansible.builtin.include_vars:
+    file: ../vars/system_vars.yml
+- name: Check and include custom config per component
+  block:
+    - name: Check if config file exists for {{ item }}
+      ansible.builtin.stat:
+        path: "../../config/components/{{ item }}.yaml"
+      register: file_stat
+      changed_when: false
+
+    - name: Include config vars for {{ item }} if exists
+      ansible.builtin.include_vars:
+        file: "../../config/components/{{ item }}.yaml"
+        name: "{{ item }}_config"
+      when: file_stat.stat.exists
+
+  loop: "{{ components }}"
+  loop_control:
+    loop_var: item

@@ -10,12 +10,12 @@ spec:
     name: http
     protocol: TCP
     targetPort: 8080
-    nodePort: 30080
+    nodePort: {{ contour_config.http_nodeport }}
   - port: 443
     name: https
     protocol: TCP
     targetPort: 8443
-    nodePort: 30443
+    nodePort: {{ contour_config.ssl_nodeport }}
   selector:
     app: envoy
   type: NodePort

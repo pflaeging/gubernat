@@ -52,7 +52,7 @@ backend k8s-api-backend
 {% endfor %}
 
 
-{% for service in services %}
+{% for service in exposed_services %}
 {% for ports in service.ports %}
 
 ## Service definition for {{ service.name }}-{{ ports.name }}
