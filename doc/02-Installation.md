@@ -37,7 +37,9 @@ loadbalancer:
     # we don't use a dedicated loadbalancer in this example
 ```
 
-Then, simply look through the rest of the config and change settings like the cluster name or which components to roll out.
+Then, look through the rest of the file and change settings like the cluster name or which components to roll out.
+
+Lastly, you may want to configure certain components, like by setting the admin mail for LetsEncrypt certificates with cert-manager or exposing a NodePort through the load balancer. For further details on how to configure important components, read [the docs (component configuration)](./README.md#specific-component-configuration), or simply look through the config files in `my-gubernat-cluster/config/`.
 
 ## Gubernat Rollout
 
