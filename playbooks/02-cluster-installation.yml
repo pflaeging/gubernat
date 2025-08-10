@@ -8,18 +8,22 @@
   roles:
     - common
 
-- name: Rollout loadbalancer (haproxy) on loadbalancer hosts if any
-  hosts: loadbalancer
-  roles:
-    - loadbalancer
-  when: groups['loadbalancer'] is defined and groups['loadbalancer'] | length > 0
+- name: Determine loadbalancer strategy
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Check if 'loadbalancer' group exists and has members
+      set_fact:
+        has_dedicated_lb_group: "{{ groups['loadbalancer'] is defined and groups['loadbalancer'] | length > 0 }}"
+      run_once: true
 
-- name: Rollout loadbalancer (haproxy) on master and worker if no loadbalancer hosts
-  hosts: master, worker
-  roles:
-    - loadbalancer
-  when: groups['loadbalancer'] is not defined or groups['loadbalancer'] | length == 0
+- name: Include playbook for dedicated loadbalancer hosts
+  import_playbook: loadbalancer/dedicated-loadbalancer.yaml
+  when: has_dedicated_lb_group
 
+- name: Include playbook for master/worker loadbalancer hosts
+  import_playbook: loadbalancer/master-worker-loadbalancer.yaml
+  when: not has_dedicated_lb_group
 
 - name: Install master and workers
   hosts: master, worker
