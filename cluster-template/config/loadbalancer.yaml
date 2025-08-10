@@ -4,14 +4,14 @@ exposed_services:
 - name: kubernetes-dashboard
   ports:
   - name: ssl
-    sourceport: {{ kubernetes-dashboard_config.nodeport }}
+    sourceport: "{{ kubernetes_dashboard_config.nodeport }}"
     gatewayport: 8443
 # Contour Ingress!
 - name: contour
   ports:
   - name: ssl
-    sourceport: {{ contour_config.ssl_nodeport }}
+    sourceport: "{{ contour_config.ssl_nodeport }}"
     gatewayport: 443
   - name: http
-    sourceport: {{ contour_config.http_nodeport }}
+    sourceport: "{{ contour_config.http_nodeport }}"
     gatewayport: 80

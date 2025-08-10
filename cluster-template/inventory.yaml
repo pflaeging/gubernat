@@ -21,16 +21,16 @@ all:
     # you can find the available components in the ./components directory
     # in the gubernat repo
     components:
-      - cert-manager
+      - cert_manager
       - contour
       # - httpbin    # (test app)
-      - kubernetes-dashboard
-      - local-storage
-      - metrics-server
+      - kubernetes_dashboard
+      - local_storage
+      - metrics_server
       # - multus    # (only for multiple network stacks)
       - opentelemetry
       - prometheus
-      - trust-manager
+      - trust_manager
 
     # (optional) to enable disconnected installation, define a registry mirror
     # all images have to be in this mirror
