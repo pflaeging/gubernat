@@ -21,7 +21,7 @@
 
 - name: Install taint-master.sh in /usr/local/sbin/taint-master.sh
   ansible.builtin.copy:
-    src: roles/k8s_components/files/sbin/taint-master.sh
+    src: sbin/taint-master.sh
     dest: /usr/local/sbin/taint-master.sh
     owner: root
     group: root

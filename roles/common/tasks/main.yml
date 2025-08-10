@@ -77,13 +77,13 @@
 
 - name: Copy dnsmasq config to NetworkManager
   ansible.builtin.copy:
-    src: roles/common/files/NetworkManager/00-dnsmasq.conf
+    src: NetworkManager/00-dnsmasq.conf
     dest: /etc/NetworkManager/conf.d/
   register: enable
 
 - name: Enable reading of /etc/hosts file
   ansible.builtin.copy:
-    src: roles/common/files/NetworkManager/05-add-hosts-file.conf
+    src: NetworkManager/05-add-hosts-file.conf
     dest: /etc/NetworkManager/dnsmasq.d/
   register: hostenable
 
@@ -204,11 +204,11 @@
   when: github_is_reachable.rc == 0
   block:
     - name: Install Cilium with shell script
-      ansible.builtin.script: roles/common/files/cilium-install.sh
+      ansible.builtin.script: cilium-install.sh
       args:
         creates: /usr/local/bin/cilium
     - name: Copy helm installer and execute shell script for installation
-      ansible.builtin.script: roles/common/files/helm-install.sh
+      ansible.builtin.script: helm-install.sh
       args:
         creates: /usr/local/bin/helm
 

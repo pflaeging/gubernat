@@ -9,12 +9,12 @@
 
 - name: Copy modules definitions to /etc/modules-load.d
   ansible.builtin.copy:
-    src: roles/prereq/files/modules-load.d/
+    src: modules-load.d/
     dest: /etc/modules-load.d/
 
 - name: Copy sysctl definitions to /etc/sysctl.d.d
   ansible.builtin.copy:
-    src: roles/prereq/files/sysctl.d/
+    src: sysctl.d/
     dest: /etc/sysctl.d/
   register: sysctl_files
 
@@ -61,7 +61,7 @@
 
 - name: Copy get-dashboard-admin-token.sh script to /usr/local/sbin
   ansible.builtin.copy:
-    src: roles/prereq/files/kcd
+    src: kcd
     dest: /usr/local/bin/kcd
     owner: root
     group: root
