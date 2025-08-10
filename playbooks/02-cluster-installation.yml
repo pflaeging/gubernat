@@ -8,22 +8,31 @@
   roles:
     - common
 
-- name: Determine loadbalancer strategy
+- name: Determine the hosts we need to rollout the loadbalancer on
   hosts: localhost
   gather_facts: false
+
   tasks:
-    - name: Check if 'loadbalancer' group exists and has members
-      set_fact:
-        has_dedicated_lb_group: "{{ groups['loadbalancer'] is defined and groups['loadbalancer'] | length > 0 }}"
-      run_once: true
+    - name: Add hosts from 'loadbalancer' group to 'lb_rollout_group' if it exists
+      ansible.builtin.add_host:
+        name: "{{ item }}"
+        groups:
+          - lb_rollout_group
+      loop: "{{ groups['loadbalancer'] }}"
+      when: groups['loadbalancer'] is defined and groups['loadbalancer'] | length > 0
 
-- name: Include playbook for dedicated loadbalancer hosts
-  import_playbook: loadbalancer/dedicated-loadbalancer.yaml
-  when: has_dedicated_lb_group
+    - name: Add hosts from 'master' and 'worker' groups to 'lb_rollout_group' if 'loadbalancer' group does NOT exist
+      ansible.builtin.add_host:
+        name: "{{ item }}"
+        groups:
+          - lb_rollout_group
+      loop: "{{ groups['master'] + groups['worker'] }}"
+      when: groups['loadbalancer'] is not defined or groups['loadbalancer'] | length == 0
 
-- name: Include playbook for master/worker loadbalancer hosts
-  import_playbook: loadbalancer/master-worker-loadbalancer.yaml
-  when: not has_dedicated_lb_group
+- name: Rollout loadbalancer (haproxy) on correct hosts
+  hosts: lb_rollout_group
+  roles:
+    - loadbalancer
 
 - name: Install master and workers
   hosts: master, worker

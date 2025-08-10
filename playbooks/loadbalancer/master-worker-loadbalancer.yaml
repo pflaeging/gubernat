@@ -1,4 +1,0 @@
-- name: Rollout loadbalancer (haproxy) on master and worker if no dedicated loadbalancer hosts
-  hosts: master, worker
-  roles:
-    - loadbalancer

@@ -1,4 +1,0 @@
-- name: Rollout loadbalancer (haproxy) on loadbalancer hosts
-  hosts: loadbalancer
-  roles:
-    - loadbalancer
