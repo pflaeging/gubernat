@@ -51,6 +51,8 @@ all:
       - trust-manager
     # only development clusters can be reseted
     development_cluster: true
+    # set the reclaimPolicy for the local-path stroage class
+    sc_local_path_reclaim_policy: "Retain"
     # the internal ip address range for pods
     k8s_cidr: 10.85.0.0/16
     # the internal ip address range for services
