@@ -28,7 +28,7 @@ So we created a simple installation procedure for kubernetes 1.28+, cilium as ne
 - k8s contour-ingress with cert-manager
 - haproxy for API and dashboard
 - helm 3
-- local storage provisioning via local-path provisioner (under `/data/k8s/`)
+- local storage provisioning via local-path provisioner (under `/data/k8s/` and `/data/k8s-shared` for shared storage)
 - network layer with cilium CNI
 - kubernetes dashboard on port 8443
 - kubernetes API services at port 7443

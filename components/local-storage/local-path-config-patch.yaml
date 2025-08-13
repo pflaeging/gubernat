@@ -6,10 +6,17 @@ metadata:
 data:
   config.json: |-
     {
-            "nodePathMap":[
-            {
-                    "node":"DEFAULT_PATH_FOR_NON_LISTED_NODES",
-                    "paths":["/data/k8s/"]
+            "storageClassConfigs":{
+                   "local-path": {
+                          "nodePathMap": [
+                          {
+                                  "node":"DEFAULT_PATH_FOR_NON_LISTED_NODES",
+                                  "paths":["/data/k8s"]
+                          }
+                          ]
+                   },
+                   "local-path-shared": {
+                          "sharedFilesystemPath": "/data/k8s-shared"
+                   }
             }
-            ]
     }

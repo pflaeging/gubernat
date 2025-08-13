@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
 - local-path-storage.yaml
+- storageclass-local-path-shared.yaml
 
 patches:
   - path: local-path-config-patch.yaml

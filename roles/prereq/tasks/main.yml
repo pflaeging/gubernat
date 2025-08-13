@@ -149,3 +149,19 @@
   ansible.builtin.command:
     cmd: restorecon -R /data/k8s
   changed_when: false
+
+- name: Create a directory for persistences (/data/k8s-shared/)
+  ansible.builtin.file:
+    path: /data/k8s-shared
+    state: directory
+    mode: '0755'
+  register: create_data_k8s_shared
+
+- name: Set selinux context for persistences
+  ansible.builtin.command:
+    cmd: semanage fcontext -a -t container_file_t  "/data/k8s-shared(/.*)?"
+  changed_when: false
+
+- name: Restore selinux context for persistences
+  ansible.builtin.command:
+    cmd: restorecon -R /data/k8s-shared
