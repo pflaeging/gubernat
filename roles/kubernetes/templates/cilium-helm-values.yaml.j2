@@ -1,26 +1,125 @@
-kubeProxyReplacement: true
+{% macro cilium_image(cilium, repo_mirror, image_name) -%}
+{% if repo_mirror is defined or cilium.version is defined %}
+image:
+{% if repo_mirror is defined %}
+  repository: "{{ repo_mirror }}/quay.io/cilium/{{ image_name }}"
+{% endif %}
+{% if cilium.version is defined %}
+  tag: "{{ cilium.version }}"
+  useDigest: false
+{% endif %}
+{% endif %}
+{%- endmacro -%}
+
 k8sServiceHost: {{ api_host }}
 k8sServicePort: {{ api_loadbalancer_port|default(k8s_loadbalancer_api_port,true) }}
 ipv4NativeRoutingCIDR:  {{ k8s_cidr }}
-routingMode: tunnel
 envoy:
   enabled: false
 ipv4:
   enabled: true
-autoDirectNodeRoutes: false
 ipam:
   operator:
     clusterPoolIPv4PodCIDRList: {{ k8s_cidr }}
-{% if repo_mirror is defined %}
-operator:
-  image:
-    repository: "{{ repo_mirror }}/quay.io/cilium/operator"
-    tag: "v1.17.2"
-    useDigest: false
-    digest: ""
-image:
-  repository: "{{ repo_mirror }}/quay.io/cilium/cilium"
-  tag: "v1.17.2"
-  useDigest: false
-  digest: ""
+
+{% if cilium.routingmode | default("tunnel", true) == "native"  %}
+routingMode:  native
+autoDirectNodeRoutes: true
+{% else %}
+routingMode:  tunnel
+autoDirectNodeRoutes: false
 {% endif %}
+
+hubble:
+  relay:
+    enabled: {{ cilium.hubble.enabled | default("false", true) }}
+{{ cilium_image(cilium, repo_mirror, "hubble-relay") | indent (4, true) }}
+  ui:
+    enabled: {{ cilium.hubble.enabled | default("false", true) }}
+{% if repo_mirror is defined %}
+    frontend:
+      image:
+        repository: "{{ repo_mirror }}/quay.io/cilium/hubble-ui"
+        tag: "v0.13.2"
+        useDigest: false
+    backend:
+      image:
+        repository: "{{ repo_mirror }}/quay.io/cilium/hubble-ui-backend"
+        tag: "v0.13.2"
+        useDigest: false
+{% endif %}
+{% if cilium.metrics.enabled is true %}
+  metrics:
+    enableOpenMetrics: true
+    enabled:  
+      - dns:query;ignoreAAAA
+      - drop
+      - tcp
+      - flow
+      - icmp
+      - http
+    serviceMonitor:
+      enabled: {{ cilium.metrics.servicemonitor | default("false", true) }}
+    dashboards:
+      enabled: {{ cilium.metrics.grafana.enabled | default("false", true)}}
+      label: grafana_dashboard
+      labelValue: "true"
+      namespace: {{ cilium.metrics.grafana.namespace |default("kube-system") }}
+{% endif %}
+  export:
+    static:
+      enabled: {{ cilium.hubble.export.enabled | default("false", true) }}
+      filePath: /var/run/cilium/hubble/events.log
+      fieldMask: 
+        - time
+        - source
+        - destination
+        - verdict
+        - l4
+        - IP
+        - node_name
+        - drop_reason_desc
+        - egress_denied_by
+      allowList:
+        - {{ "'" + cilium.hubble.export.allowList +  "'"| default('{"verdict":["DROPPED","ERROR"]}', true) }}
+      denyList: 
+        - '{"source_pod":["kube-system/"]}'
+        - '{"destination_pod":["kube-system/"]}'
+
+operator:
+  replicas: {{cilium.operator.replicas | default(1, true)}}
+{{ cilium_image(cilium, repo_mirror, "operator") | indent (2, true) }}
+  prometheus: 
+    enabled: {{ cilium.metrics.enabled | default("false", true) }}
+    serviceMonitor:
+      enabled: {{ cilium.metrics.servicemonitor | default("false", true) }}
+  dashboards:
+    enabled: {{ cilium.metrics.grafana.enabled | default("false", true) }}
+    label: grafana_dashboard
+    labelValue: "true"
+    namespace: {{ cilium.metrics.grafana.namespace | default("kube-system", true) }}
+
+{{ cilium_image(cilium, repo_mirror, "cilium") }}
+
+{# as the bandwithmanager changes some deep system things, its safer not to include it in the values, so that it fallbacks to the defaults of the helm chart  #}
+{% if cilium.bandwidthManager | default("false", true) is true  %}
+bandwidthManager:
+  enabled: true
+{% endif %}
+kubeProxyReplacement: true
+bpf:
+  masquerade: true
+
+l2announcements:
+  enabled: {{ cilium.l2announcements.enabled | default("false", true) }}
+
+prometheus:
+  enabled: {{ cilium.metrics.enabled | default("false", true) }}
+  serviceMonitor:
+    enabled: {{ cilium.metrics.servicemonitor | default("false", true) }}
+dashboards:
+  enabled: {{ cilium.metrics.grafana.enabled | default("false", true) }}
+  label: grafana_dashboard
+  labelValue: "true"
+  namespace: {{ cilium.metrics.grafana.namespace | default("kube-system", true) }}
+

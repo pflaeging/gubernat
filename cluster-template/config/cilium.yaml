@@ -1,0 +1,16 @@
+# Cilium Config (optional)
+# operator:
+#   replicas: 3
+# hubble: 
+#   enabled: true
+#   export: 
+#     enabled: true
+# bandwidthManager: true
+# version: "v1.18.0"
+# # Only activate metrics if you have the prometheus Operator installed
+# metrics: 
+#   enabled: true
+#   servicemonitor: true
+#   grafana: 
+#     enabled: true
+#     namespace: "monitoring"

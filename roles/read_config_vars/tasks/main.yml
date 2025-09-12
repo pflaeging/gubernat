@@ -1,6 +1,17 @@
 - name: Include custom cluster config from config/loadbalancer.yaml
   ansible.builtin.include_vars:
     file: ../../config/loadbalancer.yaml
+
+- name: Include custom cluster config from config/cilium.yaml
+  ansible.builtin.include_vars:
+    file: ../../config/cilium.yaml
+    name: cilium
+
+- name: Include custom cluster config from config/oidc.yaml
+  ansible.builtin.include_vars:
+    file: ../../config/oidc.yaml
+    name: oidc
+
 - name: Check if config files exist for each component
   ansible.builtin.stat:
     path: "../../config/components/{{ item }}.yaml"

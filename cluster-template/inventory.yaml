@@ -63,6 +63,9 @@ all:
     # Upgrade the OS version when Upgrading K8s
     upgrade_os: false
 
+    # Set to true if master nodes should stay tainted
+    taint_master: false
+
     # Variables so ansible knows which user and ssh key to use
     # Don't change unless you know what you're doing
     ansible_user: root
