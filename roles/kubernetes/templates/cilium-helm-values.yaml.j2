@@ -106,9 +106,11 @@ operator:
 bandwidthManager:
   enabled: true
 {% endif %}
+{% if cilium.replaceKubeProxy | default("false", true) is true  %}
 kubeProxyReplacement: true
 bpf:
   masquerade: true
+{% endif %}
 
 l2announcements:
   enabled: {{ cilium.l2announcements.enabled | default("false", true) }}

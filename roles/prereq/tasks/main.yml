@@ -27,7 +27,9 @@
 
   when: 'countour_config.mode == "deploy"'
 
-# if we want to expose the nodeports outside (enable this with care!)
+# uncomment to expose the nodeports to the public (enable this with care!)
+# note: nodeports are always exposed if you use cilium without kube-proxy replacement
+# (see cluster-templatet/config/cilium.yaml)
 # - name: Setup Firewall (open nodeport range)
 #   ansible.posix.firewalld:
 #     port: "30000-32767/tcp"
