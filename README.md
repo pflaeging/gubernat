@@ -26,7 +26,7 @@ gubernat provides a simple installation procedure for kubernetes (1.28+) with ci
 - k8s contour-ingress with cert-manager
 - HAProxy for API and dashboard as well as ingress load balancing
 - Helm 3
-- Local storage provisioning via local-path provisioner (under `/data/k8s/`)
+- Local storage provisioning via local-path provisioner (under `/data/k8s/` and `/data/k8s-shared` for shared storage)
 - Network layer: Cilium CNI
 - Kubernetes API services (on port 7443 per default)
 - Kubernetes dashboard (on port 8443 per default)
