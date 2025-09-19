@@ -15,8 +15,19 @@ data:
                           }
                           ]
                    },
+                   "local-path-retain": {
+                          "nodePathMap": [
+                          {
+                                  "node":"DEFAULT_PATH_FOR_NON_LISTED_NODES",
+                                  "paths":["/data/k8s"]
+                          }
+                          ]
+                   },
                    "local-path-shared": {
                           "sharedFilesystemPath": "/data/k8s-shared"
+                   },
+                   "local-path-shared-retain": {
+                          "sharedFileSystemPath": "/data/k8s-shared"
                    }
             }
     }
