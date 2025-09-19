@@ -39,7 +39,7 @@ listen stats
 
 ## Service definition for k8s-api
 frontend k8s-api-frontend
-    bind :{{ k8s_loadbalancer_api_port }}
+    bind :{{ lb_config.k8s_loadbalancer_api_port }}
     default_backend k8s-api-backend
     mode tcp
     option tcplog
@@ -52,7 +52,7 @@ backend k8s-api-backend
 {% endfor %}
 
 
-{% for service in exposed_services %}
+{% for service in lb_config.exposed_services %}
 {% for ports in service.ports %}
 
 ## Service definition for {{ service.name }}-{{ ports.name }}

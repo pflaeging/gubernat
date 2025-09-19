@@ -25,7 +25,7 @@
         permanent: true
         immediate: true
 
-  when: 'countour_config.mode == "deploy"'
+  when: 'lb_config.enabled | default(true) | bool'
 
 # uncomment to expose the nodeports to the public (enable this with care!)
 # note: nodeports are always exposed if you use cilium without kube-proxy replacement

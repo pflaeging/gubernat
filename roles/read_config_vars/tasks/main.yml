@@ -1,6 +1,7 @@
 - name: Include custom cluster config from config/loadbalancer.yaml
   ansible.builtin.include_vars:
     file: ../../config/loadbalancer.yaml
+    name: lb_config
 
 - name: Include custom cluster config from config/cilium.yaml
   ansible.builtin.include_vars:

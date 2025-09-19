@@ -1,3 +1,5 @@
-mode: "deploy" # "ds" for DaemonSet, "deploy" for Deployment
+# Deployment mode - "ds" for DaemonSet, "deploy" for Deployment. 
+# If you don't want to use a loadbalancer for the DaemonSet variant, disable it in loadbalancer.yaml
+mode: "deploy"
 ssl_nodeport: 30443
 http_nodeport: 30080

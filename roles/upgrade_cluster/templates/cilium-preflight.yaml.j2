@@ -1,7 +1,7 @@
 {% import '../roles/kubernetes/templates/cilium-helm-values.yaml.j2' as cilium_helm_values with context %}
 
 k8sServiceHost: {{ api_host }}
-k8sServicePort: {{ api_loadbalancer_port|default(k8s_loadbalancer_api_port,true) }}
+k8sServicePort: {{ api_loadbalancer_port|default(lb_config.k8s_loadbalancer_api_port,true) }}
 preflight:
   enabled: true
 {{ cilium_helm_values.cilium_image(cilium, repo_mirror, "cilium") | indent (2, true)}}

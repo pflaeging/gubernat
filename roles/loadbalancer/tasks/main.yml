@@ -3,7 +3,7 @@
   ansible.builtin.set_fact:
     firewall_ports: |
       {% set res = [] -%}
-      {% for service in exposed_services -%}
+      {% for service in lb_config.exposed_services -%}
           {% for ports in service.ports -%}
           {% set ignored = res.extend([{ 'Gateway' : ports.gatewayport, 'Source' : ports.sourceport }]) -%}
           {%- endfor %}
@@ -34,9 +34,9 @@
       permanent: true
       immediate: true
 
-  - name: Setup Firewall (open api port {{ k8s_loadbalancer_api_port }})
+  - name: Setup Firewall (open api port {{ lb_config.k8s_loadbalancer_api_port }})
     ansible.posix.firewalld:
-      port: "{{ k8s_loadbalancer_api_port }}/tcp"
+      port: "{{ lb_config.k8s_loadbalancer_api_port }}/tcp"
       zone: public
       state: enabled
       permanent: true
@@ -63,7 +63,7 @@
       state: started
       enabled: true
       masked: false
-  when: 'countour_config.mode == "deploy"'
+  when: 'lb_config.enabled | default(true) | bool'
 
 - name: Reload haproxy, if changed config
   ansible.builtin.systemd:

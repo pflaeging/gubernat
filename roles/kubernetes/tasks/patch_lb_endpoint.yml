@@ -53,12 +53,12 @@
 
 - name: Patch cilium-operator deployment for cilium 1.13 manually (OK for higher versions)
   ansible.builtin.shell:
-    cmd: "kubectl set env -n kube-system deploy/cilium-operator KUBERNETES_SERVICE_HOST={{ api_host }} KUBERNETES_SERVICE_PORT={{ api_loadbalancer_port|default(k8s_loadbalancer_api_port,true) }}"
+    cmd: "kubectl set env -n kube-system deploy/cilium-operator KUBERNETES_SERVICE_HOST={{ api_host }} KUBERNETES_SERVICE_PORT={{ api_loadbalancer_port|default(lb_config.k8s_loadbalancer_api_port,true) }}"
   when: groups.master[0] in inventory_hostname
 
 - name: Patch cilium daemonset for version 1.13 manually (OK for higher versions)
   ansible.builtin.shell:
-    cmd: "kubectl set env -n kube-system daemonset/cilium KUBERNETES_SERVICE_HOST={{ api_host }} KUBERNETES_SERVICE_PORT={{ api_loadbalancer_port|default(k8s_loadbalancer_api_port,true) }}"
+    cmd: "kubectl set env -n kube-system daemonset/cilium KUBERNETES_SERVICE_HOST={{ api_host }} KUBERNETES_SERVICE_PORT={{ api_loadbalancer_port|default(lb_config.k8s_loadbalancer_api_port,true) }}"
   when: groups.master[0] in inventory_hostname
 
 - name: Upgrade cilium to new setup (works only for 1.15 and higher. Ignore error on lower versions)
