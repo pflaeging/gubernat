@@ -3,6 +3,14 @@
     cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml --skip-phases=addon/kube-proxy
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
+  when: cilium.replaceKubeProxy | default(false)
+
+- name: Init cluster on first node (with kube-proxy)
+  ansible.builtin.command: 
+    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml
+    creates: /etc/kubernetes/admin.conf
+  register: running_first_master
+  when: not (cilium.replaceKubeProxy | default(false))
 
 - name: Check if cillium is installed and ready
   ansible.builtin.shell:
@@ -15,7 +23,7 @@
   ansible.builtin.shell:
     cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
   ignore_errors: true
-  when: (cilium_helm_values.changed) and (cilium_installed.rc  == 1)
+  when: cilium_installed.rc  == 1
 
 - name: Upgrade cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
   ansible.builtin.shell:

@@ -32,10 +32,10 @@ autoDirectNodeRoutes: false
 
 hubble:
   relay:
-    enabled: {{ cilium.hubble.enabled | default("false", true) }}
+    enabled: {{ (cilium.hubble.enabled | default(false)) if cilium.hubble is defined else false }}
 {{ cilium_image(cilium, repo_mirror, "hubble-relay") | indent (4, true) }}
   ui:
-    enabled: {{ cilium.hubble.enabled | default("false", true) }}
+    enabled: {{ (cilium.hubble.enabled | default(false)) if cilium.hubble is defined else false }}
 {% if repo_mirror is defined %}
     frontend:
       image:
@@ -48,7 +48,7 @@ hubble:
         tag: "v0.13.2"
         useDigest: false
 {% endif %}
-{% if cilium.metrics.enabled is true %}
+{% if cilium.metrics is defined and cilium.metrics.enabled is true %}
   metrics:
     enableOpenMetrics: true
     enabled:  
@@ -59,16 +59,16 @@ hubble:
       - icmp
       - http
     serviceMonitor:
-      enabled: {{ cilium.metrics.servicemonitor | default("false", true) }}
+      enabled: {{ (cilium.metrics.servicemonitor | default(false)) if cilium.metrics is defined else false }}
     dashboards:
-      enabled: {{ cilium.metrics.grafana.enabled | default("false", true)}}
+      enabled: {{ (cilium.metrics.grafana.enabled | default(false)) if (cilium.metrics is defined and cilium.metrics.grafana is defined) else false }}
       label: grafana_dashboard
       labelValue: "true"
-      namespace: {{ cilium.metrics.grafana.namespace |default("kube-system") }}
+      namespace: {{ (cilium.metrics.grafana.namespace | default("kube-system")) if (cilium.metrics is defined and cilium.metrics.grafana is defined) else "kube-system" }}
 {% endif %}
   export:
     static:
-      enabled: {{ cilium.hubble.export.enabled | default("false", true) }}
+      enabled: {{ (cilium.hubble.export.enabled | default(false)) if (cilium.hubble is defined and cilium.hubble.export is defined) else false }}
       filePath: /var/run/cilium/hubble/events.log
       fieldMask: 
         - time
@@ -81,23 +81,23 @@ hubble:
         - drop_reason_desc
         - egress_denied_by
       allowList:
-        - {{ "'" + cilium.hubble.export.allowList +  "'"| default('{"verdict":["DROPPED","ERROR"]}', true) }}
+        - {{ ("'" + cilium.hubble.export.allowList + "'") if (cilium.hubble is defined and cilium.hubble.export is defined and cilium.hubble.export.allowList is defined) else '{"verdict":["DROPPED","ERROR"]}' }}
       denyList: 
         - '{"source_pod":["kube-system/"]}'
         - '{"destination_pod":["kube-system/"]}'
 
 operator:
-  replicas: {{cilium.operator.replicas | default(1, true)}}
+  replicas: {{ (cilium.operator.replicas | default(1)) if cilium.operator is defined else 1 }}
 {{ cilium_image(cilium, repo_mirror, "operator") | indent (2, true) }}
   prometheus: 
-    enabled: {{ cilium.metrics.enabled | default("false", true) }}
+    enabled: {{ (cilium.metrics.enabled | default(false)) if cilium.metrics is defined else false }}
     serviceMonitor:
-      enabled: {{ cilium.metrics.servicemonitor | default("false", true) }}
+      enabled: {{ (cilium.metrics.servicemonitor | default(false)) if cilium.metrics is defined else false }}
   dashboards:
-    enabled: {{ cilium.metrics.grafana.enabled | default("false", true) }}
+    enabled: {{ (cilium.metrics.grafana.enabled | default(false)) if (cilium.metrics is defined and cilium.metrics.grafana is defined) else false }}
     label: grafana_dashboard
     labelValue: "true"
-    namespace: {{ cilium.metrics.grafana.namespace | default("kube-system", true) }}
+    namespace: {{ (cilium.metrics.grafana.namespace | default("kube-system")) if (cilium.metrics is defined and cilium.metrics.grafana is defined) else "kube-system" }}
 
 {{ cilium_image(cilium, repo_mirror, "cilium") }}
 
@@ -113,15 +113,15 @@ bpf:
 {% endif %}
 
 l2announcements:
-  enabled: {{ cilium.l2announcements.enabled | default("false", true) }}
+  enabled: {{ (cilium.l2announcements.enabled | default(false)) if cilium.l2announcements is defined else false }}
 
 prometheus:
-  enabled: {{ cilium.metrics.enabled | default("false", true) }}
+  enabled: {{ (cilium.metrics.enabled | default(false)) if cilium.metrics is defined else false }}
   serviceMonitor:
-    enabled: {{ cilium.metrics.servicemonitor | default("false", true) }}
+    enabled: {{ (cilium.metrics.servicemonitor | default(false)) if cilium.metrics is defined else false }}
 dashboards:
-  enabled: {{ cilium.metrics.grafana.enabled | default("false", true) }}
+  enabled: {{ (cilium.metrics.grafana.enabled | default(false)) if (cilium.metrics is defined and cilium.metrics.grafana is defined) else false }}
   label: grafana_dashboard
   labelValue: "true"
-  namespace: {{ cilium.metrics.grafana.namespace | default("kube-system", true) }}
+  namespace: {{ (cilium.metrics.grafana.namespace | default("kube-system")) if (cilium.metrics is defined and cilium.metrics.grafana is defined) else "kube-system" }}
 
