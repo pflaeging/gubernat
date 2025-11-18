@@ -33,7 +33,7 @@ autoDirectNodeRoutes: false
 hubble:
   relay:
     enabled: {{ (cilium.hubble.enabled | default(false)) if cilium.hubble is defined else false }}
-{{ cilium_image(cilium, repo_mirror, "hubble-relay") | indent (4, true) }}
+{{ (cilium_image(cilium, repo_mirror, "hubble-relay") | to_nice_yaml(indent=4)) if repo_mirror is defined or cilium.version is defined }}
   ui:
     enabled: {{ (cilium.hubble.enabled | default(false)) if cilium.hubble is defined else false }}
 {% if repo_mirror is defined %}
@@ -88,7 +88,7 @@ hubble:
 
 operator:
   replicas: {{ (cilium.operator.replicas | default(1)) if cilium.operator is defined else 1 }}
-{{ cilium_image(cilium, repo_mirror, "operator") | indent (2, true) }}
+{{ (cilium_image(cilium, repo_mirror, "operator") | to_nice_yaml(indent=2)) if repo_mirror is defined or cilium.version is defined  }}
   prometheus: 
     enabled: {{ (cilium.metrics.enabled | default(false)) if cilium.metrics is defined else false }}
     serviceMonitor:
