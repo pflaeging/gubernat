@@ -6,12 +6,12 @@
 
 - name: Copy cri-o repo definitions in place
   ansible.builtin.template:
-    src: roles/upgrade_cluster/templates/cri-o.repo.j2
+    src: ../templates/cri-o.repo.j2
     dest: /etc/yum.repos.d/cri-o.repo
 
 - name: Copy kubernetes repo definitions in place
   ansible.builtin.template:
-    src: roles/upgrade_cluster/templates/kubernetes.repo.j2
+    src: ../templates/kubernetes.repo.j2
     dest: /etc/yum.repos.d/kubernetes.repo
 
 - name: "Install or check for existence of some required tools"
