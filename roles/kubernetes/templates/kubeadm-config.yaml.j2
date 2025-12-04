@@ -1,8 +1,8 @@
 kind: InitConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta4
 ---
 kind: ClusterConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta4
 {% if repo_mirror is defined %}
 imageRepository: {{ repo_mirror }}/registry.k8s.io
 {% endif %}
