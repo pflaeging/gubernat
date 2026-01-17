@@ -21,8 +21,8 @@ gubernat provides a simple installation procedure for kubernetes (1.28+) with ci
 ## Components
 
 - Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 or 10 (minimal installation)
-- Kubernetes 1.34.3
-- Container Runtime: cri-o 1.34.4
+- Kubernetes 1.35.0
+- Container Runtime: cri-o 1.35.0
 - k8s contour-ingress with cert-manager
 - HAProxy for API and dashboard as well as ingress load balancing
 - Helm 3
