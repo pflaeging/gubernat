@@ -176,3 +176,34 @@
 - name: Restore selinux context for persistences
   ansible.builtin.command:
     cmd: restorecon -R /data/k8s-shared
+
+# Fix for SELinux issue with crun and systemd with eBPF
+# See https://github.com/containers/crun/issues/1879#issuecomment-3574795465
+# This was fixed in container-selinux 2.243, so we only apply the workaround
+# if an older version is installed.
+# https://github.com/containers/container-selinux/releases/tag/v2.243.0
+# See container-selinux PR #405 and #390.
+- name: Get container-selinux version
+  ansible.builtin.command: rpm -q --queryformat '%{VERSION}' container-selinux
+  register: container_selinux_ver
+  changed_when: false
+  ignore_errors: true
+
+- name: Apply SELinux workaround for crun/systemd eBPF issue (only if container-selinux < 2.243)
+  block:
+    - name: Copy ebpf-fix.te for SELinux workaround
+      ansible.builtin.copy:
+        src: ebpf-fix.te
+        dest: /tmp/ebpf-fix.te
+      register: ebpf_fix_te
+
+    - name: Apply ebpf-fix SELinux module
+      ansible.builtin.shell: |
+        checkmodule -M -m -o /tmp/ebpf-fix.mod /tmp/ebpf-fix.te
+        semodule_package -o /tmp/ebpf-fix.pp -m /tmp/ebpf-fix.mod
+        semodule -i /tmp/ebpf-fix.pp
+      when: ebpf_fix_te.changed
+  when: 
+    - container_selinux_ver.rc == 0
+    - container_selinux_ver.stdout is version('2.243', '<')
+
