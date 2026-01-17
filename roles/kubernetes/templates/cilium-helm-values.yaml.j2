@@ -1,13 +1,7 @@
 {% macro cilium_image(cilium, repo_mirror, image_name) -%}
-{% if repo_mirror is defined or cilium.version is defined %}
-image:
 {% if repo_mirror is defined %}
+image:
   repository: "{{ repo_mirror }}/quay.io/cilium/{{ image_name }}"
-{% endif %}
-{% if cilium.version is defined %}
-  tag: "{{ cilium.version }}"
-  useDigest: false
-{% endif %}
 {% endif %}
 {%- endmacro -%}
 
@@ -33,7 +27,7 @@ autoDirectNodeRoutes: false
 hubble:
   relay:
     enabled: {{ (cilium.hubble.enabled | default(false)) if cilium.hubble is defined else false }}
-{{ (cilium_image(cilium, repo_mirror, "hubble-relay") | to_nice_yaml(indent=4)) if repo_mirror is defined or cilium.version is defined }}
+{{ (cilium_image(cilium, repo_mirror, "hubble-relay") | indent(4, true)) }}
   ui:
     enabled: {{ (cilium.hubble.enabled | default(false)) if cilium.hubble is defined else false }}
 {% if repo_mirror is defined %}
@@ -88,7 +82,7 @@ hubble:
 
 operator:
   replicas: {{ (cilium.operator.replicas | default(1)) if cilium.operator is defined else 1 }}
-{{ (cilium_image(cilium, repo_mirror, "operator") | to_nice_yaml(indent=2)) if repo_mirror is defined or cilium.version is defined  }}
+{{ (cilium_image(cilium, repo_mirror, "operator") | indent(2, true)) }}
   prometheus: 
     enabled: {{ (cilium.metrics.enabled | default(false)) if cilium.metrics is defined else false }}
     serviceMonitor:

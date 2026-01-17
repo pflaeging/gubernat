@@ -1,10 +1,15 @@
-{% import '../roles/kubernetes/templates/cilium-helm-values.yaml.j2' as cilium_helm_values with context %}
+{% macro cilium_image(cilium, repo_mirror, image_name) -%}
+{% if repo_mirror is defined %}
+image:
+  repository: "{{ repo_mirror }}/quay.io/cilium/{{ image_name }}"
+{% endif %}
+{%- endmacro -%}
 
 k8sServiceHost: {{ api_host }}
 k8sServicePort: {{ api_loadbalancer_port|default(lb_config.k8s_loadbalancer_api_port,true) }}
 preflight:
   enabled: true
-{{ (cilium_helm_values.cilium_image(cilium, repo_mirror, "cilium") | to_nice_yaml(indent=2)) if repo_mirror is defined or cilium.version is defined }}
+{{ (cilium_image(cilium, repo_mirror, "cilium") | indent(2, true)) }}
 agent: false
 operator:
     enabled: false

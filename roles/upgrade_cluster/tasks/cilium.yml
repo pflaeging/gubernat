@@ -25,6 +25,27 @@
   register: cilium_installed
   changed_when: false
 
+# Running cilium install / cilium upgrade without specifying a version will not upgrade cilium to the latest version
+# but rather to the default version of the cilium-cli binary, which will never change, unless you update it manually.
+- name: Determine latest stable Cilium Version
+  block:
+    - name: Try to fetch latest stable Cilium version from GitHub
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/cilium/cilium/main/stable.txt
+        return_content: yes
+      register: stable_cilium_request
+      delegate_to: localhost # Check from the Ansible controller to avoid issues with offline clusters
+
+    - name: Set cilium.version fact if fetched successfully
+      ansible.builtin.set_fact:
+        cilium: "{{ cilium | combine({'version': stable_cilium_request.content | trim}) }}"
+      when: stable_cilium_request.content is defined
+  when: cilium.version is not defined
+  rescue:
+    - name: Version fetch failed (likely offline install)
+      ansible.builtin.debug:
+        msg: "Could not reach GitHub. Proceeding without a defined cilium.version. This will likely not upgrade Cilium, but rather stay on the default version of the cilium-cli (check with 'cilium version')."
+
 - name: Generate cilium helm values /opt/kubernetes/etc/cilium-helm-values.yaml
   ansible.builtin.template:
     src: ../roles/kubernetes/templates/cilium-helm-values.yaml.j2
@@ -33,14 +54,14 @@
 
 - name: Generate cilium helm values /opt/kubernetes/etc/cilium-preflight-helm-values.yaml
   ansible.builtin.template:
-    src: cilium-preflight.yaml.j2
+    src: ../roles/upgrade_cluster/templates/cilium-preflight.yaml.j2
     dest: /opt/kubernetes/etc/cilium-preflight.yaml
   when: cilium_helm_values.changed
 
 - name: Create Cilium Preflight
   ansible.builtin.shell: |
     export KUBECONFIG=/etc/kubernetes/admin.conf 
-    /usr/local/bin/cilium install --helm-values /opt/kubernetes/etc/cilium-preflight.yaml --dry-run | kubectl apply -f - 
+    /usr/local/bin/cilium install {{ '--version ' + cilium.version if cilium.version is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-preflight.yaml --dry-run | kubectl apply -f - 
   when: cilium_helm_values.changed
   # as it will complain about Namespace already existing
   ignore_errors: true
@@ -56,7 +77,7 @@
 
 - name: Upgrade cilium 
   ansible.builtin.shell:
-    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade --values /opt/kubernetes/etc/cilium-helm-values.yaml
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade {{ '--version ' + cilium.version if cilium.version is defined else '' }} --values /opt/kubernetes/etc/cilium-helm-values.yaml
   when: cilium_helm_values.changed
 
 - name: Cleanup Preflight Check

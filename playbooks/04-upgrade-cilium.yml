@@ -8,4 +8,4 @@
   serial: 1
   tasks:
     - name: Kick Cilium upgrade
-      ansible.builtin.include_tasks: roles/upgrade_cluster/tasks/cilium.yml
+      ansible.builtin.include_tasks: ../roles/upgrade_cluster/tasks/cilium.yml
