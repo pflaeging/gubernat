@@ -2,6 +2,8 @@
 {% if repo_mirror is defined %}
 image:
   repository: "{{ repo_mirror }}/quay.io/cilium/{{ image_name }}"
+{% else %}
+
 {% endif %}
 {%- endmacro -%}
 
