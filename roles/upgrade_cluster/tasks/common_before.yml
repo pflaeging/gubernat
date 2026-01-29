@@ -19,6 +19,7 @@
     name:
       - socat
       - conntrack-tools
+      - checkpolicy
       - container-selinux
       - tar 
       - git
@@ -46,20 +47,44 @@
   changed_when: false
   ignore_errors: true
 
+- name: Check if ebpf-fix SELinux module is already installed
+  ansible.builtin.command: semodule -l
+  register: selinux_modules
+  changed_when: false
+
 - name: Apply SELinux workaround for crun/systemd eBPF issue (only if container-selinux < 2.243)
   block:
     - name: Copy ebpf-fix.te for SELinux workaround
       ansible.builtin.copy:
-        src: ../roles/prereq/files/ebpf-fix.te
-        dest: /tmp/ebpf-fix.te
+        src: ebpf-fix.te
+        dest: /var/lib/selinux/ebpf-fix.te
       register: ebpf_fix_te
 
     - name: Apply ebpf-fix SELinux module
       ansible.builtin.shell: |
-        checkmodule -M -m -o /tmp/ebpf-fix.mod /tmp/ebpf-fix.te
-        semodule_package -o /tmp/ebpf-fix.pp -m /tmp/ebpf-fix.mod
-        semodule -i /tmp/ebpf-fix.pp
+        checkmodule -M -m -o /var/lib/selinux/ebpf-fix.mod /var/lib/selinux/ebpf-fix.te
+        semodule_package -o /var/lib/selinux/ebpf-fix.pp -m /var/lib/selinux/ebpf-fix.mod
+        semodule -i /var/lib/selinux/ebpf-fix.pp
       when: ebpf_fix_te.changed
-  when: 
+
+    - name: Cleanup ebpf-fix SELinux temp files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/lib/selinux/ebpf-fix.te
+        - /var/lib/selinux/ebpf-fix.mod
+        - /var/lib/selinux/ebpf-fix.pp
+
+  when:
     - container_selinux_ver.rc == 0
     - container_selinux_ver.stdout is version('2.243', '<')
+    - "'ebpf-fix' not in selinux_modules.stdout"
+
+# Due to a bug in kubeadm upgrade in v1.35.0 we should put something in the env variable
+# KUBELET_KUBEADM_ARGS in var/lib/kubelet/kubeadm-flags.env
+# This should be fixed in v1.35.1 (https://github.com/kubernetes/kubernetes/pull/136127)
+- name: Apply fix for kubeadm upgrade bug in v1.35.0
+  ansible.builtin.shell: |
+    echo 'KUBELET_KUBEADM_ARGS="-v 0"' > /var/lib/kubelet/kubeadm-flags.env
+  when: k8s_version == "1.35.0"
