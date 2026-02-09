@@ -1,4 +1,0 @@
-Host *
-  IdentityFile ~/.ssh/id_rsa
-  IdentityFile ~/.ssh/kubernetes-g8s
-#

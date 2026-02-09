@@ -1,2 +1,0 @@
-- name: Generate new ssh keys for root
-  ansible.builtin.include_tasks: sshkey.yml

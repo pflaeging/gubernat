@@ -1,25 +1,55 @@
+- name: Init cluster on first node (without kube-proxy)
+  ansible.builtin.command: 
+    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml --skip-phases=addon/kube-proxy
+    creates: /etc/kubernetes/admin.conf
+  register: running_first_master
+  when: cilium.replaceKubeProxy | default(false)
 
-- name: Init cluster on first node
+- name: Init cluster on first node (with kube-proxy)
   ansible.builtin.command: 
     cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
+  when: not (cilium.replaceKubeProxy | default(false))
 
 - name: Check if cillium is installed and ready
   ansible.builtin.shell:
     cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium status
   ignore_errors: true
   register: cilium_installed
+  changed_when: false
+
+# Running cilium install / cilium upgrade without specifying a version will not upgrade cilium to the latest version
+# but rather to the default version of the cilium-cli binary, which will never change, unless you update it manually.
+- name: Determine latest stable Cilium Version
+  block:
+    - name: Try to fetch latest stable Cilium version from GitHub
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/cilium/cilium/main/stable.txt
+        return_content: yes
+      register: stable_cilium_request
+      delegate_to: localhost # Check from the Ansible controller to avoid issues with offline clusters
+
+    - name: Set cilium.version fact if fetched successfully
+      ansible.builtin.set_fact:
+        cilium: "{{ cilium | combine({'version': stable_cilium_request.content | trim}) }}"
+      when: stable_cilium_request.content is defined
+  when: cilium.version is not defined
+  rescue:
+    - name: Version fetch failed (likely offline install)
+      ansible.builtin.debug:
+        msg: "Could not reach GitHub. Proceeding without a defined cilium.version. This will likely not upgrade Cilium, but rather stay on the default version of the cilium-cli (check with 'cilium version')."
+
 
 - name: Install cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
   ansible.builtin.shell:
-    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install {{ '--version ' + cilium.version if cilium.version is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
   ignore_errors: true
-  when: (cilium_helm_values.changed) and (cilium_installed.rc  == 1)
+  when: cilium_installed.rc  == 1
 
 - name: Upgrade cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
   ansible.builtin.shell:
-    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade {{ '--version ' + cilium.version if cilium.version is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
   ignore_errors: true
   when: cilium_helm_values.changed
 
@@ -27,9 +57,11 @@
   ansible.builtin.shell:
     cmd: kubectl get nodes --kubeconfig /etc/kubernetes/admin.conf -o jsonpath='{range .items[*]}{.metadata.name} {.spec.taints}{"\n"}{end}' | grep NoSchedule |awk '{print $1}'
   register: taint_nodes
+  changed_when: false
 
 - name: Make node(s) schedulable
   ansible.builtin.shell:
     cmd: kubectl taint nodes {{ item }} --kubeconfig /etc/kubernetes/admin.conf node-role.kubernetes.io/control-plane:NoSchedule-
   ignore_errors: true
   loop: "{{ taint_nodes.stdout_lines }}"
+  when: taint_master is false

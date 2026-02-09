@@ -1,0 +1,9 @@
+# Kubernetes OIDC Config (optional)
+# issuer_url: https://XXX.XXX.XXX
+# client_id: XXXX
+# username:
+#   claim: preferred_username
+#   prefix: 'oidc:'
+# groups:
+#   claim: groups
+#   prefix: 'oidc:'

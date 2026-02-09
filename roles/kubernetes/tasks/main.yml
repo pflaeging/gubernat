@@ -16,7 +16,7 @@
       {% if api_loadbalancer_port is defined -%}
         {{ api_host }}:{{ api_loadbalancer_port }}
       {%- else -%}
-        {{ api_host }}:{{ lb_api_port }}
+        {{ api_host }}:{{ lb_config.k8s_loadbalancer_api_port }}
       {%- endif %}
 
 - name: create place for configs /opt/kubernetes
@@ -58,10 +58,11 @@
 - name: Find remaining tokens in cluster
   ansible.builtin.shell:
     cmd: |
-      export KUBECONFIG=/etc/kubernetes/admin.conf 
+      export KUBECONFIG=/etc/kubernetes/admin.conf
       kubeadm token list | awk '{if(NR!=1){print $1}}'
-  delegate_to: "{{ groups.master[0] }}"  
+  delegate_to: "{{ groups.master[0] }}"
   register: certificate_key
+  changed_when: false
 
 - name: Cleanup tokens on master (means in cluster)
   ansible.builtin.shell: |
@@ -70,6 +71,7 @@
   delegate_to: "{{ groups.master[0] }}"
   run_once: true
   loop: "{{ certificate_key.stdout_lines }}"
+  changed_when: false
 
 - name: Make kubernetes config dir for root
   ansible.builtin.file:
@@ -99,6 +101,7 @@
     cmd: "KUBECONFIG=/etc/kubernetes/admin.conf kubectl get cm kubeadm-config -n kube-system -o jsonpath='{.data.ClusterConfiguration}' | grep '^controlPlaneEndpoint:' | cut -d ' ' -f2"
   register: actual_control_plane
   delegate_to: "{{ groups.master[0] }}"
+  changed_when: false
 
 - name: Switch to customer managed loadbalancer for API
   ansible.builtin.include_tasks: patch_lb_endpoint.yml

@@ -3,6 +3,7 @@
     cmd: echo $(KUBECONFIG=/etc/kubernetes/admin.conf kubeadm token create --print-join-command)
   register: join_content
   delegate_to: "{{ groups.master[0] }}"
+  changed_when: false
 
 
 - name: Execute join command on worker

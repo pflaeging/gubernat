@@ -3,7 +3,6 @@
     path: /opt/kubernetes/components/customeruser
     state: directory
     mode: '0755'
-  register: customeruser_files
 
 - name: Generate customer user config on first master
   ansible.builtin.template:
@@ -15,3 +14,4 @@
 - name: Create customer user and rolebinding with kustomize
   ansible.builtin.command:
     cmd: kubectl apply -k /opt/kubernetes/components/customeruser/
+  when: customeruser_files.changed

@@ -1,6 +1,0 @@
-{% if repo_mirror is defined %}
-images:
-- name: ghcr.io/psf/httpbin
-  newName: {{ repo_mirror }}/ghcr.io/psf/httpbin
-  newTag: 0.10.2
-{% endif %}

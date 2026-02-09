@@ -3,64 +3,67 @@
   ansible.builtin.set_fact:
     firewall_ports: |
       {% set res = [] -%}
-      {% for service in services -%}
+      {% for service in lb_config.exposed_services -%}
           {% for ports in service.ports -%}
           {% set ignored = res.extend([{ 'Gateway' : ports.gatewayport, 'Source' : ports.sourceport }]) -%}
           {%- endfor %}
       {%- endfor %}
       {{ res }}
 
-- name: Install needed packages
-  ansible.builtin.dnf:
-    name:
-      - haproxy
-      - python3-libsemanage
-    state: present
-  tags: base-packages
+- name: install loadbalancer
+  block:
+  - name: Install needed packages
+    ansible.builtin.dnf:
+      name:
+        - haproxy
+        - python3-libsemanage
+      state: latest
+    tags: base-packages
 
-- name: Generate haproxy.cfg
-  ansible.builtin.template:
-    src: haproxy.cfg.j2
-    dest: /etc/haproxy/haproxy.cfg
-  register: result
+  - name: Generate haproxy.cfg
+    ansible.builtin.template:
+      src: haproxy.cfg.j2
+      dest: /etc/haproxy/haproxy.cfg
+    register: result
 
-- name: Setup Firewall (open haproxy status on port 9000)
-  ansible.posix.firewalld:
-    port: "9000/tcp"
-    zone: public
-    state: enabled
-    permanent: true
-    immediate: true
+  - name: Setup Firewall (open haproxy status on port 9000)
+    ansible.posix.firewalld:
+      port: "9000/tcp"
+      zone: public
+      state: enabled
+      permanent: true
+      immediate: true
 
-- name: Setup Firewall (open api port {{ lb_api_port }})
-  ansible.posix.firewalld:
-    port: "{{ lb_api_port }}/tcp"
-    zone: public
-    state: enabled
-    permanent: true
-    immediate: true
+  - name: Setup Firewall (open api port {{ lb_config.k8s_loadbalancer_api_port }})
+    ansible.posix.firewalld:
+      port: "{{ lb_config.k8s_loadbalancer_api_port }}/tcp"
+      zone: public
+      state: enabled
+      permanent: true
+      immediate: true
 
-- name: Setup Firewall (open gateway ports from services_vars.yaml )
-  ansible.posix.firewalld:
-    port: "{{ item.Gateway }}/tcp"
-    zone: public
-    state: enabled
-    permanent: true
-    immediate: true
-  with_items: "{{ firewall_ports }}"
+  - name: Setup Firewall (open gateway ports from k8s_services_vars.yaml )
+    ansible.posix.firewalld:
+      port: "{{ item.Gateway }}/tcp"
+      zone: public
+      state: enabled
+      permanent: true
+      immediate: true
+    with_items: "{{ firewall_ports }}"
 
-- name: Set haproxy selinux
-  ansible.posix.seboolean:
-    name: haproxy_connect_any
-    state: true
-    persistent: true
+  - name: Set haproxy selinux
+    ansible.posix.seboolean:
+      name: haproxy_connect_any
+      state: true
+      persistent: true
 
-- name: Service haproxy should be started
-  ansible.builtin.systemd:
-    name: haproxy
-    state: started
-    enabled: true
-    masked: false
+  - name: Service haproxy should be started
+    ansible.builtin.systemd:
+      name: haproxy
+      state: started
+      enabled: true
+      masked: false
+  when: 'lb_config.enabled | default(true) | bool'
 
 - name: Reload haproxy, if changed config
   ansible.builtin.systemd:

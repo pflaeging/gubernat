@@ -1,0 +1,44 @@
+- name: Read variable definitions
+  hosts: "*, localhost"
+  roles:
+    - read_config_vars
+
+- name: Common setup
+  hosts: loadbalancer, master, worker
+  roles:
+    - common
+
+- name: Determine the hosts we need to rollout the loadbalancer on
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+    - name: Add hosts from 'loadbalancer' group to 'lb_rollout_group' if it exists
+      ansible.builtin.add_host:
+        name: "{{ item }}"
+        groups:
+          - lb_rollout_group
+      loop: "{{ groups['loadbalancer'] }}"
+      when: groups['loadbalancer'] is defined and groups['loadbalancer'] | length > 0
+      changed_when: false
+
+    - name: Add hosts from 'master' and 'worker' groups to 'lb_rollout_group' if 'loadbalancer' group does NOT exist
+      ansible.builtin.add_host:
+        name: "{{ item }}"
+        groups:
+          - lb_rollout_group
+      loop: "{{ groups['master'] + groups['worker'] }}"
+      when: groups['loadbalancer'] is not defined or groups['loadbalancer'] | length == 0
+      changed_when: false
+
+- name: Rollout loadbalancer (haproxy) on correct hosts
+  hosts: lb_rollout_group
+  roles:
+    - loadbalancer
+
+- name: Install master and workers
+  hosts: master, worker
+  roles:
+    - prereq
+    - kubernetes
+    - k8s_components

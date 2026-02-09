@@ -1,4 +1,3 @@
-
 - name: Create component dir for {{ component }}
   ansible.builtin.file:
     path: "/opt/kubernetes/components/{{ component }}"
@@ -9,22 +8,34 @@
   ansible.builtin.template:
     src: "{{ item }}"
     dest: "/opt/kubernetes/components/{{ component }}"
-  with_fileglob: "components/{{ component }}/*"
+  with_fileglob: "../components/{{ component }}/*"
+  register: changed_config
 
-- name: Is there an install.sh? 
+- name: Check if custom config file exists for {{ component }}
+  stat:
+    path: "../../config/components/{{ component }}.yaml"
+  register: custom_config_file_stat
+
+- name: Include {{ component }} vars with namespace
+  ansible.builtin.include_vars:
+    file: "../../config/components/{{ component }}.yaml"
+    name: "{{ component }}_config"
+  when: custom_config_file_stat.stat.exists
+
+- name: Is there an install.sh for {{ component }} ? 
   ansible.builtin.stat:
     path: "/opt/kubernetes/components/{{ component }}/install.sh"
   register: install_sh
   when: groups.master[0] in inventory_hostname
 
-- name: Install via install.sh
+- name: Install {{ component }} via install.sh
   ansible.builtin.command:
     chdir: "/opt/kubernetes/components/{{ component }}"
     cmd: "sh ./install.sh"
-  when: (groups.master[0] in inventory_hostname) and (install_sh.stat.exists)
+  when: (groups.master[0] in inventory_hostname) and (install_sh.stat.exists) and (changed_config.changed)
 
-- name: Else install via kustomize 
+- name: Else install {{ component }} via kustomize 
   ansible.builtin.command:
     chdir: "/opt/kubernetes/components/{{ component }}"
     cmd: "kubectl apply -k ."
-  when: (groups.master[0] in inventory_hostname) and (not install_sh.stat.exists)
+  when: (groups.master[0] in inventory_hostname) and (not install_sh.stat.exists) and (changed_config.changed)

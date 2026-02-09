@@ -16,12 +16,12 @@
       {% if api_loadbalancer_port is defined -%}
         {{ api_host }}:{{ api_loadbalancer_port }}
       {%- else -%}
-        {{ api_host }}:{{ lb_api_port }}
+        {{ api_host }}:{{ lb_config.k8s_loadbalancer_api_port }}
       {%- endif %}
 
 - name: Install taint-master.sh in /usr/local/sbin/taint-master.sh
   ansible.builtin.copy:
-    src: roles/k8s_components/files/sbin/taint-master.sh
+    src: sbin/taint-master.sh
     dest: /usr/local/sbin/taint-master.sh
     owner: root
     group: root

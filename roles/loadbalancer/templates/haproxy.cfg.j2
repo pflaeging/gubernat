@@ -39,7 +39,7 @@ listen stats
 
 ## Service definition for k8s-api
 frontend k8s-api-frontend
-    bind :{{ lb_api_port }}
+    bind :{{ lb_config.k8s_loadbalancer_api_port }}
     default_backend k8s-api-backend
     mode tcp
     option tcplog
@@ -48,11 +48,11 @@ backend k8s-api-backend
     balance roundrobin
     mode tcp
 {% for name in groups.master %}
-    server {{ name }} {{ hostvars[name].ansible_host }}:{{ api_port }} check
+    server {{ name }} {{ hostvars[name].ansible_host }}:6443 check
 {% endfor %}
 
 
-{% for service in services %}
+{% for service in lb_config.exposed_services %}
 {% for ports in service.ports %}
 
 ## Service definition for {{ service.name }}-{{ ports.name }}

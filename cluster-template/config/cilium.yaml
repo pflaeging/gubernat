@@ -1,0 +1,17 @@
+# Cilium Config (optional)
+# operator:
+#   replicas: 3
+# hubble: 
+#   enabled: true
+#   export: 
+#     enabled: true
+# bandwidthManager: true
+# replaceKubeProxy: true # enable cilium as kube-proxy replacement - required for node ports to be hidden from outside
+# version: "v1.18.0"
+# # Only activate metrics if you have the prometheus Operator installed
+# metrics: 
+#   enabled: true
+#   servicemonitor: true
+#   grafana: 
+#     enabled: true
+#     namespace: "monitoring"

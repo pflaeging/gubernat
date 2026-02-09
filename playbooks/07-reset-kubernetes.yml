@@ -1,0 +1,9 @@
+- name: Read variable definitions
+  hosts: "*, localhost"
+  roles:
+    - read_config_vars
+
+- name: Install master and workers
+  hosts: master, worker
+  roles:
+    - reset_kubernetes

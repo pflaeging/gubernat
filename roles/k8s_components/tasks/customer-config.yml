@@ -1,15 +1,16 @@
-
 - name: Get customer ServiceAccount token
   ansible.builtin.shell:
     cmd: KUBECONFIG=/etc/kubernetes/admin.conf kubectl get secret customer -n default -o jsonpath='{.data.token}' | base64 -d
   register: customer_token
   delegate_to: "{{ groups.master[0] }}"
+  changed_when: false
 
 - name: Get cluster cert
   ansible.builtin.shell:
     cmd: KUBECONFIG=/etc/kubernetes/admin.conf kubectl config view -o jsonpath='{.clusters[0].cluster.certificate-authority-data}' --raw
   register: cluster_cert
   delegate_to: "{{ groups.master[0] }}"
+  changed_when: false
 
 - name: Make kubernetes config dir for setup user
   ansible.builtin.file:
@@ -36,10 +37,10 @@
     group: setup
     mode: 0o400
   
-- name: Copy get-customer-token.sh script to /usr/local/bin
+- name: Copy get-dashboard-customer-token.sh script to /usr/local/bin
   ansible.builtin.copy:
-    src: roles/k8s_components/files/get-customer-token.sh
-    dest: /usr/local/bin/get-customer-token.sh
+    src: get-dashboard-customer-token.sh
+    dest: /usr/local/bin/get-dashboard-customer-token.sh
     owner: root
     group: root
     mode: 0o755

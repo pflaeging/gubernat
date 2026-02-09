@@ -1,0 +1,4 @@
+- name: Initial one-time SSH key setup
+  hosts: localhost
+  roles:
+    - initialsshsetup

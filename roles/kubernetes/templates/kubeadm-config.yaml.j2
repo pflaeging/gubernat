@@ -1,8 +1,8 @@
 kind: InitConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta4
 ---
 kind: ClusterConfiguration
-apiVersion: kubeadm.k8s.io/v1beta3
+apiVersion: kubeadm.k8s.io/v1beta4
 {% if repo_mirror is defined %}
 imageRepository: {{ repo_mirror }}/registry.k8s.io
 {% endif %}
@@ -21,6 +21,15 @@ apiServer:
   - {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
 {% if api_loadbalancer is defined %}
   - {{ api_loadbalancer }}
+{% endif %}
+{% if oidc.issuer_url is defined %}
+  extraArgs: 
+    oidc-issuer-url: {{ oidc.issuer_url }}
+    oidc-client-id: {{ oidc.client_id }}
+    oidc-username-claim: {{ oidc.username.claim | default("preferred_username", true) }}
+    oidc-username-prefix: {{  "'" + oidc.username.prefix + "'"  | default("'oidc:'", true) }}
+    oidc-groups-prefix: {{  "'" + oidc.groups.prefix + "'"  | default("'oidc:'", true) }}
+    oidc-groups-claim: {{ oidc.groups.claim | default("groups", true) }}
 {% endif %}
 ---
 apiVersion: kubelet.config.k8s.io/v1beta1
