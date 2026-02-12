@@ -49,6 +49,7 @@ all:
     # which kubernetes and cri-o version do we roll out?
     k8s_version: 1.35.0
     crio_version: 1.35.0
+    helm_version: 3.20.0
 
     # specify your DNS servers here. They will act as forwarders
     dns_forwarders:

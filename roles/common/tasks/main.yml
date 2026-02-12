@@ -208,7 +208,7 @@
       args:
         creates: /usr/local/bin/cilium
     - name: Copy helm installer and execute shell script for installation
-      ansible.builtin.script: helm-install.sh
+      ansible.builtin.script: "helm-install.sh --version {{ helm_version }}"
       args:
         creates: /usr/local/bin/helm
 

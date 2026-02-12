@@ -17,6 +17,9 @@
     dnf install -y epel-release
     dnf config-manager --set-disabled epel
     # install ansible and git (for cloning the repos)
+    # RHEL 10, Alma 10, Rocky 10:
+    dnf install -y ansible-core  ansible-collection-ansible-posix ansible-collection-community-general--enablerepo=epel
+    # RHEL 9 , Alma 9 , Rocky 9:
     dnf install -y ansible --enablerepo=epel
     dnf install -y git
     ```
