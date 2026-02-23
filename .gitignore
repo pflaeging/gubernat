@@ -7,3 +7,4 @@ httpbin/kustomization.yaml
 /LoadBalancerConfig.txt
 ./inventory
 ./vm-env.sh
+headlamp-test-cert.*

@@ -1,4 +1,24 @@
----
+- name: Define api_host
+  ansible.builtin.set_fact:
+    api_host: >-
+      {% if groups.loadbalancer[0] is defined -%}
+        {{ groups.loadbalancer[0] }}
+      {%- else -%}
+        {% if api_loadbalancer is defined -%}
+          {{ api_loadbalancer }}
+        {%- else -%}
+          {{ groups.master[0] }}
+        {%- endif %}
+      {%- endif %}
+- name: Define control_plane
+  ansible.builtin.set_fact:
+    control_plane: >-
+      {% if api_loadbalancer_port is defined -%}
+        {{ api_host }}:{{ api_loadbalancer_port }}
+      {%- else -%}
+        {{ api_host }}:{{ lb_config.k8s_loadbalancer_api_port }}
+      {%- endif %}
+
 - name: Set Variables
   ansible.builtin.set_fact:
     firewall_ports: |

@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- template.yaml
+{% if "cert_manager" in components %}
+- tls-secret-cert-manager.yaml
+{% else %}
+- tls-secret.yaml
+{% endif %}
+
+namespace: headlamp
+
+
+patches:
+- target:
+    kind: Service
+    name: headlamp
+  patch: |-
+    - op: replace
+      path: /spec/ports/0/nodePort
+      value:  {{ headlamp_config.nodeport }}
+# Due to a bug we need to specify the scheme in the liveness and readiness probes if tls is enabled
+#  see: https://github.com/kubernetes-sigs/headlamp/issues/4406
+- target:
+    kind: Deployment
+    name:  headlamp
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/livenessProbe/httpGet
+      value: 
+        path: /
+        port: http
+        scheme: HTTPS
+- target:
+    kind: Deployment
+    name:  headlamp
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/readinessProbe/httpGet
+      value: 
+        path: /
+        port: http
+        scheme: HTTPS
+
+# {% if repo_mirror is defined %}
+# images:
+# - name: ghcr.io/headlamp-k8s/headlamp:v0.40.0
+#   newName: {{ repo_mirror }}/ghcr.io/headlamp-k8s/headlamp
+#   newTag: v0.40.0
+# {% endif %}
