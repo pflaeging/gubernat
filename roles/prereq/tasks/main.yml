@@ -99,7 +99,7 @@
     dest: /usr/local/bin/k
     state: link
 
-- name: Copy get-dashboard-admin-token.sh script to /usr/local/sbin
+- name: Copy kcd  script to /usr/local/bin
   ansible.builtin.copy:
     src: kcd
     dest: /usr/local/bin/kcd
