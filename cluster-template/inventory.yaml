@@ -2,7 +2,13 @@
 # == CLUSTER NODES DEFINITION ==
 # master nodes (define 1 or 3 with ip-address in ansible_host)
 master:
-  hosts:
+  hosts:  
+    # firstmaster.my.domain: 
+    #   ansible_host: 172.72.99.101
+    # secondmaster.my.domain: 
+    #   ansible_host: 172.72.92.102
+    # thirdmaster.my.domain: 
+    #   ansible_host: 172.72.94.103
 # if you use more than 3 machines, define the rest as workers
 worker:
   hosts:
@@ -24,7 +30,9 @@ all:
       - cert_manager
       - contour
       # - httpbin    # (test app)
-      - kubernetes_dashboard
+      # kubernetes-dashboard is deprecated, pls do not use!
+      # - kubernetes_dashboard
+      - headlamp
       - local_storage
       - metrics_server
       # - multus    # (only for multiple network stacks)
@@ -47,8 +55,9 @@ all:
     k8s_svc_cidr: 10.86.0.0/16
 
     # which kubernetes and cri-o version do we roll out?
-    k8s_version: 1.35.0
+    k8s_version: 1.35.1
     crio_version: 1.35.0
+    # use helm <4 for now
     helm_version: 3.20.0
 
     # specify your DNS servers here. They will act as forwarders

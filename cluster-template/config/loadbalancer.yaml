@@ -4,18 +4,20 @@ enabled: true
 k8s_loadbalancer_api_port: 7443
 # Define services with nodeports which will be exposed through the loadbalancer
 exposed_services:
-# Kubernetes Dashboard
-- name: kubernetes-dashboard
+
+# Headlamp
+- name: headlamp
   ports:
   - name: ssl
-    sourceport: "{{ kubernetes_dashboard_config.nodeport }}"
+    sourceport: "{{ headlamp_config.nodeport | default(32443) }}"
     gatewayport: 8443
+
 # Contour Ingress!
 - name: contour
   ports:
   - name: ssl
-    sourceport: "{{ contour_config.ssl_nodeport }}"
+    sourceport: "{{ contour_config.ssl_nodeport | default(30080) }}"
     gatewayport: 443
   - name: http
-    sourceport: "{{ contour_config.http_nodeport }}"
+    sourceport: "{{ contour_config.http_nodeport | default(30443) }}"
     gatewayport: 80

@@ -1,0 +1,11 @@
+nodeport: 32443
+
+# which hostname do we use for the certificate
+# default ist the api_host = {{ api_host }}
+# else use a string as hostname
+tls_host: "{{ api_host }}"
+
+# if cert-manager is not installed you have two options for the tls cert of headlamp:
+# 1. there's a self signed certificate with a lifetime of 2  years generated on rollout
+# 2. you can generate your own certificate and use it  by replacing the secret
+# please look in ./gubernat/components/headlamp for ihelp
