@@ -1,4 +1,4 @@
 #! /bin/sh
 
-kubectl get secret admin-user -n users -o jsonpath='{.data.token}' | base64 -d
+kubectl get secret admin-user -n kube-system -o jsonpath='{.data.token}' | base64 -d
 echo
