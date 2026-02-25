@@ -1,6 +1,35 @@
 # Migration Guide
 
-## 1.2 -> 1.3
+## kubernetes-dashboard -> headlamp
+
+[Kubernetes Dashboard](https://github.com/kubernetes-retired/dashboard) was recently deprecated. The modern replacement is [Headlamp](https://github.com/kubernetes-sigs/headlamp). To replace kubernetes dashboard with headlamp, do the following:
+
+1. Update the gubernat submodule: `git submodule update --remote --merge gubernat`
+2. Delete the old kubernetes dashboard: `kubectl delete ns kubernetes-dashboard`
+3. Update your `inventory.yaml`:
+   - Replace `kubernetes_dashboard` component with `headlamp`
+   - Define `helm_version: 3.20.0` alongside the crio and k8s version
+4. In your `loadbalancer.yaml` config, replace the kubernetes dashboard definition with:
+   ```
+   # Headlamp
+   - name: headlamp
+     ports:
+     - name: ssl
+       sourceport: "{{ headlamp_config.nodeport | default(32443) }}"
+       gatewayport: 8443
+   ```
+5. Copy the new `headlamp.yaml` config from the template: `cp ./gubernat/cluster-template/config/components/headlamp.yaml ./config/components/`
+   - Leave it as is to use https://cluster:8443 and LetsEncrypt certs, or configure it to use another IP, port or self-signed certs
+6. Delete the old `kubernetes_dashboard.yaml` config: `rm ./config/components/kubernetes_dashboard.yaml`
+7. Apply your new gubernat config:
+   ```bash
+   ansible-playbook -i inventory.yaml ./gubernat/playbooks/06-update-only-loadbalancer-ports.yml
+   ansible-playbook -i inventory.yaml ./gubernat/playbooks/05-install-only-components.yml
+   ```
+8. Log into Headlamp with the same URL as the old k8s dashboard (default https://cluster:8443). You can get the admin token using `./gubernat/components/headlamp/get-headlamp-admin-token.sh`
+9. If after waiting a while, your browser still says "Connection Unsecure" because headlamp uses a non-trusted certificate, you may need to restart the deployment for headlamp to use the newly acquired LetsEncrypt certificates: `kubectl rollout restart deployment/headlamp -n headlamp`
+
+## 1.2 -> 2.0
 
 The monolithic configuration in `inventory.yaml` was split up into multiple smaller, component-related configs.\
 With that, there now is a greater variety of settings for total control.
