@@ -2,17 +2,18 @@
 
 *'gubernat' means 'steer' (latin)*
 
-***New version (v1.3.0):*** This is a new version of gubernat, changing the structure of repository. At the moment this is only tested on AlmaLinux 10. If you want to use the old shell based version which is also available for Raspbian, please refer to the tag `Release-1-shell`. Suppport for Debian and Raspbian will be added in a later release.
+New Version 2.0 with kubernetes v1.35 and headlamp as dashboard
 
 ## About
 
 Gubernat is an approach to establish a production ready kubernetes cluster with minimal effort.
 
 The main goal of gubernat is to create a one or multi-node kubernetes cluster which is:
-  - highly customizable
-  - easy to understand
-  - as near as possible to the upstream k8s
-  - using stable components, preferably from CNCF projects
+
+- highly customizable
+- easy to understand
+- as near as possible to the upstream k8s
+- using stable components, preferably from CNCF projects
 
 It can run on a single server, a small 3 node cluster and also a larger 100 node cluster.
 
@@ -21,15 +22,15 @@ gubernat provides a simple installation procedure for kubernetes (1.28+) with ci
 ## Components
 
 - Base OS: AlmaLinux / RockyLinux / RHEL / CentOS 9 or 10 (minimal installation)
-- Kubernetes 1.35.0
-- Container Runtime: cri-o 1.35.0
+- Kubernetes 1.35
+- Container Runtime: cri-o 1.35
 - k8s contour-ingress with cert-manager
 - HAProxy for API and dashboard as well as ingress load balancing
 - Helm 3
 - Local storage provisioning via local-path provisioner (under `/data/k8s/` and `/data/k8s-shared` for shared storage)
 - Network layer: Cilium CNI
 - Kubernetes API services (on port 7443 per default)
-- Kubernetes dashboard (on port 8443 per default)
+- Headlam as kubernetes dashboard (on port 8443 per default)
 
 ## Documentation
 
