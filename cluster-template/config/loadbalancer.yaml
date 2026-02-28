@@ -16,8 +16,8 @@ exposed_services:
 - name: contour
   ports:
   - name: ssl
-    sourceport: "{{ contour_config.ssl_nodeport | default(30080) }}"
+    sourceport: "{{ contour_config.ssl_nodeport | default(30443) }}"
     gatewayport: 443
   - name: http
-    sourceport: "{{ contour_config.http_nodeport | default(30443) }}"
+    sourceport: "{{ contour_config.http_nodeport | default(30080) }}"
     gatewayport: 80
