@@ -17,7 +17,11 @@ exposed_services:
   ports:
   - name: ssl
     sourceport: "{{ contour_config.ssl_nodeport | default(30443) }}"
+    # use the proxy-protocol to the contour ingress (you must also set "option: proxy-protocol" in components/contour.yaml)
+    option: proxy-protocol
     gatewayport: 443
   - name: http
+    # use the proxy-protocol to the contour ingress
+    option: proxy-protocol
     sourceport: "{{ contour_config.http_nodeport | default(30080) }}"
     gatewayport: 80

@@ -10,6 +10,17 @@ resources:
 
 patches:
 - path: service-patch.yaml
+{% if contour_config.option is defined %}
+{% if contour_config.option == "proxy-protocol" %}
+- target:
+    kind: Deployment
+    name:  contour
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/args/-
+      value: --use-proxy-protocol
+{% endif %}
+{% endif %}
 {% endif %}
 
 {% if repo_mirror is defined %}
