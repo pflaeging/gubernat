@@ -66,10 +66,10 @@ backend {{ service.name }}-{{ ports.name }}-backend
     balance roundrobin
     mode tcp
 {% for name in groups.master %}
-    server {{ name }} {{ hostvars[name].ansible_host }}:{{ ports.sourceport }} check {{ if ports.option is defined }} {{ if ports.option == 'proxy-protocol' }} send-proxy {{ endif }} {{ endif }}
+    server {{ name }} {{ hostvars[name].ansible_host }}:{{ ports.sourceport }} check{% if ports.option is defined and ports.option == 'proxy-protocol' %} send-proxy{% endif %}
 {% endfor %}
 {% for name in groups.worker %}
-    server {{ name }} {{ hostvars[name].ansible_host }}:{{ ports.sourceport }} check {{ if ports.option is defined }} {{ if ports.option == 'proxy-protocol' }} send-proxy {{ endif }} {{ endif }}
+    server {{ name }} {{ hostvars[name].ansible_host }}:{{ ports.sourceport }} check{% if ports.option is defined and ports.option == 'proxy-protocol' %} send-proxy{% endif %}
 {% endfor %}
 {% endfor %}
 {% endfor %}
