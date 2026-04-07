@@ -1,5 +1,37 @@
 # Migration Guide
 
+## enabling proxy-protocol
+
+To make services behind the ingress get the real client IP, do the following:
+
+1. Update the gubernat submodule: `git submodule update --remote --merge gubernat`
+2. Add this to your `config/components/contour.yaml`:
+   ```yaml
+   # Use proxy protocol inbound (must also be configured in ../loadbalancer.yaml) to the ingress controller.
+   option: proxy-protocol
+   ```
+3. In your `config/loadbalancer.yaml`, add the two lines with `option: proxy-protocol`:
+   ```yaml
+   - name: contour
+     ports:
+     - name: ssl
+        sourceport: "{{ contour_config.ssl_nodeport | default(30443) }}"
+        # use the proxy-protocol to the contour ingress (you must also set "option: proxy-protocol" in components/contour.yaml)
+        option: proxy-protocol  # <-- ADD THIS!
+        gatewayport: 443
+     - name: http
+        # use the proxy-protocol to the contour ingress
+        option: proxy-protocol # <-- ADD THIS!
+        sourceport: "{{ contour_config.http_nodeport | default(30080) }}"
+        gatewayport: 80
+   ```
+4. Apply your new gubernat config:
+   ```bash
+   ansible-playbook -i inventory.yaml ./gubernat/playbooks/06-update-only-loadbalancer-ports.yml
+   ansible-playbook -i inventory.yaml ./gubernat/playbooks/05-install-only-components.yml
+   ```
+
+
 ## kubernetes-dashboard -> headlamp
 
 [Kubernetes Dashboard](https://github.com/kubernetes-retired/dashboard) was recently deprecated. The modern replacement is [Headlamp](https://github.com/kubernetes-sigs/headlamp). To replace kubernetes dashboard with headlamp, do the following:
