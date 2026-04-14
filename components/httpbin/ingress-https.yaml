@@ -3,7 +3,12 @@ apiVersion: networking.k8s.io/v1
 metadata:
   name: httpbin-s
   annotations:
+{% if "cert_manager" in components %}
+{% if cert_manager_config.admin_mail is defined %}
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+{% else %}
     cert-manager.io/cluster-issuer: gubernat-issuer
+{% endif %}
 spec:
   ingressClassName: contour
   tls:
