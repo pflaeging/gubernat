@@ -9,6 +9,7 @@ metadata:
 {% else %}
     cert-manager.io/cluster-issuer: gubernat-issuer
 {% endif %}
+{% endif %}
 spec:
   ingressClassName: contour
   tls:
