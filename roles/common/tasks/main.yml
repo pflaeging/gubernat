@@ -196,9 +196,10 @@
     dest: /etc/yum.repos.d/kubernetes.repo
 
 - name: Check if we can reach https://github.com for downloads
-  ansible.builtin.command: curl --output /dev/null --silent --head --fail https://github.com/
+  ansible.builtin.command: curl --max-time 10 --output /dev/null --silent --head --fail https://github.com/ 
   register: github_is_reachable
   changed_when: false
+  ignore_errors: true
 
 - name: Install Cilium and Helm from github
   when: github_is_reachable.rc == 0
