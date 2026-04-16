@@ -241,7 +241,7 @@
     ansible.builtin.command: "grubby --update-kernel=ALL --args='systemd.unified_cgroup_hierarchy=1'"
     register: grubby_update_result
     when: "'systemd.unified_cgroup_hierarchy=1' not in proc_cmdline.stdout"
-  when: ansible_distribution == "RedHat" and ansible_distribution_major_version == "8"
+  when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "8"
 
 - name: Ensure that SeLinux is enabled (permissive mode)
   ansible.posix.selinux:
@@ -249,7 +249,7 @@
     state: permissive
     update_kernel_param: true
   register: selinux_permissive
-  when: ansible_selinux is defined and ansible_selinux.status == 'disabled'
+  when: ansible_facts['selinux'] is defined and ansible_facts['selinux']['status'] == 'disabled'
 
 - name: Relabel files on next boot if SELinux mode changed
   ansible.builtin.file:
@@ -274,7 +274,7 @@
     state: enforcing
     update_kernel_param: true
   register: selinux_enforcing
-  when: ansible_selinux is defined and ansible_selinux.mode == 'permissive'
+  when: ansible_facts['selinux'] is defined and ansible_facts['selinux']['mode'] == 'permissive'
 
 - name: Reboot 
   ansible.builtin.reboot:

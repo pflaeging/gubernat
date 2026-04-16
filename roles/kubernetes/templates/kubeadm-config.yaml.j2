@@ -18,7 +18,7 @@ apiServer:
   - {{ name }}
   - {{ hostvars[name].ansible_host }}
 {% endfor %}
-  - {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
+  - {{ ansible_facts['fqdn']| regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
 {% if api_loadbalancer is defined %}
   - {{ api_loadbalancer }}
 {% endif %}
