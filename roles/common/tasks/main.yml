@@ -17,6 +17,7 @@
       - tar
       - mkpasswd
       - openssl
+      - kernel-modules-extra
     state: latest
 
 - name: enable open-vm-tools
