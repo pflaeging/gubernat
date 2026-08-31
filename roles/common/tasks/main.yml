@@ -60,8 +60,8 @@
 - name: Ensure hostname is in /etc/hosts
   ansible.builtin.lineinfile:
     dest: /etc/hosts
-    regexp: "^{{ ansible_default_ipv4.address }}.+$"
-    line: "{{ ansible_default_ipv4.address }} {{ ansible_fqdn }}"
+    regexp: "^{{ ansible_facts['default_ipv4']['address'] }}.+$"
+    line: "{{ ansible_facts['default_ipv4']['address'] }} {{ ansible_facts['fqdn'] }}"
   when: hostsfile is changed
 
 - name: DNS listen on Network interface
