@@ -1,12 +1,12 @@
 - name: Init cluster on first node (without kube-proxy)
-  ansible.builtin.command: 
+  ansible.builtin.command:
     cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml --skip-phases=addon/kube-proxy
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
   when: cilium.replaceKubeProxy | default(false)
 
 - name: Init cluster on first node (with kube-proxy)
-  ansible.builtin.command: 
+  ansible.builtin.command:
     cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml
     creates: /etc/kubernetes/admin.conf
   register: running_first_master
@@ -40,16 +40,15 @@
       ansible.builtin.debug:
         msg: "Could not reach GitHub. Proceeding without a defined cilium.version. This will likely not upgrade Cilium, but rather stay on the default version of the cilium-cli (check with 'cilium version')."
 
-
 - name: Install cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
   ansible.builtin.shell:
-    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install {{ '--version ' + cilium.version if cilium.version is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium install {{ '--version ' + cilium.version if cilium.version is defined else '' }} {{ '--repository oci://' + repo_mirror + '/quay.io/charts/cilium' if repo_mirror is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
   ignore_errors: true
   when: cilium_installed.rc  == 1
 
 - name: Upgrade cilium on first master (cilium_helm_values={{ cilium_helm_values.changed }} and cilium_installed.rc={{ cilium_installed.rc }})
   ansible.builtin.shell:
-    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade {{ '--version ' + cilium.version if cilium.version is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
+    cmd: KUBECONFIG=/etc/kubernetes/admin.conf /usr/local/bin/cilium upgrade {{ '--version ' + cilium.version if cilium.version is defined else '' }} {{ '--repository oci://' + repo_mirror + '/quay.io/charts/cilium' if repo_mirror is defined else '' }} --helm-values /opt/kubernetes/etc/cilium-helm-values.yaml
   ignore_errors: true
   when: cilium_helm_values.changed
 

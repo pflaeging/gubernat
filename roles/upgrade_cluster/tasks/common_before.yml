@@ -21,7 +21,7 @@
       - conntrack-tools
       - checkpolicy
       - container-selinux
-      - tar 
+      - tar
       - git
       - kubernetes-cni
       - yum-utils

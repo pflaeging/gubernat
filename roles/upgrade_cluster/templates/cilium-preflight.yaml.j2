@@ -2,6 +2,7 @@
 {% if repo_mirror is defined %}
 image:
   repository: "{{ repo_mirror }}/quay.io/cilium/{{ image_name }}"
+  useDigest: false
 {% else %}
 
 {% endif %}
@@ -14,4 +15,6 @@ preflight:
 {{ (cilium_image(cilium, repo_mirror, "cilium") | indent(2, true)) }}
 agent: false
 operator:
-    enabled: false
+  enabled: false
+envoy:
+  enabled: false
