@@ -1,7 +1,8 @@
-# - name: Bring system to newest software level
-#   ansible.builtin.dnf:
-#     name: "*"
-#     state: latest
+- name: Bring system to newest software level
+  ansible.builtin.dnf:
+    name: "*"
+    state: latest
+  when: upgrade_os is true
 
 - name: Set hostname
   ansible.builtin.hostname:
