@@ -1,24 +1,19 @@
-- name: Bring system to newest software level
-  ansible.builtin.dnf:
-    name: "*"
-    state: latest
+# - name: Bring system to newest software level
+#   ansible.builtin.dnf:
+#     name: "*"
+#     state: latest
 
 - name: Set hostname
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
     use: systemd
 
-- name: Install needed -> dnsmasq, chrony, open-vm-tools, tar
+- name: Install open-vm-tools
   ansible.builtin.dnf:
     name:
-      - dnsmasq
-      - chrony
       - open-vm-tools
-      - tar
-      - mkpasswd
-      - openssl
-      - kernel-modules-extra
-    state: latest
+    state: present
+  when: ansible_virtualization_type == "VMware"
 
 - name: enable open-vm-tools
   ansible.builtin.systemd:
@@ -26,7 +21,45 @@
     state: started
     enabled: true
     masked: no
+  when: ansible_virtualization_type == "VMware"
   changed_when: false
+
+- name: Install qemu-guest-agent
+  ansible.builtin.dnf:
+    name:
+      - qemu-guest-agent
+    state: present
+  when: ansible_virtualization_type == "kvm" and ansible_virtualization_role == "guest"
+
+- name: enable qemu-guest-agent
+  ansible.builtin.systemd:
+    name: qemu-guest-agent
+    state: started
+    enabled: true
+    masked: no
+  when: ansible_virtualization_type == "kvm" and ansible_virtualization_role == "guest"
+  changed_when: false
+
+- name: Install needed -> dnsmasq, chrony, tar
+  ansible.builtin.dnf:
+    name:
+      - dnsmasq
+      - chrony
+      - tar
+      - audit
+      - mkpasswd
+      - openssl
+      - python3-libsemanage
+      - mkpasswd
+      - openssl
+      - kernel-modules-extra
+    state: present
+
+- name: Install additional packages
+  ansible.builtin.dnf:
+    name: "{{ additional_packages | default([]) }}"
+    state: latest
+  when: additional_packages | default([]) | length > 0
 
 - name: Create custom DNS resolver file in /etc/resolv.conf.kubernetes
   ansible.builtin.template:
@@ -51,7 +84,7 @@
 - name: Update /etc/hosts file
   ansible.builtin.lineinfile:
     dest: /etc/hosts
-    regexp: '{{ hostvars[item].ansible_host }}.*{{ item }}.*$'
+    regexp: "{{ hostvars[item].ansible_host }}.*{{ item }}.*$"
     line: "{{ hostvars[item].ansible_host }} {{ item }}"
     state: present
   with_items: "{{ groups.all }}"
@@ -165,12 +198,12 @@
 
 - name: Deploy chrony.conf template
   ansible.builtin.template:
-     src: chrony.conf.j2
-     dest: /etc/chrony.conf
-     owner: root
-     group: root
-     mode: 0644
-     backup: yes
+    src: chrony.conf.j2
+    dest: /etc/chrony.conf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
   register: chrony_conf
 
 - name: Enable chrony
@@ -197,9 +230,10 @@
     dest: /etc/yum.repos.d/kubernetes.repo
 
 - name: Check if we can reach https://github.com for downloads
-  ansible.builtin.command: curl --output /dev/null --silent --head --fail https://github.com/
+  ansible.builtin.command: curl --output /dev/null --silent --head --fail https://github.com/ --connect-timeout 3
   register: github_is_reachable
   changed_when: false
+  ignore_errors: true
 
 - name: Install Cilium and Helm from github
   when: github_is_reachable.rc == 0
@@ -226,7 +260,7 @@
         src: helm
         dest: /usr/local/bin/helm
         mode: 755
-  
+
 - name: Add setup user (password should be set manually!)
   ansible.builtin.user:
     name: setup
@@ -234,14 +268,14 @@
 
 - name: Enable Cgroupv2 for RHEL 8
   block:
-  - name: Check current kernel command line
-    ansible.builtin.command: cat /proc/cmdline
-    register: proc_cmdline
+    - name: Check current kernel command line
+      ansible.builtin.command: cat /proc/cmdline
+      register: proc_cmdline
 
-  - name: Add systemd.unified_cgroup_hierarchy=1 to grub 
-    ansible.builtin.command: "grubby --update-kernel=ALL --args='systemd.unified_cgroup_hierarchy=1'"
-    register: grubby_update_result
-    when: "'systemd.unified_cgroup_hierarchy=1' not in proc_cmdline.stdout"
+    - name: Add systemd.unified_cgroup_hierarchy=1 to grub
+      ansible.builtin.command: "grubby --update-kernel=ALL --args='systemd.unified_cgroup_hierarchy=1'"
+      register: grubby_update_result
+      when: "'systemd.unified_cgroup_hierarchy=1' not in proc_cmdline.stdout"
   when: ansible_facts['distribution'] == "RedHat" and ansible_facts['distribution_major_version'] == "8"
 
 - name: Ensure that SeLinux is enabled (permissive mode)
@@ -257,16 +291,16 @@
     path: /.autorelabel
     state: touch
     mode: "0644"
-  when: selinux_permissive is changed 
+  when: selinux_permissive is changed
 
-- name: Reboot 
+- name: Reboot
   ansible.builtin.reboot:
-  when: selinux_permissive is changed or grubby_update_result is changed 
+  when: selinux_permissive is changed or grubby_update_result is changed
 
 - name: Get SELinux Facts
   ansible.builtin.setup:
     filter:
-      - 'ansible_selinux'
+      - "ansible_selinux"
   when: selinux_permissive is changed
 
 - name: Ensure that SeLinux is enabled (enforcing mode)
@@ -277,6 +311,14 @@
   register: selinux_enforcing
   when: ansible_facts['selinux'] is defined and ansible_facts['selinux']['mode'] == 'permissive'
 
-- name: Reboot 
+- name: Enable SELinux booleans from inventory
+  ansible.posix.seboolean:
+    name: "{{ item }}"
+    state: true
+    persistent: true
+  loop: "{{ sebools_to_activate | default([], true) }}"
+  when: sebools_to_activate | length > 0
+
+- name: Reboot
   ansible.builtin.reboot:
   when: selinux_enforcing is changed
