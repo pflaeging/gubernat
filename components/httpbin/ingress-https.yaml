@@ -3,16 +3,22 @@ apiVersion: networking.k8s.io/v1
 metadata:
   name: httpbin-s
   annotations:
+{% if "cert_manager" in components %}
+{% if cert_manager_config.admin_mail is defined %}
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+{% else %}
     cert-manager.io/cluster-issuer: gubernat-issuer
+{% endif %}
+{% endif %}
 spec:
   ingressClassName: contour
   tls:
     - hosts:
         # This funny contruct generates a clustername from ansible (look in /etc/hosts ;-))
-        - {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
+        - {{ ansible_facts['fqdn'] | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
       secretName: httpbin-tls-secret
   rules:
-    - host: {{ ansible_fqdn | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
+    - host: {{ ansible_facts['fqdn'] | regex_replace('^([\\d\\w]+)-[\\d\\w]+\\.', '\\1.') }}
       http:
         paths:
           - path: /

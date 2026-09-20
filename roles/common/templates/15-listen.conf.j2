@@ -1,2 +1,2 @@
 # {{ ansible_managed}}
-listen-address={{ ansible_default_ipv4.address }}
+listen-address={{ ansible_facts['default_ipv4']['address'] }}

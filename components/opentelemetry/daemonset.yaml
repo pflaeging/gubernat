@@ -23,7 +23,7 @@ spec:
         effect: NoSchedule
       containers:
       - name: otel-collector
-        image: otel/opentelemetry-collector-contrib:0.128.0
+        image: otel/opentelemetry-collector-contrib:0.153.0
         env:
         - name: KUBE_NODE_NAME
           valueFrom:

@@ -77,7 +77,7 @@ hubble:
         - drop_reason_desc
         - egress_denied_by
       allowList:
-        - {{ ("'" + cilium.hubble.export.allowList + "'") if (cilium.hubble is defined and cilium.hubble.export is defined and cilium.hubble.export.allowList is defined) else '{"verdict":["DROPPED","ERROR"]}' }}
+        - {{ ("'" + cilium.hubble.export.allowList + "'") if (cilium.hubble is defined and cilium.hubble.export is defined and cilium.hubble.export.allowList is defined) else '\'{"verdict":["DROPPED","ERROR"]}\'' }}
       denyList: 
         - '{"source_pod":["kube-system/"]}'
         - '{"destination_pod":["kube-system/"]}'

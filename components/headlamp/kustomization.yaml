@@ -44,9 +44,9 @@ patches:
         port: http
         scheme: HTTPS
 
-# {% if repo_mirror is defined %}
-# images:
-# - name: ghcr.io/headlamp-k8s/headlamp:v0.40.0
-#   newName: {{ repo_mirror }}/ghcr.io/headlamp-k8s/headlamp
-#   newTag: v0.40.0
-# {% endif %}
+{% if repo_mirror is defined %}
+images:
+- name: ghcr.io/headlamp-k8s/headlamp:v0.42.0
+  newName: {{ repo_mirror }}/ghcr.io/headlamp-k8s/headlamp
+  newTag: v0.42.0
+{% endif %}

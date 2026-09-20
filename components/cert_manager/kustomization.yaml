@@ -6,13 +6,13 @@ resources:
 
 {% if repo_mirror is defined %}
 images:
-- name: quay.io/jetstack/cert-manager-controller:v1.17.2
+- name: quay.io/jetstack/cert-manager-controller:v1.20.2
   newName: {{ repo_mirror }}/quay.io/jetstack/cert-manager-controller
-  newTag: v1.17.2
-- name: quay.io/jetstack/cert-manager-cainjector:v1.17.2
+  newTag: v1.20.2
+- name: quay.io/jetstack/cert-manager-cainjector:v1.20.2
   newName: {{ repo_mirror }}/quay.io/jetstack/cert-manager-cainjector
-  newTag: v1.17.2
-- name: quay.io/jetstack/cert-manager-webhook:v1.17.2
+  newTag: v1.20.2
+- name: quay.io/jetstack/cert-manager-webhook:v1.20.2
   newName: {{ repo_mirror }}/quay.io/jetstack/cert-manager-webhook
-  newTag: v1.17.2
+  newTag: v1.20.2
 {% endif %}

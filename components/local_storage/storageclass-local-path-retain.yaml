@@ -3,5 +3,5 @@ kind: StorageClass
 metadata:
   name: local-path-retain
 provisioner: rancher.io/local-path
-volumeBindingMode: WaitForFirstConsumer
+volumeBindingMode: Immediate
 reclaimPolicy: Retain

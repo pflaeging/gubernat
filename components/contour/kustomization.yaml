@@ -25,10 +25,10 @@ patches:
 
 {% if repo_mirror is defined %}
 images:
-- name: ghcr.io/projectcontour/contour:v1.32.0
+- name: ghcr.io/projectcontour/contour:v1.33.5
   newName: {{ repo_mirror }}/ghcr.io/projectcontour/contour
-  newTag: v1.32.0
-- name: docker.io/envoyproxy/envoy:v1.34.1
+  newTag: v1.33..5
+- name: docker.io/envoyproxy/envoy:distroless-v1.35.10
   newName: {{ repo_mirror }}/docker.io/envoyproxy/envoy
-  newTag: v1.34.1
+  newTag: distroless-v1.35.10
 {% endif %}

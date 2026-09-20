@@ -11,8 +11,14 @@
 
 ## Generate image list for mirror images
 
-- in the root `gubernat` folder, execute:  
-  `python3 tools/make-repo-mirros-and-csv.py`  
-  This does 2 things:
-  - It updates the repo mirrors in each component's kustomization.yaml
-  - It creates an `imagelist.csv`, containing all the necessary images (note: you need `kubeadm` installed on your system to create this list)
+- update `images.txt` in the top repo folder
+- update all the `images:` definitions in `./components/*/kustomization.yaml``
+- run the following command to generate a new `imagelist.csv`:\
+    `cat images.txt| awk '{print $1 ",__REPOMIRROR__/" $1}' > imagelist.csv`
+
+### sources for the image list
+
+- `/opt/kubernetes/components/*`\
+    (there you can do: `kubectl kustomize . | grep image: | sort -u | awk '{ print $2 }'`)
+- `crictl ps -a`
+- `kubeadm config images list`
