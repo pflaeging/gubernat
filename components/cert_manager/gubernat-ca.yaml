@@ -14,6 +14,8 @@ spec:
   isCA: true
   commonName: gubernat-selfsigned-ca
   secretName: root-secret
+  duration: 17520h
+  renewBefore: 720h
   privateKey:
     algorithm: ECDSA
     size: 256
