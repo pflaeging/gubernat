@@ -1,6 +1,38 @@
 - name: Start common prereq for update
   ansible.builtin.include_tasks: common_before.yml
 
+- name: Define api_host
+  ansible.builtin.set_fact:
+    api_host: >-
+      {% if groups.loadbalancer[0] is defined -%}
+        {{ groups.loadbalancer[0] }}
+      {%- else -%}
+        {% if api_loadbalancer is defined -%}
+          {{ api_loadbalancer }}
+        {%- else -%}
+          {{ groups.master[0] }}
+        {%- endif %}
+      {%- endif %}
+- name: Define control_plane
+  ansible.builtin.set_fact:
+    control_plane: >-
+      {% if api_loadbalancer_port is defined -%}
+        {{ api_host }}:{{ api_loadbalancer_port }}
+      {%- else -%}
+        {{ api_host }}:{{ lb_config.k8s_loadbalancer_api_port }}
+      {%- endif %}
+
+- name: Generate /opt/kubernetes/etc/kubeadm-config.yaml
+  ansible.builtin.template:
+    src: ../../kubernetes/templates/kubeadm-config.yaml.j2
+    dest: /opt/kubernetes/etc/kubeadm-config.yaml
+    mode: "0644"
+
+- name: Upload the kubelet configuration to the kubelet-config ConfigMap
+  ansible.builtin.command:
+    cmd: kubeadm init --config /opt/kubernetes/etc/kubeadm-config.yaml phase upload-config kubelet
+  changed_when: false
+
 - name: Update first master to {{ k8s_version }}
   ansible.builtin.command:
     cmd: kubeadm upgrade apply v{{ k8s_version }} --yes

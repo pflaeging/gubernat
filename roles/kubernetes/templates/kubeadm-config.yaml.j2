@@ -35,3 +35,27 @@ apiServer:
 apiVersion: kubelet.config.k8s.io/v1beta1
 kind: KubeletConfiguration
 resolvConf: /etc/resolv.conf.kubernetes
+systemReserved:
+  cpu: "{{ kubelet_system_reserved_cpu | default('500m') }}"
+  memory: "{{ kubelet_system_reserved_memory | default('1Gi') }}"
+  ephemeral-storage: "{{ kubelet_system_reserved_ephemeral_storage | default('2Gi') }}"
+kubeReserved:
+  cpu: "{{ kubelet_kube_reserved_cpu | default('1') }}"
+  memory: "{{ kubelet_kube_reserved_memory | default('1500Mi') }}"
+  ephemeral-storage: "{{ kubelet_kube_reserved_ephemeral_storage | default('2Gi') }}"
+# evict pods before the node runs out of memory/disk, so the kubelet gets to choose
+# the victim gracefully instead of the kernel OOM killer decide
+evictionHard:
+  memory.available: "{{ kubelet_eviction_hard_memory_available | default('500Mi') }}"
+  nodefs.available: "10%"
+  imagefs.available: "10%"
+  nodefs.inodesFree: "5%"
+  imagefs.inodesFree: "5%"
+evictionSoft:
+  memory.available: "{{ kubelet_eviction_soft_memory_available | default('1Gi') }}"
+  nodefs.available: "15%"
+  imagefs.available: "15%"
+evictionSoftGracePeriod:
+  memory.available: "2m"
+  nodefs.available: "2m"
+  imagefs.available: "2m"
