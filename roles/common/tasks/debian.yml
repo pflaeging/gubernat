@@ -1,0 +1,19 @@
+- name: Install firewalld, selinux and NetworkManager in debian
+  ansible.builtin.package:
+    name:
+      - firewalld
+      - network-manager
+      - selinux-basics
+      - selinux-policy-default
+    state: latest
+
+- name: Uninstall ifupdown
+  ansible.builtin.package:
+    name:
+      - ifupdown
+    state: absent
+
+- name: Remove ifupdown network definitions so that NetworkManager works on all interfaces
+  ansible.builtin.file:
+    path: /etc/network/interfaces
+    state: absent

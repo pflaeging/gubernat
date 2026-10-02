@@ -1,7 +1,13 @@
 - name: Bring system to newest software level
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name: "*"
     state: latest
+
+- name: Install debian specific things
+  ansible.builtin.include_tasks: debian.yml
+  when: ansible_facts['os_family'] == "Debian"
+  l
+
 
 - name: Set hostname
   ansible.builtin.hostname:
@@ -9,16 +15,24 @@
     use: systemd
 
 - name: Install needed -> dnsmasq, chrony, open-vm-tools, tar
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name:
       - dnsmasq
       - chrony
       - open-vm-tools
       - tar
-      - mkpasswd
+      - whois
       - openssl
-      - kernel-modules-extra
     state: latest
+
+- name: Install extra kernel modules for RHEL based system
+  ansible.builtin.package:
+    name:
+    -  kernel-modules-extra
+    state: latest
+  when: ansible_facts['os_family'] == "RedHat"
+
+
 
 - name: enable open-vm-tools
   ansible.builtin.systemd:
